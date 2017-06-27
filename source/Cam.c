@@ -12,6 +12,8 @@ License : MIT
 u8 cam_buffer_safe[BLACK_WIDTH*2];
 u8 cam_buffer[IMG_ROWS][IMG_COLS+BLACK_WIDTH];   //64*155，把黑的部分舍去是59*128
 Road road_B[ROAD_SIZE];//由近及远存放
+s8 slope[ROAD_SIZE];//
+s8 curvatureL[ROAD_SIZE],curvatureR[ROAD_SIZE];
 float mid_ave;//road中点加权后的值
 //float  weight[10] = {1,1,1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744}; //2.296};//, 1.454};//上一次的权值
 //float weight[10] = {1.04,1.14,1.41,2.01,3.03,4.35,5.52,6,5.52,4.35};//待测试
@@ -45,6 +47,7 @@ int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
+
 /*
 //——————透视变换·变量——————
 double matrix[4][4];
@@ -225,13 +228,6 @@ void Cam_B_Init()//初始化Cam_B
   
 }
 
-    //出界保护  //无效……
-  /*  static bool flag_protect=0;
-    if((cam_buffer[56][60]+cam_buffer[57][60]+cam_buffer[58][60])<3*thr||flag_protect==1){                       //保护机制，貌似不太好用cam_buffer[45][64]<70 && cam_buffer[50][64]<70 &&
-      Servo_Output(0);
-      PWM(0, 0, &L, &R); 
-      flag_protect=1;
-    }*/
 
 //test
 double theta,theta_d,slope,test;
@@ -244,74 +240,8 @@ void Cam_B(){
   
     float max_speed=MAX_SPEED+debug_speed;//最大速度
     static int dir;//舵机输出
-    
-    //================================透视变化
-    //getMatrix(0.785398,1.0,1.0,1000);
-   // linearization();
-   // matrixMultiply();
-   // getNewBuffer();
+    //slope[0] = 0;
  
-    //==================================获取road_B的left right mid 坐标和slope_
-    //斜率方案
-    /*
-    for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
-    {
-      //double x,y;
-      slope=road_B[j].slope_;
-      theta=atan(road_B[j].slope_);//double theta=atan(road_B[j].slope_);
-      test=sin(theta);
-      test=cos(theta);
-      test=tan(theta);
-      theta_d=theta*180/PI;
-      test=sin(theta_d);//以上用来检测atan函数以及sin函数使用的是否正确，debug模式下
-      //left
-      x=road_B[j].mid[0];
-      y=road_B[j].mid[1];
-      while(x>=0 && x<=CAM_WID && y<=CAM_NEAR && y>=CAM_FAR)
-      {
-        if(cam_buffer[(int)y][(int)x]<thr)
-          break;
-        else
-        {
-          x-=cos(theta);
-          y-=sin(theta);
-        }
-      }
-      road_B[j].left[0]=constrain(0,CAM_WID,x);
-      road_B[j].left[1]=constrain(CAM_FAR,CAM_NEAR,y);
-
-      //right
-      x=road_B[j].mid[0];
-      y=road_B[j].mid[1];
-      while(x>=0 && x<=CAM_WID && y<=CAM_NEAR && y>=CAM_FAR)
-      {
-        if(cam_buffer[(int)y][(int)x]<thr)
-          break;
-        else
-        {
-          x+=cos(theta);
-          y+=sin(theta);
-        }
-      }
-      road_B[j].right[0]=constrain(0,CAM_WID,x);
-      road_B[j].right[1]=constrain(CAM_FAR,CAM_NEAR,y);
-      //mid
-      road_B[j].mid[0] = (road_B[j].left[0] + road_B[j].right[0])/2;
-      road_B[j].mid[1] = (road_B[j].left[1] + road_B[j].right[1])/2;//分别计算并存储25行的mid
-      //slope
-      if(j>0)
-      {
-        road_B[j].slope_=getSlope_(road_B[j-1].mid[0],-road_B[j-1].mid[1],road_B[j].mid[0],-road_B[j].mid[1]);
-        road_B[j+1].slope_=road_B[j].slope_;//用以预测下一个mid
-      }
-      //mid of the next road_B[]
-      if(j<(ROAD_SIZE-1))
-      {
-        road_B[j+1].mid[0]=road_B[j].mid[0]+CAM_STEP*sin(theta);
-        road_B[j+1].mid[1]=road_B[j].mid[1]-CAM_STEP*cos(theta);
-      }
-    }
-    */
     //横向扫描方案
     for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
     {
@@ -333,6 +263,13 @@ void Cam_B(){
       //store
       if(j<(ROAD_SIZE-1))
         road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
+      if(j > 0)
+        slope[j] = road_B[j].mid - road_B[j - 1];
+      if(j > 1)
+      {
+        curvatureL[j] = road_B[j].left - road_B[j - 1].left * 2 + road_B[j - 2].left;
+        curvatureR[j] = road_B[j].right - road_B[j - 1].right * 2 + road_B[j - 2].right;
+      }
     }
       
     //===========================区分前方道路类型//需要设置一个优先级！！！
@@ -351,7 +288,32 @@ void Cam_B(){
     if(valid_row<valid_row_thr)
       road_state=2;//弯道
     else road_state=1;//直道
+    
+    int tmpL, tmpR;
+    bool flagL_island = 0, flagR_island = 0;
+    for(tmpL = 2; tmpL < (ROAD_SIZE - 3) && flagL_island == 0; tmpL++)
+    {
+      if(curvatureL[tmpL] < -4)
+        flagL_island = 1;
+    }
+    for(tmpR = 2; tmpR < (ROAD_SIZE - 3) && flagR_island == 0; tmpR++)
+    {
+      if(curvatureR[tmpR] > 4)
+        flagR_island = 1;
+    }
+    if(flagL_island && flagR_island)
+    {
+      u8 flag_tmp = 0;
+      int i, j;
+      int tmpRow_island = ROAD_SIZE - ((tmpL + tmpR) / 2) * CAM_STEP, tmpCol_island;
+      s8 tmp_slope = slope[tmpL > tmpR ? tmpR : tmpL];
+      tmpCol_island = road_B[tmp_island].mid;
+      for(i = 0; i < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - i * CAM_STEP][tmpCol_island + i * tmp_slope] > thr;i++){};
+      for(j = i; j < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - j * CAM_STEP][tmpCol_island + j * tmp_slope] < thr;j++){};
+      if(j >= (ROAD_SIZE - 3 - tmpROW_island))
+        road_state = 3;
     //detect the black hole————————————————————
+    /*
     int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
     {
@@ -379,7 +341,7 @@ void Cam_B(){
       }
     }
     if(left>=1 && right>=1)
-      road_state=3;//前方环岛
+      road_state=3;//前方环岛*/
     //detect the obstacle————————————————————
   /*  if((road_B[ROAD_OBST_ROW].right-road_B[ROAD_OBST_ROW].left)<OBSTACLE_THR)
     {
