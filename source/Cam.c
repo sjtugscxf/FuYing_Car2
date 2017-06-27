@@ -305,13 +305,15 @@ void Cam_B(){
     {
       u8 flag_tmp = 0;
       int i, j;
-      int tmpRow_island = ROAD_SIZE - ((tmpL + tmpR) / 2) * CAM_STEP, tmpCol_island;
-      s8 tmp_slope = slope[tmpL > tmpR ? tmpR : tmpL];
+      int tmpRow_island = tmpL > tmpR ? tmpR : tmpL, tmpCol_island;
+      tmpRow_island = ROAD_SIZE - tmpRow_island * CAM_STEP;
+      s8 tmp_slope = slope[tmpRow_island];
       tmpCol_island = road_B[tmp_island].mid;
       for(i = 0; i < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - i * CAM_STEP][tmpCol_island + i * tmp_slope] > thr;i++){};
       for(j = i; j < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - j * CAM_STEP][tmpCol_island + j * tmp_slope] < thr;j++){};
-      if(j >= (ROAD_SIZE - 3 - tmpROW_island))
+      if(j < (ROAD_SIZE - 3 - tmpROW_island))
         road_state = 3;
+    }
     //detect the black hole！！！！！！！！！！！！！！！！！！！！
     /*
     int left=0,right=0;
