@@ -12,18 +12,18 @@ U32 distance_last;
 
 void StartUltrasound(u8 x){
   if(x)
-    PTB->PSOR |= 1<<21;
+    PTC->PSOR |= 1<<1;
   else
-    PTB->PCOR |= 1<<21;
+    PTC->PCOR |= 1<<1;
 }
 
 void Wave_Init()
 {
-  PORTB->PCR[20] |= PORT_PCR_MUX(1) |PORT_PCR_PE_MASK | PORT_PCR_PS_MASK | PORT_PCR_IRQC(11);    // CCD2SI接口用作输入，超声波接收
-  PORTB->PCR[21] |= PORT_PCR_MUX(1);    // CCD1SI接口用作输出，超声波发送
-  PTB->PDDR |= (0x1<<21);
-  NVIC_EnableIRQ(PORTB_IRQn);
-  NVIC_SetPriority(PORTB_IRQn, NVIC_EncodePriority(NVIC_GROUP, 2, 1)); //PORTC中断服务程序在cam.c中
+  PORTC->PCR[0] |= PORT_PCR_MUX(1) |PORT_PCR_PE_MASK | PORT_PCR_PS_MASK | PORT_PCR_IRQC(11);    // CCD2AO接口用作输入，超声波接收
+  PORTC->PCR[1] |= PORT_PCR_MUX(1);    // CCD1AO接口用作输出，超声波发送
+  PTC->PDDR |= (0x1<<1);
+  NVIC_EnableIRQ(PORTC_IRQn);
+  NVIC_SetPriority(PORTC_IRQn, NVIC_EncodePriority(NVIC_GROUP, 2, 1)); //PORTC中断服务程序在cam.c中
 }
 
 
