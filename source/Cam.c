@@ -452,11 +452,11 @@ void Cam_B(){
     err = mid_ave  - CAM_WID / 2;
 
     dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
-    if(dir>0)
-      dir*=1.2;//修正舵机左右不对称的问题//不可删
+    //if(dir>0)
+      //dir*=1.2;//修正舵机左右不对称的问题//不可删
     last_err = err;
     
-    dir=constrainInt(-230,230,dir);
+    dir=constrainInt(-250,250,dir)-55;
     if(car_state!=0)
       Servo_Output(dir);
     else   
