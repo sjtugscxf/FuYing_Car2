@@ -161,7 +161,7 @@ void PIT0_IRQHandler(){
   
 #if (CAR_TYPE==0)   // Magnet and Balance
   
-  Mag_Sample();
+  //Mag_Sample();
   
   gyro1 = Gyro1();
   gyro2 = Gyro2();
@@ -170,8 +170,8 @@ void PIT0_IRQHandler(){
   
 #elif (CAR_TYPE==1)     // CCD
   
-  CCD1_GetLine(ccd1_line);
-  CCD2_GetLine(ccd2_line);
+  //CCD1_GetLine(ccd1_line);
+  //CCD2_GetLine(ccd2_line);
   
   
   
