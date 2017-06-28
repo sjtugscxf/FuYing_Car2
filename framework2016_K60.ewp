@@ -302,19 +302,12 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\app</state>
-          <state>$PROJ_DIR$\..\..\..\lib\CPU</state>
-          <state>$PROJ_DIR$\..\..\..\lib\common</state>
-          <state>$PROJ_DIR$\..\..\..\lib\LPLD</state>
-          <state>$PROJ_DIR$\..\..\..\lib\LPLD\HW</state>
-          <state>$PROJ_DIR$\..\..\..\lib\LPLD\DEV</state>
-          <state>$PROJ_DIR$\..\..\..\lib\uCOS-II\Ports</state>
-          <state>$PROJ_DIR$\..\..\..\lib\uCOS-II\Source</state>
-          <state>$PROJ_DIR$\..\..\..\lib\FatFs</state>
-          <state>$PROJ_DIR$\..\..\..\lib\FatFs\option</state>
-          <state>$PROJ_DIR$\..\..\..\lib\USB\common</state>
-          <state>$PROJ_DIR$\..\..\..\lib\USB\driver</state>
-          <state>$PROJ_DIR$\..\..\..\lib\USB\descriptor</state>
-          <state>$PROJ_DIR$\..\..\..\lib\USB\class</state>
+          <state>D:\GitHub_pository\FuYing_Car2\source</state>
+          <state>D:\GitHub_pository\FuYing_Car2\common</state>
+          <state>D:\GitHub_pository\FuYing_Car2\LPLD</state>
+          <state>D:\GitHub_pository\FuYing_Car2\LPLD\HW</state>
+          <state>D:\GitHub_pository\FuYing_Car2\LPLD\DEV</state>
+          <state>D:\GitHub_pository\FuYing_Car2\iar_config_files</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>

@@ -12,8 +12,8 @@ License : MIT
 u8 cam_buffer_safe[BLACK_WIDTH*2];
 u8 cam_buffer[IMG_ROWS][IMG_COLS+BLACK_WIDTH];   //64*155，把黑的部分舍去是59*128
 Road road_B[ROAD_SIZE];//由近及远存放
-s8 slope[ROAD_SIZE];//
-s8 curvatureL[ROAD_SIZE],curvatureR[ROAD_SIZE];
+int slope_mid[ROAD_SIZE];//
+int curvatureL[ROAD_SIZE],curvatureR[ROAD_SIZE];
 float mid_ave;//road中点加权后的值
 //float  weight[10] = {1,1,1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744}; //2.296};//, 1.454};//上一次的权值
 //float weight[10] = {1.04,1.14,1.41,2.01,3.03,4.35,5.52,6,5.52,4.35};//待测试
@@ -263,8 +263,11 @@ void Cam_B(){
       //store
       if(j<(ROAD_SIZE-1))
         road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
+    }
+    for(int j = 0;j < ROAD_SIZE; j++)
+    {
       if(j > 0)
-        slope[j] = road_B[j].mid - road_B[j - 1];
+        slope_mid[j] = road_B[j].mid - road_B[j - 1].mid;
       if(j > 1)
       {
         curvatureL[j] = road_B[j].left - road_B[j - 1].left * 2 + road_B[j - 2].left;
@@ -290,7 +293,7 @@ void Cam_B(){
     else road_state=1;//直道
     
     int tmpL, tmpR;
-    bool flagL_island = 0, flagR_island = 0;
+    u8 flagL_island = 0, flagR_island = 0;
     for(tmpL = 2; tmpL < (ROAD_SIZE - 3) && flagL_island == 0; tmpL++)
     {
       if(curvatureL[tmpL] < -4)
@@ -301,19 +304,19 @@ void Cam_B(){
       if(curvatureR[tmpR] > 4)
         flagR_island = 1;
     }
-    if(flagL_island && flagR_island)
+    /*if(flagL_island == 1 && flagR_island == 1)
     {
-      u8 flag_tmp = 0;
       int i, j;
       int tmpRow_island = tmpL > tmpR ? tmpR : tmpL, tmpCol_island;
-      tmpRow_island = ROAD_SIZE - tmpRow_island * CAM_STEP;
-      s8 tmp_slope = slope[tmpRow_island];
-      tmpCol_island = road_B[tmp_island].mid;
-      for(i = 0; i < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - i * CAM_STEP][tmpCol_island + i * tmp_slope] > thr;i++){};
-      for(j = i; j < (ROAD_SIZE - 3 - tmpROW_island) && cam_buffer[tmpRow_island - j * CAM_STEP][tmpCol_island + j * tmp_slope] < thr;j++){};
-      if(j < (ROAD_SIZE - 3 - tmpROW_island))
-        road_state = 3;
-    }
+      int tmp_slope = slope_mid[tmpRow_island];/////
+      tmpCol_island = road_B[tmpRow_island].mid;
+      tmpRow_island = 60 - tmpRow_island * CAM_STEP;/////
+      for(i = 0; i < (60 - 3 - tmpRow_island) && cam_buffer[tmpRow_island - i * CAM_STEP][tmpCol_island + i * tmp_slope] > thr;i++){};
+      for(j = i; j < (60 - 3 - tmpRow_island) && cam_buffer[tmpRow_island - j * CAM_STEP][tmpCol_island + j * tmp_slope] < thr;j++){};
+      if(j < (60 - 3 - tmpRow_island - tmpRow_island))
+        road_state = 2;
+    }*/
+    
     //detect the black hole————————————————————
     /*
     int left=0,right=0;

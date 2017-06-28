@@ -1,0 +1,2934 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.2.7424/W32 for ARM        28/Jun/2017  11:22:42
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  D:\GitHub_pository\FuYing_Car2\source\Cam.c
+#    Command line =  
+#        D:\GitHub_pository\FuYing_Car2\source\Cam.c -D LPLD_K60 -lCN
+#        D:\GitHub_pository\FuYing_Car2\RAM\List\ -lB
+#        D:\GitHub_pository\FuYing_Car2\RAM\List\ -o
+#        D:\GitHub_pository\FuYing_Car2\RAM\Obj\ --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M4 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.0\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\GitHub_pository\FuYing_Car2\..\app\ -I
+#        D:\GitHub_pository\FuYing_Car2\source\ -I
+#        D:\GitHub_pository\FuYing_Car2\common\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\HW\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\DEV\ -I
+#        D:\GitHub_pository\FuYing_Car2\iar_config_files\ -Ol -I "C:\Program
+#        Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\CMSIS\Include\" -D
+#        ARM_MATH_CM4
+#    List file    =  D:\GitHub_pository\FuYing_Car2\RAM\List\Cam.lst
+#    Object file  =  D:\GitHub_pository\FuYing_Car2\RAM\Obj\Cam.o
+#
+###############################################################################
+
+D:\GitHub_pository\FuYing_Car2\source\Cam.c
+      1          /*
+      2          Arthor : Qian Qiyang (KisaragiAyanoo@twitter)
+      3          Date : 2015/12/01
+      4          License : MIT
+      5          */
+      6          
+      7          #include "includes.h"
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_EnableIRQ(IRQn_Type)
+   \                     NVIC_EnableIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable9  ;; 0xe000e100
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0940             LSRS     R0,R0,#+5
+   \   00000010   0xF842 0x1020      STR      R1,[R2, R0, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_SetPriority(IRQn_Type, uint32_t)
+   \                     NVIC_SetPriority: (+1)
+   \   00000000   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000002   0x2800             CMP      R0,#+0
+   \   00000004   0xD509             BPL.N    ??NVIC_SetPriority_0
+   \   00000006   0x0109             LSLS     R1,R1,#+4
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable6  ;; 0xe000ed18
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0xF010 0x000F      ANDS     R0,R0,#0xF
+   \   00000012   0x1880             ADDS     R0,R0,R2
+   \   00000014   0xF800 0x1C04      STRB     R1,[R0, #-4]
+   \   00000018   0xE004             B.N      ??NVIC_SetPriority_1
+   \                     ??NVIC_SetPriority_0: (+1)
+   \   0000001A   0x0109             LSLS     R1,R1,#+4
+   \   0000001C   0x.... 0x....      LDR.W    R2,??DataTable9_1  ;; 0xe000e400
+   \   00000020   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000022   0x5481             STRB     R1,[R0, R2]
+   \                     ??NVIC_SetPriority_1: (+1)
+   \   00000024   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp uint32_t NVIC_EncodePriority(uint32_t, uint32_t, uint32_t)
+   \                     NVIC_EncodePriority: (+1)
+   \   00000000   0xB410             PUSH     {R4}
+   \   00000002   0xF010 0x0007      ANDS     R0,R0,#0x7
+   \   00000006   0xF1D0 0x0307      RSBS     R3,R0,#+7
+   \   0000000A   0x2B05             CMP      R3,#+5
+   \   0000000C   0xD301             BCC.N    ??NVIC_EncodePriority_0
+   \   0000000E   0x2304             MOVS     R3,#+4
+   \   00000010   0xE001             B.N      ??NVIC_EncodePriority_1
+   \                     ??NVIC_EncodePriority_0: (+1)
+   \   00000012   0xF1D0 0x0307      RSBS     R3,R0,#+7
+   \                     ??NVIC_EncodePriority_1: (+1)
+   \   00000016   0x1D04             ADDS     R4,R0,#+4
+   \   00000018   0x2C07             CMP      R4,#+7
+   \   0000001A   0xD201             BCS.N    ??NVIC_EncodePriority_2
+   \   0000001C   0x2000             MOVS     R0,#+0
+   \   0000001E   0xE000             B.N      ??NVIC_EncodePriority_3
+   \                     ??NVIC_EncodePriority_2: (+1)
+   \   00000020   0x1EC0             SUBS     R0,R0,#+3
+   \                     ??NVIC_EncodePriority_3: (+1)
+   \   00000022   0x2401             MOVS     R4,#+1
+   \   00000024   0xFA14 0xF303      LSLS     R3,R4,R3
+   \   00000028   0x1E5B             SUBS     R3,R3,#+1
+   \   0000002A   0x4019             ANDS     R1,R3,R1
+   \   0000002C   0x4081             LSLS     R1,R1,R0
+   \   0000002E   0x2301             MOVS     R3,#+1
+   \   00000030   0xFA13 0xF000      LSLS     R0,R3,R0
+   \   00000034   0x1E40             SUBS     R0,R0,#+1
+   \   00000036   0x4010             ANDS     R0,R0,R2
+   \   00000038   0x4308             ORRS     R0,R0,R1
+   \   0000003A   0xBC10             POP      {R4}
+   \   0000003C   0x4770             BX       LR               ;; return
+      8          
+      9          
+     10          // ====== Variables ======
+     11          // ---- Global ----
+
+   \                                 In section .bss, align 4
+     12          u8 cam_buffer_safe[BLACK_WIDTH*2];
+   \                     cam_buffer_safe:
+   \   00000000                      DS8 56
+
+   \                                 In section .bss, align 4
+     13          u8 cam_buffer[IMG_ROWS][IMG_COLS+BLACK_WIDTH];   //64*155，把黑的部分舍去是59*128
+   \                     cam_buffer:
+   \   00000000                      DS8 9920
+
+   \                                 In section .bss, align 4
+     14          Road road_B[ROAD_SIZE];//由近及远存放
+   \                     road_B:
+   \   00000000                      DS8 300
+
+   \                                 In section .bss, align 4
+     15          s8 slope_mid[ROAD_SIZE];//
+   \                     slope_mid:
+   \   00000000                      DS8 28
+
+   \                                 In section .bss, align 4
+     16          s8 curvatureL[ROAD_SIZE],curvatureR[ROAD_SIZE];
+   \                     curvatureL:
+   \   00000000                      DS8 28
+
+   \                                 In section .bss, align 4
+   \                     curvatureR:
+   \   00000000                      DS8 28
+
+   \                                 In section .bss, align 4
+     17          float mid_ave;//road中点加权后的值
+   \                     mid_ave:
+   \   00000000                      DS8 4
+     18          //float  weight[10] = {1,1,1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744}; //2.296};//, 1.454};//上一次的权值
+     19          //float weight[10] = {1.04,1.14,1.41,2.01,3.03,4.35,5.52,6,5.52,4.35};//待测试
+
+   \                                 In section .data, align 4
+     20          float weight[4][10] ={ {0,0,0,0,0,0,0,0,0,0},
+   \                     weight:
+   \   00000000   0x00000000         DC32 0H, 0H, 0H, 0H, 0H, 0H, 0H, 0H, 0H, 0H, 3F800000H, 3F800000H
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x00000000   
+   \              0x3F800000   
+   \              0x3F800000   
+   \   00000030   0x3F800000         DC32 3F800000H, 3F800000H, 3F800000H, 3F800000H, 3F800000H, 3F800000H
+   \              0x3F800000   
+   \              0x3F800000   
+   \              0x3F800000   
+   \              0x3F800000   
+   \              0x3F800000   
+   \   00000048   0x3F800000         DC32 3F800000H, 3F800000H, 3F800000H, 3F83D70AH, 3F91EB85H, 3FC51EB8H
+   \              0x3F800000   
+   \              0x3F800000   
+   \              0x3F83D70A   
+   \              0x3F91EB85   
+   \              0x3FC51EB8   
+   \   00000060   0x4023D70A         DC32 4023D70AH, 408947AEH, 40C51EB8H, 40E00000H, 40C51EB8H, 408947AEH
+   \              0x408947AE   
+   \              0x40C51EB8   
+   \              0x40E00000   
+   \              0x40C51EB8   
+   \              0x408947AE   
+   \   00000078   0x3F8F1AA0         DC32 3F8F1AA0H, 3FBA1CACH, 4012F1AAH, 406F9DB2H, 40A9BA5EH, 40C00000H
+   \              0x3FBA1CAC   
+   \              0x4012F1AA   
+   \              0x406F9DB2   
+   \              0x40A9BA5E   
+   \              0x40C00000   
+   \   00000090   0x40A9BA5E         DC32 40A9BA5EH, 406F9DB2H, 4012F1AAH, 3FBA1CACH
+   \              0x406F9DB2   
+   \              0x4012F1AA   
+   \              0x3FBA1CAC   
+     21                                  {1,1,1,1,1,1,1,1,1,1},
+     22                                  {1.00,1.03,1.14,1.54,2.56,               4.29,6.16,7.00,6.16,4.29},
+     23                                  {1.118, 1.454, 2.296, 3.744, 5.304,      6.000, 5.304, 3.744, 2.296, 1.454}};
+
+   \                                 In section .bss, align 4
+     24          int valid_row=0;//与有效行相关，未有效识别
+   \                     valid_row:
+   \   00000000                      DS8 4
+
+   \                                 In section .data, align 4
+     25          int valid_row_thr=10;//有效行阈值
+   \                     valid_row_thr:
+   \   00000000   0x0000000A         DC32 10
+
+   \                                 In section .bss, align 1
+     26          u8 car_state=0;//智能车状态标志 0：停止  1：测试舵机  2：正常巡线
+   \                     car_state:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     27          u8 remote_state = 0;//远程控制
+   \                     remote_state:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     28          u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
+   \                     road_state:
+   \   00000000                      DS8 1
+     29                            //3 4 状态下权重拉近
+     30                            //2 状态下减速
+     31          
+
+   \                                 In section .data, align 4
+     32          float motor_L=MIN_SPEED;
+   \                     motor_L:
+   \   00000000   0x41400000         DC32 41400000H
+
+   \                                 In section .data, align 4
+     33          float motor_R=MIN_SPEED;
+   \                     motor_R:
+   \   00000000   0x41400000         DC32 41400000H
+     34          
+     35          //OLED调参
+
+   \                                 In section .bss, align 4
+     36          int debug_speed=0;
+   \                     debug_speed:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 8
+     37          PIDInfo debug_dir;
+   \                     debug_dir:
+   \   00000000                      DS8 56
+
+   \                                 In section .data, align 4
+     38          int margin=30;
+   \                     margin:
+   \   00000000   0x0000001E         DC32 30
+
+   \                                 In section .bss, align 4
+     39          circle C;
+   \                     C:
+   \   00000000                      DS8 8
+
+   \                                 In section .data, align 4
+     40          int c1=15, c2=10, c3=5;
+   \                     `c1`:
+   \   00000000   0x0000000F         DC32 15
+
+   \                                 In section .data, align 4
+   \                     `c2`:
+   \   00000000   0x0000000A         DC32 10
+
+   \                                 In section .data, align 4
+   \                     `c3`:
+   \   00000000   0x00000005         DC32 5
+     41          
+     42          //=====================
+
+   \                                 In section .data, align 4
+     43          int CAM_HOLE_ROW=27; //用来向两边扫描检测黑洞·环岛的cam_buffer行位置
+   \                     CAM_HOLE_ROW:
+   \   00000000   0x0000001B         DC32 27
+
+   \                                 In section .data, align 4
+     44          int ROAD_OBST_ROW=10; //用来检测障碍物的road_B行位置//不能太远，也不能太近
+   \                     ROAD_OBST_ROW:
+   \   00000000   0x0000000A         DC32 10
+
+   \                                 In section .data, align 4
+     45          int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
+   \                     OBSTACLE_THR:
+   \   00000000   0x00000028         DC32 40
+     46          
+     47          
+     48          // ---- Local ----
+
+   \                                 In section .bss, align 1
+     49          u8 cam_row = 0, img_row = 0;
+   \                     cam_row:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     img_row:
+   \   00000000                      DS8 1
+     50          
+     51          /*
+     52          //——————透视变换·变量——————
+     53          double matrix[4][4];
+     54          //int buffer[64][128];=cam_buffer
+     55          int former[8200][4];
+     56          int later[8200][4];
+     57          u8 cam_buffer2[64][128];//int buffer2[64][128];
+     58          int visited[64][128];
+     59          
+     60          //——————透视变换·函数——————
+     61          
+     62          void getMatrix(double fov, double aspect, double zn, double zf){
+     63              matrix[0][0] = 1 / (tan(fov * 0.5) *aspect) ;
+     64              matrix[1][1] = 1 / tan(fov * 0.5) ;
+     65              matrix[2][2] = zf / (zf - zn) ;
+     66              matrix[2][3] = 1.0;
+     67              matrix[3][2] = (zn * zf) / (zn - zf);
+     68              return;
+     69          }
+     70          
+     71          void linearization(){
+     72              int cnt = 0;
+     73              for (int i=0;i<64;i++){
+     74                  for (int j=0;j<128;j++){
+     75                      former[cnt][0] = i;
+     76                      former[cnt][1] = j;
+     77                      former[cnt][2] = cam_buffer[i][j];//buffer[i][j];
+     78                      former[cnt][3] = 1;
+     79                      cnt++;
+     80                  }
+     81              }
+     82              return;
+     83          }
+     84          
+     85          void multiply(int k){
+     86              for (int i=0;i<4;i++){
+     87                  later[k][i] = former[k][0]*matrix[0][i]+former[k][1]*matrix[1][i]+former[k][2]*matrix[2][i]+former[k][3]+matrix[3][i];
+     88              }
+     89              return;
+     90          }
+     91          
+     92          void matrixMultiply(){
+     93              for (int i=0;i<8192;i++){
+     94                  multiply(i);
+     95              }
+     96              return;
+     97          }
+     98          
+     99          void getNewBuffer(){
+    100              for (int i=0;i<64;i++){
+    101                  for (int j=0;j<128;j++){
+    102                      cam_buffer2[i][j] = 0;
+    103                  }
+    104              }
+    105              for (int i=0;i<8192;i++){
+    106                  cam_buffer2[later[i][0]][later[i][1]] = later[i][2];
+    107              }
+    108              return;
+    109          }
+    110          */
+    111          
+    112          // ====== 
+    113          
+
+   \                                 In section .text, align 2, keep-with-next
+    114          void Cam_Algorithm(){
+   \                     Cam_Algorithm: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+    115            static u8 img_row_used = 0;
+    116            
+    117            while(img_row_used ==  img_row%IMG_ROWS); // wait for a new row received
+   \                     ??Cam_Algorithm_0: (+1)
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable7
+   \   00000006   0x7800             LDRB     R0,[R0, #+0]
+   \   00000008   0x.... 0x....      LDR.W    R1,??DataTable7_1
+   \   0000000C   0x7809             LDRB     R1,[R1, #+0]
+   \   0000000E   0x2240             MOVS     R2,#+64
+   \   00000010   0xFB91 0xF3F2      SDIV     R3,R1,R2
+   \   00000014   0xFB03 0x1312      MLS      R3,R3,R2,R1
+   \   00000018   0x4298             CMP      R0,R3
+   \   0000001A   0xD0F2             BEQ.N    ??Cam_Algorithm_0
+    118            
+    119            // -- Handle the row --  
+    120            
+    121            if (img_row_used >= BLACK_HEIGHT) {     //前5行黑的不要
+   \   0000001C   0x.... 0x....      LDR.W    R0,??DataTable7
+   \   00000020   0x7800             LDRB     R0,[R0, #+0]
+   \   00000022   0x2805             CMP      R0,#+5
+   \   00000024   0xDB26             BLT.N    ??Cam_Algorithm_1
+    122              for (int col = 0; col < IMG_COLS; col++) {
+   \   00000026   0x2400             MOVS     R4,#+0
+   \   00000028   0xE004             B.N      ??Cam_Algorithm_2
+    123                u8 tmp = cam_buffer[img_row_used][col];
+    124                if(!SW1()) UART_SendChar(tmp < 0xfe ? tmp : 0xfd);
+   \                     ??Cam_Algorithm_3: (+1)
+   \   0000002A   0x20FD             MOVS     R0,#+253
+   \                     ??Cam_Algorithm_4: (+1)
+   \   0000002C   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   0000002E   0x.... 0x....      BL       UART_SendChar
+   \                     ??Cam_Algorithm_5: (+1)
+   \   00000032   0x1C64             ADDS     R4,R4,#+1
+   \                     ??Cam_Algorithm_2: (+1)
+   \   00000034   0x2C80             CMP      R4,#+128
+   \   00000036   0xDA13             BGE.N    ??Cam_Algorithm_6
+   \   00000038   0x.... 0x....      LDR.W    R0,??DataTable7_2
+   \   0000003C   0x.... 0x....      LDR.W    R1,??DataTable7
+   \   00000040   0x7809             LDRB     R1,[R1, #+0]
+   \   00000042   0x229B             MOVS     R2,#+155
+   \   00000044   0xFB02 0x0001      MLA      R0,R2,R1,R0
+   \   00000048   0x5C20             LDRB     R0,[R4, R0]
+   \   0000004A   0x.... 0x....      LDR.W    R1,??DataTable9_2  ;; 0x400ff090
+   \   0000004E   0x6809             LDR      R1,[R1, #+0]
+   \   00000050   0xF3C1 0x1100      UBFX     R1,R1,#+4,#+1
+   \   00000054   0x2900             CMP      R1,#+0
+   \   00000056   0xD1EC             BNE.N    ??Cam_Algorithm_5
+   \   00000058   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   0000005A   0x28FE             CMP      R0,#+254
+   \   0000005C   0xDAE5             BGE.N    ??Cam_Algorithm_3
+   \   0000005E   0xE7E5             B.N      ??Cam_Algorithm_4
+    125              }
+    126             if(!SW1()) UART_SendChar(0xfe);//0xfe->纯参数读取溢出
+   \                     ??Cam_Algorithm_6: (+1)
+   \   00000060   0x.... 0x....      LDR.W    R0,??DataTable9_2  ;; 0x400ff090
+   \   00000064   0x6800             LDR      R0,[R0, #+0]
+   \   00000066   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   0000006A   0x2800             CMP      R0,#+0
+   \   0000006C   0xD102             BNE.N    ??Cam_Algorithm_1
+   \   0000006E   0x20FE             MOVS     R0,#+254
+   \   00000070   0x.... 0x....      BL       UART_SendChar
+    127            }
+    128            
+    129            //  -- The row is used --
+    130            img_row_used++;
+   \                     ??Cam_Algorithm_1: (+1)
+   \   00000074   0x.... 0x....      LDR.W    R0,??DataTable7
+   \   00000078   0x7800             LDRB     R0,[R0, #+0]
+   \   0000007A   0x1C40             ADDS     R0,R0,#+1
+   \   0000007C   0x.... 0x....      LDR.W    R1,??DataTable7
+   \   00000080   0x7008             STRB     R0,[R1, #+0]
+    131            if (img_row_used == IMG_ROWS) {    //一帧图像完行归零，控制算法启动，进入AI_Run
+   \   00000082   0x.... 0x....      LDR.W    R0,??DataTable7
+   \   00000086   0x7800             LDRB     R0,[R0, #+0]
+   \   00000088   0x2840             CMP      R0,#+64
+   \   0000008A   0xD10D             BNE.N    ??Cam_Algorithm_7
+    132              img_row_used = 0;
+   \   0000008C   0x2000             MOVS     R0,#+0
+   \   0000008E   0x.... 0x....      LDR.W    R1,??DataTable7
+   \   00000092   0x7008             STRB     R0,[R1, #+0]
+    133          
+    134              if(!SW1()) UART_SendChar(0xff);//0xff->异常结束
+   \   00000094   0x.... 0x....      LDR.W    R0,??DataTable9_2  ;; 0x400ff090
+   \   00000098   0x6800             LDR      R0,[R0, #+0]
+   \   0000009A   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   0000009E   0x2800             CMP      R0,#+0
+   \   000000A0   0xD102             BNE.N    ??Cam_Algorithm_7
+   \   000000A2   0x20FF             MOVS     R0,#+255
+   \   000000A4   0x.... 0x....      BL       UART_SendChar
+    135            }//以上原来是SW1()
+    136          }
+   \                     ??Cam_Algorithm_7: (+1)
+   \   000000A8   0xBD10             POP      {R4,PC}          ;; return
+
+   \                                 In section .bss, align 1
+   \                     ??img_row_used:
+   \   00000000                      DS8 1
+    137          
+
+   \                                 In section .text, align 2, keep-with-next
+    138          float constrain(float lowerBoundary, float upperBoundary, float input)
+    139          {
+   \                     constrain: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+   \   00000002   0x0003             MOVS     R3,R0
+   \   00000004   0x0008             MOVS     R0,R1
+    140          	if (input > upperBoundary)
+   \   00000006   0x0011             MOVS     R1,R2
+   \   00000008   0x.... 0x....      BL       __aeabi_cfcmple
+   \   0000000C   0xD307             BCC.N    ??constrain_0
+    141          		return upperBoundary;
+    142          	else if (input < lowerBoundary)
+   \                     ??constrain_1: (+1)
+   \   0000000E   0x0010             MOVS     R0,R2
+   \   00000010   0x0019             MOVS     R1,R3
+   \   00000012   0x.... 0x....      BL       __aeabi_cfcmple
+   \   00000016   0xD201             BCS.N    ??constrain_2
+    143          		return lowerBoundary;
+   \   00000018   0x0018             MOVS     R0,R3
+   \   0000001A   0xE000             B.N      ??constrain_0
+    144          	else
+    145          		return input;
+   \                     ??constrain_2: (+1)
+   \   0000001C   0x0010             MOVS     R0,R2
+   \                     ??constrain_0: (+1)
+   \   0000001E   0xBD02             POP      {R1,PC}          ;; return
+    146          }
+    147          
+
+   \                                 In section .text, align 2, keep-with-next
+    148          int constrainInt(int lowerBoundary, int upperBoundary, int input)
+    149          {
+    150          	if (input > upperBoundary)
+   \                     constrainInt: (+1)
+   \   00000000   0x4291             CMP      R1,R2
+   \   00000002   0xDA01             BGE.N    ??constrainInt_0
+    151          		return upperBoundary;
+   \   00000004   0x0008             MOVS     R0,R1
+   \   00000006   0xE002             B.N      ??constrainInt_1
+    152          	else if (input < lowerBoundary)
+   \                     ??constrainInt_0: (+1)
+   \   00000008   0x4282             CMP      R2,R0
+   \   0000000A   0xDB00             BLT.N    ??constrainInt_1
+    153          		return lowerBoundary;
+    154          	else
+    155          		return input;
+   \                     ??constrainInt_2: (+1)
+   \   0000000C   0x0010             MOVS     R0,R2
+   \                     ??constrainInt_1: (+1)
+   \   0000000E   0x4770             BX       LR               ;; return
+    156          }
+    157          
+
+   \                                 In section .text, align 2, keep-with-next
+    158          circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
+    159          {
+   \                     getR: (+1)
+   \   00000000   0xE92D 0x4FF7      PUSH     {R0-R2,R4-R11,LR}
+   \   00000004   0xB088             SUB      SP,SP,#+32
+   \   00000006   0x4698             MOV      R8,R3
+    160            double a,b,c,d,e,f;
+    161            double r,x,y;
+    162          	
+    163            a=2*(x2-x1);
+   \   00000008   0x4640             MOV      R0,R8
+   \   0000000A   0x9909             LDR      R1,[SP, #+36]
+   \   0000000C   0x.... 0x....      BL       __aeabi_fsub
+   \   00000010   0xF05F 0x4180      MOVS     R1,#+1073741824
+   \   00000014   0x.... 0x....      BL       __aeabi_fmul
+   \   00000018   0x.... 0x....      BL       __aeabi_f2d
+   \   0000001C   0xE9CD 0x0104      STRD     R0,R1,[SP, #+16]
+   \   00000020   0xF8DD 0x9050      LDR      R9,[SP, #+80]
+    164            b=2*(y2-y1);
+   \   00000024   0x4648             MOV      R0,R9
+   \   00000026   0x990A             LDR      R1,[SP, #+40]
+   \   00000028   0x.... 0x....      BL       __aeabi_fsub
+   \   0000002C   0xF05F 0x4180      MOVS     R1,#+1073741824
+   \   00000030   0x.... 0x....      BL       __aeabi_fmul
+   \   00000034   0x.... 0x....      BL       __aeabi_f2d
+   \   00000038   0x0006             MOVS     R6,R0
+   \   0000003A   0x000F             MOVS     R7,R1
+    165            c=x2*x2+y2*y2-x1*x1-y1*y1;
+   \   0000003C   0x4640             MOV      R0,R8
+   \   0000003E   0x4641             MOV      R1,R8
+   \   00000040   0x.... 0x....      BL       __aeabi_fmul
+   \   00000044   0x0004             MOVS     R4,R0
+   \   00000046   0x4648             MOV      R0,R9
+   \   00000048   0x4649             MOV      R1,R9
+   \   0000004A   0x.... 0x....      BL       __aeabi_fmul
+   \   0000004E   0x0021             MOVS     R1,R4
+   \   00000050   0x.... 0x....      BL       __aeabi_fadd
+   \   00000054   0x0004             MOVS     R4,R0
+   \   00000056   0x9909             LDR      R1,[SP, #+36]
+   \   00000058   0x9809             LDR      R0,[SP, #+36]
+   \   0000005A   0x.... 0x....      BL       __aeabi_fmul
+   \   0000005E   0x0001             MOVS     R1,R0
+   \   00000060   0x0020             MOVS     R0,R4
+   \   00000062   0x.... 0x....      BL       __aeabi_fsub
+   \   00000066   0x0004             MOVS     R4,R0
+   \   00000068   0x990A             LDR      R1,[SP, #+40]
+   \   0000006A   0x980A             LDR      R0,[SP, #+40]
+   \   0000006C   0x.... 0x....      BL       __aeabi_fmul
+   \   00000070   0x0001             MOVS     R1,R0
+   \   00000072   0x0020             MOVS     R0,R4
+   \   00000074   0x.... 0x....      BL       __aeabi_fsub
+   \   00000078   0x.... 0x....      BL       __aeabi_f2d
+   \   0000007C   0xE9CD 0x0106      STRD     R0,R1,[SP, #+24]
+   \   00000080   0xF8DD 0xB054      LDR      R11,[SP, #+84]
+    166            d=2*(x3-x2);
+   \   00000084   0x4658             MOV      R0,R11
+   \   00000086   0x4641             MOV      R1,R8
+   \   00000088   0x.... 0x....      BL       __aeabi_fsub
+   \   0000008C   0xF05F 0x4180      MOVS     R1,#+1073741824
+   \   00000090   0x.... 0x....      BL       __aeabi_fmul
+   \   00000094   0x.... 0x....      BL       __aeabi_f2d
+   \   00000098   0xE9CD 0x0102      STRD     R0,R1,[SP, #+8]
+   \   0000009C   0xF8DD 0xA058      LDR      R10,[SP, #+88]
+    167            e=2*(y3-y2);
+   \   000000A0   0x4650             MOV      R0,R10
+   \   000000A2   0x4649             MOV      R1,R9
+   \   000000A4   0x.... 0x....      BL       __aeabi_fsub
+   \   000000A8   0xF05F 0x4180      MOVS     R1,#+1073741824
+   \   000000AC   0x.... 0x....      BL       __aeabi_fmul
+   \   000000B0   0x.... 0x....      BL       __aeabi_f2d
+   \   000000B4   0x0004             MOVS     R4,R0
+   \   000000B6   0x000D             MOVS     R5,R1
+    168            f=x3*x3+y3*y3-x2*x2-y2*y2;
+   \   000000B8   0x4658             MOV      R0,R11
+   \   000000BA   0x4659             MOV      R1,R11
+   \   000000BC   0x.... 0x....      BL       __aeabi_fmul
+   \   000000C0   0x4683             MOV      R11,R0
+   \   000000C2   0x4650             MOV      R0,R10
+   \   000000C4   0x4651             MOV      R1,R10
+   \   000000C6   0x.... 0x....      BL       __aeabi_fmul
+   \   000000CA   0x4659             MOV      R1,R11
+   \   000000CC   0x.... 0x....      BL       __aeabi_fadd
+   \   000000D0   0x4682             MOV      R10,R0
+   \   000000D2   0x4640             MOV      R0,R8
+   \   000000D4   0x4641             MOV      R1,R8
+   \   000000D6   0x.... 0x....      BL       __aeabi_fmul
+   \   000000DA   0x0001             MOVS     R1,R0
+   \   000000DC   0x4650             MOV      R0,R10
+   \   000000DE   0x.... 0x....      BL       __aeabi_fsub
+   \   000000E2   0x4680             MOV      R8,R0
+   \   000000E4   0x4648             MOV      R0,R9
+   \   000000E6   0x4649             MOV      R1,R9
+   \   000000E8   0x.... 0x....      BL       __aeabi_fmul
+   \   000000EC   0x0001             MOVS     R1,R0
+   \   000000EE   0x4640             MOV      R0,R8
+   \   000000F0   0x.... 0x....      BL       __aeabi_fsub
+   \   000000F4   0x.... 0x....      BL       __aeabi_f2d
+   \   000000F8   0x4682             MOV      R10,R0
+   \   000000FA   0x468B             MOV      R11,R1
+    169            x=(b*f-e*c)/(b*d-e*a);
+   \   000000FC   0x4652             MOV      R2,R10
+   \   000000FE   0x465B             MOV      R3,R11
+   \   00000100   0x0030             MOVS     R0,R6
+   \   00000102   0x0039             MOVS     R1,R7
+   \   00000104   0x.... 0x....      BL       __aeabi_dmul
+   \   00000108   0x4680             MOV      R8,R0
+   \   0000010A   0x4689             MOV      R9,R1
+   \   0000010C   0xE9DD 0x0106      LDRD     R0,R1,[SP, #+24]
+   \   00000110   0x0022             MOVS     R2,R4
+   \   00000112   0x002B             MOVS     R3,R5
+   \   00000114   0x.... 0x....      BL       __aeabi_dmul
+   \   00000118   0x0002             MOVS     R2,R0
+   \   0000011A   0x000B             MOVS     R3,R1
+   \   0000011C   0x4640             MOV      R0,R8
+   \   0000011E   0x4649             MOV      R1,R9
+   \   00000120   0x.... 0x....      BL       __aeabi_dsub
+   \   00000124   0xE9CD 0x0100      STRD     R0,R1,[SP, #+0]
+   \   00000128   0xE9DD 0x0102      LDRD     R0,R1,[SP, #+8]
+   \   0000012C   0x0032             MOVS     R2,R6
+   \   0000012E   0x003B             MOVS     R3,R7
+   \   00000130   0x.... 0x....      BL       __aeabi_dmul
+   \   00000134   0x4680             MOV      R8,R0
+   \   00000136   0x4689             MOV      R9,R1
+   \   00000138   0xE9DD 0x0104      LDRD     R0,R1,[SP, #+16]
+   \   0000013C   0x0022             MOVS     R2,R4
+   \   0000013E   0x002B             MOVS     R3,R5
+   \   00000140   0x.... 0x....      BL       __aeabi_dmul
+   \   00000144   0x0002             MOVS     R2,R0
+   \   00000146   0x000B             MOVS     R3,R1
+   \   00000148   0x4640             MOV      R0,R8
+   \   0000014A   0x4649             MOV      R1,R9
+   \   0000014C   0x.... 0x....      BL       __aeabi_dsub
+   \   00000150   0x0002             MOVS     R2,R0
+   \   00000152   0x000B             MOVS     R3,R1
+   \   00000154   0xE9DD 0x0100      LDRD     R0,R1,[SP, #+0]
+   \   00000158   0x.... 0x....      BL       __aeabi_ddiv
+   \   0000015C   0x4680             MOV      R8,R0
+   \   0000015E   0x4689             MOV      R9,R1
+    170            y=(d*c-a*f)/(b*d-e*a);
+   \   00000160   0xE9DD 0x2302      LDRD     R2,R3,[SP, #+8]
+   \   00000164   0xE9DD 0x0106      LDRD     R0,R1,[SP, #+24]
+   \   00000168   0x.... 0x....      BL       __aeabi_dmul
+   \   0000016C   0xE9CD 0x0100      STRD     R0,R1,[SP, #+0]
+   \   00000170   0xE9DD 0x0104      LDRD     R0,R1,[SP, #+16]
+   \   00000174   0x4652             MOV      R2,R10
+   \   00000176   0x465B             MOV      R3,R11
+   \   00000178   0x.... 0x....      BL       __aeabi_dmul
+   \   0000017C   0x0002             MOVS     R2,R0
+   \   0000017E   0x000B             MOVS     R3,R1
+   \   00000180   0xE9DD 0x0100      LDRD     R0,R1,[SP, #+0]
+   \   00000184   0x.... 0x....      BL       __aeabi_dsub
+   \   00000188   0x4682             MOV      R10,R0
+   \   0000018A   0x468B             MOV      R11,R1
+   \   0000018C   0xE9DD 0x0102      LDRD     R0,R1,[SP, #+8]
+   \   00000190   0x0032             MOVS     R2,R6
+   \   00000192   0x003B             MOVS     R3,R7
+   \   00000194   0x.... 0x....      BL       __aeabi_dmul
+   \   00000198   0x0006             MOVS     R6,R0
+   \   0000019A   0x000F             MOVS     R7,R1
+   \   0000019C   0xE9DD 0x0104      LDRD     R0,R1,[SP, #+16]
+   \   000001A0   0x0022             MOVS     R2,R4
+   \   000001A2   0x002B             MOVS     R3,R5
+   \   000001A4   0x.... 0x....      BL       __aeabi_dmul
+   \   000001A8   0x0002             MOVS     R2,R0
+   \   000001AA   0x000B             MOVS     R3,R1
+   \   000001AC   0x0030             MOVS     R0,R6
+   \   000001AE   0x0039             MOVS     R1,R7
+   \   000001B0   0x.... 0x....      BL       __aeabi_dsub
+   \   000001B4   0x0002             MOVS     R2,R0
+   \   000001B6   0x000B             MOVS     R3,R1
+   \   000001B8   0x4650             MOV      R0,R10
+   \   000001BA   0x4659             MOV      R1,R11
+   \   000001BC   0x.... 0x....      BL       __aeabi_ddiv
+   \   000001C0   0x0004             MOVS     R4,R0
+   \   000001C2   0x000D             MOVS     R5,R1
+    171            r=sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1));
+   \   000001C4   0x9809             LDR      R0,[SP, #+36]
+   \   000001C6   0x.... 0x....      BL       __aeabi_f2d
+   \   000001CA   0x0002             MOVS     R2,R0
+   \   000001CC   0x000B             MOVS     R3,R1
+   \   000001CE   0x4640             MOV      R0,R8
+   \   000001D0   0x4649             MOV      R1,R9
+   \   000001D2   0x.... 0x....      BL       __aeabi_dsub
+   \   000001D6   0x0006             MOVS     R6,R0
+   \   000001D8   0x000F             MOVS     R7,R1
+   \   000001DA   0x9809             LDR      R0,[SP, #+36]
+   \   000001DC   0x.... 0x....      BL       __aeabi_f2d
+   \   000001E0   0x0002             MOVS     R2,R0
+   \   000001E2   0x000B             MOVS     R3,R1
+   \   000001E4   0x4640             MOV      R0,R8
+   \   000001E6   0x4649             MOV      R1,R9
+   \   000001E8   0x.... 0x....      BL       __aeabi_dsub
+   \   000001EC   0x0032             MOVS     R2,R6
+   \   000001EE   0x003B             MOVS     R3,R7
+   \   000001F0   0x.... 0x....      BL       __aeabi_dmul
+   \   000001F4   0x4682             MOV      R10,R0
+   \   000001F6   0x468B             MOV      R11,R1
+   \   000001F8   0x980A             LDR      R0,[SP, #+40]
+   \   000001FA   0x.... 0x....      BL       __aeabi_f2d
+   \   000001FE   0x0002             MOVS     R2,R0
+   \   00000200   0x000B             MOVS     R3,R1
+   \   00000202   0x0020             MOVS     R0,R4
+   \   00000204   0x0029             MOVS     R1,R5
+   \   00000206   0x.... 0x....      BL       __aeabi_dsub
+   \   0000020A   0x0006             MOVS     R6,R0
+   \   0000020C   0x000F             MOVS     R7,R1
+   \   0000020E   0x980A             LDR      R0,[SP, #+40]
+   \   00000210   0x.... 0x....      BL       __aeabi_f2d
+   \   00000214   0x0002             MOVS     R2,R0
+   \   00000216   0x000B             MOVS     R3,R1
+   \   00000218   0x0020             MOVS     R0,R4
+   \   0000021A   0x0029             MOVS     R1,R5
+   \   0000021C   0x.... 0x....      BL       __aeabi_dsub
+   \   00000220   0x0032             MOVS     R2,R6
+   \   00000222   0x003B             MOVS     R3,R7
+   \   00000224   0x.... 0x....      BL       __aeabi_dmul
+   \   00000228   0x4652             MOV      R2,R10
+   \   0000022A   0x465B             MOV      R3,R11
+   \   0000022C   0x.... 0x....      BL       __aeabi_dadd
+   \   00000230   0x.... 0x....      BL       sqrt
+   \   00000234   0x0006             MOVS     R6,R0
+   \   00000236   0x000F             MOVS     R7,R1
+    172            x=constrain(-1000.0,1000.0,x);
+   \   00000238   0x4640             MOV      R0,R8
+   \   0000023A   0x4649             MOV      R1,R9
+   \   0000023C   0x.... 0x....      BL       __aeabi_d2f
+   \   00000240   0x0002             MOVS     R2,R0
+   \   00000242   0x.... 0x....      LDR.W    R1,??DataTable9_3  ;; 0x447a0000
+   \   00000246   0x.... 0x....      LDR.W    R0,??DataTable9_4  ;; 0xc47a0000
+   \   0000024A   0x.... 0x....      BL       constrain
+   \   0000024E   0x.... 0x....      BL       __aeabi_f2d
+   \   00000252   0x4680             MOV      R8,R0
+   \   00000254   0x4689             MOV      R9,R1
+    173            y=constrain(-1000.0,1000.0,y);
+   \   00000256   0x0020             MOVS     R0,R4
+   \   00000258   0x0029             MOVS     R1,R5
+   \   0000025A   0x.... 0x....      BL       __aeabi_d2f
+   \   0000025E   0x0002             MOVS     R2,R0
+   \   00000260   0x.... 0x....      LDR.W    R1,??DataTable9_3  ;; 0x447a0000
+   \   00000264   0x.... 0x....      LDR.W    R0,??DataTable9_4  ;; 0xc47a0000
+   \   00000268   0x.... 0x....      BL       constrain
+   \   0000026C   0x.... 0x....      BL       __aeabi_f2d
+   \   00000270   0x0004             MOVS     R4,R0
+   \   00000272   0x000D             MOVS     R5,R1
+    174            r=constrain(1.0,500.0,r);
+   \   00000274   0x0030             MOVS     R0,R6
+   \   00000276   0x0039             MOVS     R1,R7
+   \   00000278   0x.... 0x....      BL       __aeabi_d2f
+   \   0000027C   0x0002             MOVS     R2,R0
+   \   0000027E   0x.... 0x....      LDR.W    R1,??DataTable10  ;; 0x43fa0000
+   \   00000282   0xF05F 0x507E      MOVS     R0,#+1065353216
+   \   00000286   0x.... 0x....      BL       constrain
+   \   0000028A   0x.... 0x....      BL       __aeabi_f2d
+   \   0000028E   0x0006             MOVS     R6,R0
+   \   00000290   0x000F             MOVS     R7,R1
+    175            bool sign = (x>0)?1:0;
+   \   00000292   0x4640             MOV      R0,R8
+   \   00000294   0x4649             MOV      R1,R9
+   \   00000296   0x2200             MOVS     R2,#+0
+   \   00000298   0x2300             MOVS     R3,#+0
+   \   0000029A   0x.... 0x....      BL       __aeabi_cdrcmple
+   \   0000029E   0xD201             BCS.N    ??getR_0
+   \   000002A0   0x2401             MOVS     R4,#+1
+   \   000002A2   0xE000             B.N      ??getR_1
+   \                     ??getR_0: (+1)
+   \   000002A4   0x2400             MOVS     R4,#+0
+    176            circle tmp = {r,sign};
+   \                     ??getR_1: (+1)
+   \   000002A6   0x0030             MOVS     R0,R6
+   \   000002A8   0x0039             MOVS     R1,R7
+   \   000002AA   0x.... 0x....      BL       __aeabi_d2f
+   \   000002AE   0x9000             STR      R0,[SP, #+0]
+   \   000002B0   0xF88D 0x4004      STRB     R4,[SP, #+4]
+    177            return tmp;
+   \   000002B4   0xE9DD 0x0100      LDRD     R0,R1,[SP, #+0]
+   \   000002B8   0x9A08             LDR      R2,[SP, #+32]
+   \   000002BA   0xE9C2 0x0100      STRD     R0,R1,[R2, #+0]
+   \   000002BE   0xB00B             ADD      SP,SP,#+44
+   \   000002C0   0xE8BD 0x8FF0      POP      {R4-R11,PC}      ;; return
+    178          }
+    179          
+
+   \                                 In section .text, align 2, keep-with-next
+    180          bool is_stop_line(int target_line)//目测并不有效……
+    181          {
+    182            if((road_B[target_line].right-road_B[target_line].left)<ROAD_WID)
+   \                     is_stop_line: (+1)
+   \   00000000   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000004   0x220C             MOVS     R2,#+12
+   \   00000006   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   0000000A   0x6849             LDR      R1,[R1, #+4]
+   \   0000000C   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000010   0x230C             MOVS     R3,#+12
+   \   00000012   0xFB03 0x2000      MLA      R0,R3,R0,R2
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0x1A08             SUBS     R0,R1,R0
+   \   0000001A   0x281E             CMP      R0,#+30
+   \   0000001C   0xDA01             BGE.N    ??is_stop_line_0
+    183              return 1;
+   \   0000001E   0x2001             MOVS     R0,#+1
+   \   00000020   0xE000             B.N      ??is_stop_line_1
+    184            else return 0;
+   \                     ??is_stop_line_0: (+1)
+   \   00000022   0x2000             MOVS     R0,#+0
+   \                     ??is_stop_line_1: (+1)
+   \   00000024   0x4770             BX       LR               ;; return
+    185          }
+    186          
+
+   \                                 In section .text, align 2, keep-with-next
+    187          double getSlope_(int x1, int y1, int x2, int y2)
+    188          {
+   \                     getSlope_: (+1)
+   \   00000000   0xB5F8             PUSH     {R3-R7,LR}
+   \   00000002   0x000E             MOVS     R6,R1
+   \   00000004   0x001F             MOVS     R7,R3
+    189            double dx = x2-x1;
+   \   00000006   0x1A10             SUBS     R0,R2,R0
+   \   00000008   0x.... 0x....      BL       __aeabi_i2d
+   \   0000000C   0x0004             MOVS     R4,R0
+   \   0000000E   0x000D             MOVS     R5,R1
+    190            double dy = y2-y1;
+   \   00000010   0x1BB8             SUBS     R0,R7,R6
+   \   00000012   0x.... 0x....      BL       __aeabi_i2d
+   \   00000016   0x0006             MOVS     R6,R0
+   \   00000018   0x000F             MOVS     R7,R1
+    191            if(dy==0) return dx*100;
+   \   0000001A   0x2000             MOVS     R0,#+0
+   \   0000001C   0x2100             MOVS     R1,#+0
+   \   0000001E   0x0032             MOVS     R2,R6
+   \   00000020   0x003B             MOVS     R3,R7
+   \   00000022   0x.... 0x....      BL       __aeabi_cdcmpeq
+   \   00000026   0xD107             BNE.N    ??getSlope__0
+   \   00000028   0x2000             MOVS     R0,#+0
+   \   0000002A   0x.... 0x....      LDR.W    R1,??DataTable10_2  ;; 0x40590000
+   \   0000002E   0x0022             MOVS     R2,R4
+   \   00000030   0x002B             MOVS     R3,R5
+   \   00000032   0x.... 0x....      BL       __aeabi_dmul
+   \   00000036   0xE005             B.N      ??getSlope__1
+    192            else return (double)dx/dy;
+   \                     ??getSlope__0: (+1)
+   \   00000038   0x0020             MOVS     R0,R4
+   \   0000003A   0x0029             MOVS     R1,R5
+   \   0000003C   0x0032             MOVS     R2,R6
+   \   0000003E   0x003B             MOVS     R3,R7
+   \   00000040   0x.... 0x....      BL       __aeabi_ddiv
+   \                     ??getSlope__1: (+1)
+   \   00000044   0xBDF4             POP      {R2,R4-R7,PC}    ;; return
+    193          }
+    194          
+
+   \                                 In section .text, align 2, keep-with-next
+    195          void Cam_B_Init()//初始化Cam_B
+    196          {
+    197            int i=0;
+   \                     Cam_B_Init: (+1)
+   \   00000000   0x2000             MOVS     R0,#+0
+    198            for(i=0;i<ROAD_SIZE;i++)
+   \   00000002   0x2100             MOVS     R1,#+0
+   \   00000004   0x0008             MOVS     R0,R1
+   \   00000006   0xE015             B.N      ??Cam_B_Init_0
+    199            {
+    200              road_B[i].left=CAM_WID/2;
+   \                     ??Cam_B_Init_1: (+1)
+   \   00000008   0x2142             MOVS     R1,#+66
+   \   0000000A   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000000E   0x230C             MOVS     R3,#+12
+   \   00000010   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000014   0x6011             STR      R1,[R2, #+0]
+    201              road_B[i].right=CAM_WID/2+2;
+   \   00000016   0x2144             MOVS     R1,#+68
+   \   00000018   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000001C   0x230C             MOVS     R3,#+12
+   \   0000001E   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000022   0x6051             STR      R1,[R2, #+4]
+    202              road_B[i].mid=CAM_WID/2+1;
+   \   00000024   0x2143             MOVS     R1,#+67
+   \   00000026   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000002A   0x230C             MOVS     R3,#+12
+   \   0000002C   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000030   0x6091             STR      R1,[R2, #+8]
+    203            }
+   \   00000032   0x1C40             ADDS     R0,R0,#+1
+   \                     ??Cam_B_Init_0: (+1)
+   \   00000034   0x2819             CMP      R0,#+25
+   \   00000036   0xDBE7             BLT.N    ??Cam_B_Init_1
+    204            mid_ave=CAM_WID/2+1;
+   \   00000038   0x.... 0x....      LDR.W    R0,??DataTable10_3  ;; 0x42860000
+   \   0000003C   0x.... 0x....      LDR.W    R1,??DataTable10_4
+   \   00000040   0x6008             STR      R0,[R1, #+0]
+    205            //以下为road->mid加权值weight的初始化，由近到远
+    206            //方案一：分段函数
+    207            /*for(i=0;i<3;i++)
+    208            {  
+    209              weight[i]=1;
+    210            }
+    211            for(i=3;i<7;i++)
+    212            {  
+    213              weight[i]=2;
+    214            }
+    215            for(i=7;i<10;i++)
+    216            {
+    217              weight[i]=1;
+    218            }*/
+    219            
+    220            //方案二：遵从正态分布，最高值在weight[MaxWeight_index]，在头文件定义相关参数//但是……无效……不知为何
+    221          /*  for(int i=0;i<10;i++)
+    222            {
+    223              weight[i]=1.0 + MaxWeight * exp(-(double)exp_k*pow((double)(i-MaxWeight_index),2.0)/2.0); //目前最高下标为常量
+    224            }*/
+    225            
+    226            // design 3 ——>声明与定义放一块，global
+    227          //  weight = {1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744, 2.296, 1.454};
+    228            
+    229          }
+   \   00000042   0x4770             BX       LR               ;; return
+    230          
+    231          
+    232          //test
+
+   \                                 In section .bss, align 8
+    233          double theta,theta_d,slope,test;
+   \                     theta:
+   \   00000000                      DS8 8
+
+   \                                 In section .bss, align 8
+   \                     theta_d:
+   \   00000000                      DS8 8
+
+   \                                 In section .bss, align 8
+   \                     slope:
+   \   00000000                      DS8 8
+
+   \                                 In section .bss, align 8
+   \                     test:
+   \   00000000                      DS8 8
+
+   \                                 In section .bss, align 8
+    234          double x,y;
+   \                     x:
+   \   00000000                      DS8 8
+
+   \                                 In section .bss, align 8
+   \                     y:
+   \   00000000                      DS8 8
+    235          
+    236            //第一次进化版巡线程序
+
+   \                                 In section .text, align 2, keep-with-next
+    237          void Cam_B(){
+   \                     Cam_B: (+1)
+   \   00000000   0xE92D 0x4FF8      PUSH     {R3-R11,LR}
+    238            
+    239              //===================变量定义====================
+    240            
+    241              float max_speed=MAX_SPEED+debug_speed;//最大速度
+   \   00000004   0x.... 0x....      LDR.W    R0,??DataTable10_5
+   \   00000008   0x6800             LDR      R0,[R0, #+0]
+   \   0000000A   0x3014             ADDS     R0,R0,#+20
+   \   0000000C   0x.... 0x....      BL       __aeabi_i2f
+   \   00000010   0x0007             MOVS     R7,R0
+    242              static int dir;//舵机输出
+    243              //slope[0] = 0;
+    244           
+    245              //横向扫描方案
+    246              for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
+   \   00000012   0x2000             MOVS     R0,#+0
+   \   00000014   0xE084             B.N      ??Cam_B_0
+    247              {
+    248                int i;
+    249                //left
+    250                for (i = road_B[j].mid; i > 0; i--){
+    251                  if (cam_buffer[60-CAM_STEP*j][i] < thr)
+    252                    break;
+    253                  }
+    254                road_B[j].left = i;
+    255                //right
+    256                for (i = road_B[j].mid; i < CAM_WID; i++){
+   \                     ??Cam_B_1: (+1)
+   \   00000016   0x1C49             ADDS     R1,R1,#+1
+   \                     ??Cam_B_2: (+1)
+   \   00000018   0x2984             CMP      R1,#+132
+   \   0000001A   0xDA0B             BGE.N    ??Cam_B_3
+    257                  if (cam_buffer[60-CAM_STEP*j][i] < thr)
+   \   0000001C   0x.... 0x....      LDR.W    R2,??DataTable7_2
+   \   00000020   0x.... 0x....      LDR.W    R3,??DataTable10_6  ;; 0xfffffeca
+   \   00000024   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000028   0x188A             ADDS     R2,R1,R2
+   \   0000002A   0xF242 0x4354      MOVW     R3,#+9300
+   \   0000002E   0x5C9A             LDRB     R2,[R3, R2]
+   \   00000030   0x2A46             CMP      R2,#+70
+   \   00000032   0xDAF0             BGE.N    ??Cam_B_1
+    258                    break;
+    259                  }
+    260                road_B[j].right = i;
+   \                     ??Cam_B_3: (+1)
+   \   00000034   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000038   0x230C             MOVS     R3,#+12
+   \   0000003A   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   0000003E   0x6051             STR      R1,[R2, #+4]
+    261                //mid
+    262                road_B[j].mid = (road_B[j].left + road_B[j].right)/2;//分别计算并存储25行的mid
+   \   00000040   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000044   0x220C             MOVS     R2,#+12
+   \   00000046   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   0000004A   0x6809             LDR      R1,[R1, #+0]
+   \   0000004C   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000050   0x230C             MOVS     R3,#+12
+   \   00000052   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000056   0x6852             LDR      R2,[R2, #+4]
+   \   00000058   0x1851             ADDS     R1,R2,R1
+   \   0000005A   0x2202             MOVS     R2,#+2
+   \   0000005C   0xFB91 0xF1F2      SDIV     R1,R1,R2
+   \   00000060   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000064   0x230C             MOVS     R3,#+12
+   \   00000066   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   0000006A   0x6091             STR      R1,[R2, #+8]
+    263                //store
+    264                if(j<(ROAD_SIZE-1))
+   \   0000006C   0x2818             CMP      R0,#+24
+   \   0000006E   0xDA0B             BGE.N    ??Cam_B_4
+    265                  road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
+   \   00000070   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000074   0x220C             MOVS     R2,#+12
+   \   00000076   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   0000007A   0x6889             LDR      R1,[R1, #+8]
+   \   0000007C   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000080   0x230C             MOVS     R3,#+12
+   \   00000082   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000086   0x6151             STR      R1,[R2, #+20]
+    266                if(j > 0)
+   \                     ??Cam_B_4: (+1)
+   \   00000088   0x2801             CMP      R0,#+1
+   \   0000008A   0xDB10             BLT.N    ??Cam_B_5
+    267                  slope_mid[j] = road_B[j].mid - road_B[j - 1].mid;
+   \   0000008C   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000090   0x220C             MOVS     R2,#+12
+   \   00000092   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   00000096   0x6889             LDR      R1,[R1, #+8]
+   \   00000098   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000009C   0x230C             MOVS     R3,#+12
+   \   0000009E   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   000000A2   0xF852 0x2C04      LDR      R2,[R2, #-4]
+   \   000000A6   0x1A89             SUBS     R1,R1,R2
+   \   000000A8   0x.... 0x....      LDR.W    R2,??DataTable10_7
+   \   000000AC   0x5481             STRB     R1,[R0, R2]
+    268                if(j > 1)
+   \                     ??Cam_B_5: (+1)
+   \   000000AE   0x2802             CMP      R0,#+2
+   \   000000B0   0xDB35             BLT.N    ??Cam_B_6
+    269                {
+    270                  curvatureL[j] = road_B[j].left - road_B[j - 1].left * 2 + road_B[j - 2].left;
+   \   000000B2   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   000000B6   0x220C             MOVS     R2,#+12
+   \   000000B8   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   000000BC   0x6809             LDR      R1,[R1, #+0]
+   \   000000BE   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   000000C2   0x230C             MOVS     R3,#+12
+   \   000000C4   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   000000C8   0xF852 0x2C0C      LDR      R2,[R2, #-12]
+   \   000000CC   0xB2D2             UXTB     R2,R2            ;; ZeroExt  R2,R2,#+24,#+24
+   \   000000CE   0xEBB1 0x0142      SUBS     R1,R1,R2, LSL #+1
+   \   000000D2   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   000000D6   0x230C             MOVS     R3,#+12
+   \   000000D8   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   000000DC   0xF852 0x2C18      LDR      R2,[R2, #-24]
+   \   000000E0   0x1851             ADDS     R1,R2,R1
+   \   000000E2   0x.... 0x....      LDR.W    R2,??DataTable10_8
+   \   000000E6   0x5481             STRB     R1,[R0, R2]
+    271                  curvatureR[j] = road_B[j].right - road_B[j - 1].right * 2 + road_B[j - 2].right;
+   \   000000E8   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   000000EC   0x220C             MOVS     R2,#+12
+   \   000000EE   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   000000F2   0x6849             LDR      R1,[R1, #+4]
+   \   000000F4   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   000000F8   0x230C             MOVS     R3,#+12
+   \   000000FA   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   000000FE   0xF852 0x2C08      LDR      R2,[R2, #-8]
+   \   00000102   0xB2D2             UXTB     R2,R2            ;; ZeroExt  R2,R2,#+24,#+24
+   \   00000104   0xEBB1 0x0142      SUBS     R1,R1,R2, LSL #+1
+   \   00000108   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000010C   0x230C             MOVS     R3,#+12
+   \   0000010E   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000112   0xF852 0x2C14      LDR      R2,[R2, #-20]
+   \   00000116   0x1851             ADDS     R1,R2,R1
+   \   00000118   0x.... 0x....      LDR.W    R2,??DataTable10_9
+   \   0000011C   0x5481             STRB     R1,[R0, R2]
+    272                }
+   \                     ??Cam_B_6: (+1)
+   \   0000011E   0x1C40             ADDS     R0,R0,#+1
+   \                     ??Cam_B_0: (+1)
+   \   00000120   0x2819             CMP      R0,#+25
+   \   00000122   0xDA22             BGE.N    ??Cam_B_7
+   \   00000124   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000128   0x220C             MOVS     R2,#+12
+   \   0000012A   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   0000012E   0x6889             LDR      R1,[R1, #+8]
+   \   00000130   0xE000             B.N      ??Cam_B_8
+   \                     ??Cam_B_9: (+1)
+   \   00000132   0x1E49             SUBS     R1,R1,#+1
+   \                     ??Cam_B_8: (+1)
+   \   00000134   0x2901             CMP      R1,#+1
+   \   00000136   0xDB0B             BLT.N    ??Cam_B_10
+   \   00000138   0x.... 0x....      LDR.W    R2,??DataTable7_2
+   \   0000013C   0x.... 0x....      LDR.W    R3,??DataTable10_6  ;; 0xfffffeca
+   \   00000140   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000144   0x188A             ADDS     R2,R1,R2
+   \   00000146   0xF242 0x4354      MOVW     R3,#+9300
+   \   0000014A   0x5C9A             LDRB     R2,[R3, R2]
+   \   0000014C   0x2A46             CMP      R2,#+70
+   \   0000014E   0xDAF0             BGE.N    ??Cam_B_9
+   \                     ??Cam_B_10: (+1)
+   \   00000150   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000154   0x230C             MOVS     R3,#+12
+   \   00000156   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   0000015A   0x6011             STR      R1,[R2, #+0]
+   \   0000015C   0x.... 0x....      LDR.W    R1,??DataTable10_1
+   \   00000160   0x220C             MOVS     R2,#+12
+   \   00000162   0xFB02 0x1100      MLA      R1,R2,R0,R1
+   \   00000166   0x6889             LDR      R1,[R1, #+8]
+   \   00000168   0xE756             B.N      ??Cam_B_2
+    273              }
+    274                
+    275              //===========================区分前方道路类型//需要设置一个优先级！！！
+    276              static int mid_ave3;
+    277              bool flag_valid_row=0;
+   \                     ??Cam_B_7: (+1)
+   \   0000016A   0x2000             MOVS     R0,#+0
+    278              for(int i_valid=0;i_valid<(ROAD_SIZE-3) && flag_valid_row==0;i_valid++)
+   \   0000016C   0x2100             MOVS     R1,#+0
+   \   0000016E   0xE004             B.N      ??Cam_B_11
+    279              {
+    280                mid_ave3 = (road_B[i_valid].mid + road_B[i_valid+1].mid + road_B[i_valid+2].mid)/3;
+    281                if(mid_ave3<margin||mid_ave3>(CAM_WID-margin))
+    282                {
+    283                  flag_valid_row=1;
+    284                  valid_row=i_valid;
+    285                }
+    286                else valid_row=ROAD_SIZE-3;
+   \                     ??Cam_B_12: (+1)
+   \   00000170   0x2216             MOVS     R2,#+22
+   \   00000172   0x.... 0x....      LDR.W    R3,??DataTable10_10
+   \   00000176   0x601A             STR      R2,[R3, #+0]
+   \                     ??Cam_B_13: (+1)
+   \   00000178   0x1C49             ADDS     R1,R1,#+1
+   \                     ??Cam_B_11: (+1)
+   \   0000017A   0x2916             CMP      R1,#+22
+   \   0000017C   0xDA33             BGE.N    ??Cam_B_14
+   \   0000017E   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000180   0x2800             CMP      R0,#+0
+   \   00000182   0xD130             BNE.N    ??Cam_B_14
+   \   00000184   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   00000188   0x230C             MOVS     R3,#+12
+   \   0000018A   0xFB03 0x2201      MLA      R2,R3,R1,R2
+   \   0000018E   0x6892             LDR      R2,[R2, #+8]
+   \   00000190   0x.... 0x....      LDR.W    R3,??DataTable10_1
+   \   00000194   0x240C             MOVS     R4,#+12
+   \   00000196   0xFB04 0x3301      MLA      R3,R4,R1,R3
+   \   0000019A   0x695B             LDR      R3,[R3, #+20]
+   \   0000019C   0x189A             ADDS     R2,R3,R2
+   \   0000019E   0x.... 0x....      LDR.W    R3,??DataTable10_1
+   \   000001A2   0x240C             MOVS     R4,#+12
+   \   000001A4   0xFB04 0x3301      MLA      R3,R4,R1,R3
+   \   000001A8   0x6A1B             LDR      R3,[R3, #+32]
+   \   000001AA   0x189A             ADDS     R2,R3,R2
+   \   000001AC   0x2303             MOVS     R3,#+3
+   \   000001AE   0xFB92 0xF2F3      SDIV     R2,R2,R3
+   \   000001B2   0x.... 0x....      LDR.W    R3,??DataTable10_11
+   \   000001B6   0x601A             STR      R2,[R3, #+0]
+   \   000001B8   0x.... 0x....      LDR.W    R2,??DataTable10_11
+   \   000001BC   0x6812             LDR      R2,[R2, #+0]
+   \   000001BE   0x.... 0x....      LDR.W    R3,??DataTable10_12
+   \   000001C2   0x681B             LDR      R3,[R3, #+0]
+   \   000001C4   0x429A             CMP      R2,R3
+   \   000001C6   0xDB09             BLT.N    ??Cam_B_15
+   \   000001C8   0x.... 0x....      LDR.W    R2,??DataTable10_12
+   \   000001CC   0x6812             LDR      R2,[R2, #+0]
+   \   000001CE   0xF1D2 0x0284      RSBS     R2,R2,#+132
+   \   000001D2   0x.... 0x....      LDR.W    R3,??DataTable10_11
+   \   000001D6   0x681B             LDR      R3,[R3, #+0]
+   \   000001D8   0x429A             CMP      R2,R3
+   \   000001DA   0xDAC9             BGE.N    ??Cam_B_12
+   \                     ??Cam_B_15: (+1)
+   \   000001DC   0x2001             MOVS     R0,#+1
+   \   000001DE   0x.... 0x....      LDR.W    R2,??DataTable10_10
+   \   000001E2   0x6011             STR      R1,[R2, #+0]
+   \   000001E4   0xE7C8             B.N      ??Cam_B_13
+    287              }
+    288              if(valid_row<valid_row_thr)
+   \                     ??Cam_B_14: (+1)
+   \   000001E6   0x.... 0x....      LDR.W    R0,??DataTable10_10
+   \   000001EA   0x6800             LDR      R0,[R0, #+0]
+   \   000001EC   0x.... 0x....      LDR.W    R1,??DataTable10_13
+   \   000001F0   0x6809             LDR      R1,[R1, #+0]
+   \   000001F2   0x4288             CMP      R0,R1
+   \   000001F4   0xDA04             BGE.N    ??Cam_B_16
+    289                road_state=2;//弯道
+   \   000001F6   0x2002             MOVS     R0,#+2
+   \   000001F8   0x.... 0x....      LDR.W    R1,??DataTable10_14
+   \   000001FC   0x7008             STRB     R0,[R1, #+0]
+   \   000001FE   0xE003             B.N      ??Cam_B_17
+    290              else road_state=1;//直道
+   \                     ??Cam_B_16: (+1)
+   \   00000200   0x2001             MOVS     R0,#+1
+   \   00000202   0x.... 0x....      LDR.W    R1,??DataTable10_14
+   \   00000206   0x7008             STRB     R0,[R1, #+0]
+    291              
+    292              int tmpL, tmpR;
+    293              bool flagL_island = 0, flagR_island = 0;
+   \                     ??Cam_B_17: (+1)
+   \   00000208   0x2200             MOVS     R2,#+0
+   \   0000020A   0x2300             MOVS     R3,#+0
+    294              for(tmpL = 2; tmpL < (ROAD_SIZE - 3) && flagL_island == 0; tmpL++)
+   \   0000020C   0x2002             MOVS     R0,#+2
+   \   0000020E   0xE000             B.N      ??Cam_B_18
+    295              {
+    296                if(curvatureL[tmpL] < -4)
+   \                     ??Cam_B_19: (+1)
+   \   00000210   0x1C40             ADDS     R0,R0,#+1
+   \                     ??Cam_B_18: (+1)
+   \   00000212   0x2816             CMP      R0,#+22
+   \   00000214   0xDA02             BGE.N    ??Cam_B_20
+   \   00000216   0xB2D2             UXTB     R2,R2            ;; ZeroExt  R2,R2,#+24,#+24
+   \   00000218   0x2A00             CMP      R2,#+0
+   \   0000021A   0xD0F9             BEQ.N    ??Cam_B_19
+    297                  flagL_island = 1;
+    298              }
+    299              for(tmpR = 2; tmpR < (ROAD_SIZE - 3) && flagR_island == 0; tmpR++)
+   \                     ??Cam_B_20: (+1)
+   \   0000021C   0x2102             MOVS     R1,#+2
+   \   0000021E   0xE006             B.N      ??Cam_B_21
+    300              {
+    301                if(curvatureR[tmpR] > 4)
+   \                     ??Cam_B_22: (+1)
+   \   00000220   0x.... 0x....      LDR.W    R4,??DataTable10_9
+   \   00000224   0x5D0C             LDRB     R4,[R1, R4]
+   \   00000226   0x2C05             CMP      R4,#+5
+   \   00000228   0xDB00             BLT.N    ??Cam_B_23
+    302                  flagR_island = 1;
+   \   0000022A   0x2301             MOVS     R3,#+1
+    303              }
+   \                     ??Cam_B_23: (+1)
+   \   0000022C   0x1C49             ADDS     R1,R1,#+1
+   \                     ??Cam_B_21: (+1)
+   \   0000022E   0x2916             CMP      R1,#+22
+   \   00000230   0xDA02             BGE.N    ??Cam_B_24
+   \   00000232   0xB2DB             UXTB     R3,R3            ;; ZeroExt  R3,R3,#+24,#+24
+   \   00000234   0x2B00             CMP      R3,#+0
+   \   00000236   0xD0F3             BEQ.N    ??Cam_B_22
+    304              if(flagL_island && flagR_island)
+   \                     ??Cam_B_24: (+1)
+   \   00000238   0xB2D2             UXTB     R2,R2            ;; ZeroExt  R2,R2,#+24,#+24
+   \   0000023A   0x2A00             CMP      R2,#+0
+   \   0000023C   0xD042             BEQ.N    ??Cam_B_25
+   \   0000023E   0xB2DB             UXTB     R3,R3            ;; ZeroExt  R3,R3,#+24,#+24
+   \   00000240   0x2B00             CMP      R3,#+0
+   \   00000242   0xD03F             BEQ.N    ??Cam_B_25
+    305              {
+    306                u8 flag_tmp = 0;
+   \   00000244   0x2200             MOVS     R2,#+0
+    307                int i, j;
+    308                int tmpRow_island = tmpL > tmpR ? tmpR : tmpL, tmpCol_island;
+   \   00000246   0x4281             CMP      R1,R0
+   \   00000248   0xDA01             BGE.N    ??Cam_B_26
+   \   0000024A   0x0008             MOVS     R0,R1
+   \   0000024C   0xE7FF             B.N      ??Cam_B_27
+    309                tmpRow_island = ROAD_SIZE - tmpRow_island * CAM_STEP;
+   \                     ??Cam_B_26: (+1)
+   \                     ??Cam_B_27: (+1)
+   \   0000024E   0x0040             LSLS     R0,R0,#+1
+   \   00000250   0xF1D0 0x0019      RSBS     R0,R0,#+25
+    310                s8 tmp_slope = slope_mid[tmpRow_island];
+   \   00000254   0x.... 0x....      LDR.W    R1,??DataTable10_7
+   \   00000258   0x5C41             LDRB     R1,[R0, R1]
+    311                tmpCol_island = road_B[tmpRow_island].mid;
+   \   0000025A   0x.... 0x....      LDR.W    R2,??DataTable10_1
+   \   0000025E   0x230C             MOVS     R3,#+12
+   \   00000260   0xFB03 0x2200      MLA      R2,R3,R0,R2
+   \   00000264   0x6892             LDR      R2,[R2, #+8]
+    312                for(i = 0; i < (ROAD_SIZE - 3 - tmpRow_island) && cam_buffer[tmpRow_island - i * CAM_STEP][tmpCol_island + i * tmp_slope] > thr;i++){};
+   \   00000266   0x2300             MOVS     R3,#+0
+   \   00000268   0xE000             B.N      ??Cam_B_28
+   \                     ??Cam_B_29: (+1)
+   \   0000026A   0x1C5B             ADDS     R3,R3,#+1
+   \                     ??Cam_B_28: (+1)
+   \   0000026C   0xF1D0 0x0416      RSBS     R4,R0,#+22
+   \   00000270   0x42A3             CMP      R3,R4
+   \   00000272   0xDA0C             BGE.N    ??Cam_B_30
+   \   00000274   0x.... 0x....      LDR.W    R4,??DataTable7_2
+   \   00000278   0xEBB0 0x0543      SUBS     R5,R0,R3, LSL #+1
+   \   0000027C   0x269B             MOVS     R6,#+155
+   \   0000027E   0xFB06 0x4405      MLA      R4,R6,R5,R4
+   \   00000282   0xB2C9             UXTB     R1,R1            ;; ZeroExt  R1,R1,#+24,#+24
+   \   00000284   0xFB01 0x2503      MLA      R5,R1,R3,R2
+   \   00000288   0x5D2C             LDRB     R4,[R5, R4]
+   \   0000028A   0x2C47             CMP      R4,#+71
+   \   0000028C   0xDAED             BGE.N    ??Cam_B_29
+    313                for(j = i; j < (ROAD_SIZE - 3 - tmpRow_island) && cam_buffer[tmpRow_island - j * CAM_STEP][tmpCol_island + j * tmp_slope] < thr;j++){};
+   \                     ??Cam_B_30: (+1)
+   \   0000028E   0xE000             B.N      ??Cam_B_31
+   \                     ??Cam_B_32: (+1)
+   \   00000290   0x1C5B             ADDS     R3,R3,#+1
+   \                     ??Cam_B_31: (+1)
+   \   00000292   0xF1D0 0x0416      RSBS     R4,R0,#+22
+   \   00000296   0x42A3             CMP      R3,R4
+   \   00000298   0xDA0C             BGE.N    ??Cam_B_33
+   \   0000029A   0x.... 0x....      LDR.W    R4,??DataTable7_2
+   \   0000029E   0xEBB0 0x0543      SUBS     R5,R0,R3, LSL #+1
+   \   000002A2   0x269B             MOVS     R6,#+155
+   \   000002A4   0xFB06 0x4405      MLA      R4,R6,R5,R4
+   \   000002A8   0xB2C9             UXTB     R1,R1            ;; ZeroExt  R1,R1,#+24,#+24
+   \   000002AA   0xFB01 0x2503      MLA      R5,R1,R3,R2
+   \   000002AE   0x5D2C             LDRB     R4,[R5, R4]
+   \   000002B0   0x2C46             CMP      R4,#+70
+   \   000002B2   0xDBED             BLT.N    ??Cam_B_32
+    314                if(j < (ROAD_SIZE - 3 - tmpRow_island))
+   \                     ??Cam_B_33: (+1)
+   \   000002B4   0xF1D0 0x0016      RSBS     R0,R0,#+22
+   \   000002B8   0x4283             CMP      R3,R0
+   \   000002BA   0xDA03             BGE.N    ??Cam_B_25
+    315                  road_state = 3;
+   \   000002BC   0x2003             MOVS     R0,#+3
+   \   000002BE   0x.... 0x....      LDR.W    R1,??DataTable10_14
+   \   000002C2   0x7008             STRB     R0,[R1, #+0]
+    316              }
+    317              
+    318              if(road_state == 3)
+    319              {
+    320                
+    321              }
+    322              //detect the black hole————————————————————
+    323              /*
+    324              int left=0,right=0;
+    325              if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
+    326              {
+    327                //left
+    328                int i=CAM_WID/2-1;
+    329                while(i>0){
+    330                  if(left==0 && cam_buffer[CAM_HOLE_ROW][i]>thr){//是否考虑取平均防跳变？
+    331                    left++;
+    332                  }
+    333                  else if(left==1 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    334                    left++;
+    335                  }
+    336                  i--;
+    337                }
+    338                //right
+    339                i=CAM_WID/2+1;
+    340                while(i<CAM_WID){
+    341                  if(right==0 && cam_buffer[CAM_HOLE_ROW][i]>thr){//是否考虑取平均防跳变？
+    342                    right++;
+    343                  }
+    344                  else if(right==1 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    345                    right++;
+    346                  }
+    347                  i++;
+    348                }
+    349              }
+    350              if(left>=1 && right>=1)
+    351                road_state=3;//前方环岛*/
+    352              //detect the obstacle————————————————————
+    353            /*  if((road_B[ROAD_OBST_ROW].right-road_B[ROAD_OBST_ROW].left)<OBSTACLE_THR)
+    354              {
+    355                int i=road_B[ROAD_OBST_ROW].mid;
+    356                left=0;
+    357                right=0;
+    358                //left
+    359                while(i>0){
+    360                  if(left==0 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    361                    left++;
+    362                  }
+    363                  else if(left==1 && cam_buffer[CAM_HOLE_ROW][i]>thr){
+    364                    left++;
+    365                  }
+    366                  else if(left==2 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    367                    left++;
+    368                  }
+    369                  i--;
+    370                }
+    371                //right
+    372                while(i<CAM_WID){
+    373                  if(right==0 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    374                    right++;
+    375                  }
+    376                  else if(right==1 && cam_buffer[CAM_HOLE_ROW][i]>thr){
+    377                    right++;
+    378                  }
+    379                  else if(right==2 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+    380                    right++;
+    381                  }
+    382                  i++;
+    383                }
+    384                if(left>=3 || right>=3)
+    385                  road_state=4;
+    386              }*/
+    387              
+    388            /*  //=============================根据前方道路类型，选择不同的权值weight
+    389               switch(road_state)
+    390              {
+    391                case 1: 
+    392                  for(int i=0;i<10;i++)weight[i]=1;//均匀分布的权值
+    393                  break;
+    394                case 2:
+    395                  max_speed=MAX_SPEED-5;//减多少未定，取决于弯道最高速度
+    396                  float weight2[10] = {1.00,1.03,1.14,1.54,2.56,4.29,6.16,7.00,6.16,4.29};
+    397                  for(int i;i<10;i++) weight[i] = weight2[i];//正态分布的权值
+    398                  break;
+    399                case 3:
+    400                  max_speed=MAX_SPEED-5;
+    401                  float  weight3[10] = {1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744, 2.296, 1.454};//未确定
+    402                  for(int i;i<10;i++) weight[i] = weight2[i];
+    403                  break;
+    404                case 4:
+    405                  break;
+    406                default:break;
+    407              }*/
+    408              
+    409              //================================对十行mid加权：
+    410              float weight_sum=0;
+   \                     ??Cam_B_25: (+1)
+   \   000002C4   0x2400             MOVS     R4,#+0
+    411              for(int j=0;j<10;j++)
+   \   000002C6   0x2500             MOVS     R5,#+0
+   \   000002C8   0xE02A             B.N      ??Cam_B_34
+    412              {
+    413                mid_ave += road_B[j].mid * weight[road_state][j];
+   \                     ??Cam_B_35: (+1)
+   \   000002CA   0x.... 0x....      LDR.W    R0,??DataTable10_1
+   \   000002CE   0x210C             MOVS     R1,#+12
+   \   000002D0   0xFB01 0x0005      MLA      R0,R1,R5,R0
+   \   000002D4   0x6880             LDR      R0,[R0, #+8]
+   \   000002D6   0x.... 0x....      BL       __aeabi_i2f
+   \   000002DA   0x.... 0x....      LDR.W    R1,??DataTable10_15
+   \   000002DE   0x.... 0x....      LDR.W    R2,??DataTable10_14
+   \   000002E2   0x7812             LDRB     R2,[R2, #+0]
+   \   000002E4   0x2328             MOVS     R3,#+40
+   \   000002E6   0xFB03 0x1102      MLA      R1,R3,R2,R1
+   \   000002EA   0xF851 0x1025      LDR      R1,[R1, R5, LSL #+2]
+   \   000002EE   0x.... 0x....      BL       __aeabi_fmul
+   \   000002F2   0x.... 0x....      LDR.W    R1,??DataTable10_4
+   \   000002F6   0x6809             LDR      R1,[R1, #+0]
+   \   000002F8   0x.... 0x....      BL       __aeabi_fadd
+   \   000002FC   0x.... 0x....      LDR.W    R1,??DataTable10_4
+   \   00000300   0x6008             STR      R0,[R1, #+0]
+    414                weight_sum += weight[road_state][j];
+   \   00000302   0x.... 0x....      LDR.W    R0,??DataTable10_15
+   \   00000306   0x.... 0x....      LDR.W    R1,??DataTable10_14
+   \   0000030A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000030C   0x2228             MOVS     R2,#+40
+   \   0000030E   0xFB02 0x0001      MLA      R0,R2,R1,R0
+   \   00000312   0xF850 0x0025      LDR      R0,[R0, R5, LSL #+2]
+   \   00000316   0x0021             MOVS     R1,R4
+   \   00000318   0x.... 0x....      BL       __aeabi_fadd
+   \   0000031C   0x0004             MOVS     R4,R0
+    415              }
+   \   0000031E   0x1C6D             ADDS     R5,R5,#+1
+   \                     ??Cam_B_34: (+1)
+   \   00000320   0x2D0A             CMP      R5,#+10
+   \   00000322   0xDBD2             BLT.N    ??Cam_B_35
+    416              mid_ave/=weight_sum;
+   \   00000324   0x.... 0x....      LDR.W    R0,??DataTable10_4
+   \   00000328   0x6800             LDR      R0,[R0, #+0]
+   \   0000032A   0x0021             MOVS     R1,R4
+   \   0000032C   0x.... 0x....      BL       __aeabi_fdiv
+   \   00000330   0x.... 0x....      LDR.W    R1,??DataTable10_4
+   \   00000334   0x6008             STR      R0,[R1, #+0]
+    417              
+    418              //=================================舵机的PD控制
+    419              static float err;
+    420              static float last_err;
+    421              err = mid_ave  - CAM_WID / 2;
+   \   00000336   0x.... 0x....      LDR.W    R0,??DataTable10_4
+   \   0000033A   0x6801             LDR      R1,[R0, #+0]
+   \   0000033C   0x.... 0x....      LDR.W    R0,??DataTable10_16  ;; 0xc2840000
+   \   00000340   0x.... 0x....      BL       __aeabi_fadd
+   \   00000344   0x.... 0x....      LDR.W    R1,??DataTable10_17
+   \   00000348   0x6008             STR      R0,[R1, #+0]
+    422          
+    423              dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
+   \   0000034A   0x.... 0x....      LDR.W    R0,??DataTable10_18
+   \   0000034E   0xE9D0 0x2300      LDRD     R2,R3,[R0, #+0]
+   \   00000352   0x2000             MOVS     R0,#+0
+   \   00000354   0x.... 0x....      LDR.W    R1,??DataTable10_19  ;; 0x40100000
+   \   00000358   0x.... 0x....      BL       __aeabi_dadd
+   \   0000035C   0x0004             MOVS     R4,R0
+   \   0000035E   0x000D             MOVS     R5,R1
+   \   00000360   0x.... 0x....      LDR.W    R0,??DataTable10_17
+   \   00000364   0x6800             LDR      R0,[R0, #+0]
+   \   00000366   0x.... 0x....      BL       __aeabi_f2d
+   \   0000036A   0x0022             MOVS     R2,R4
+   \   0000036C   0x002B             MOVS     R3,R5
+   \   0000036E   0x.... 0x....      BL       __aeabi_dmul
+   \   00000372   0x4680             MOV      R8,R0
+   \   00000374   0x4689             MOV      R9,R1
+   \   00000376   0x.... 0x....      LDR.W    R0,??DataTable10_18
+   \   0000037A   0xE9D0 0x2304      LDRD     R2,R3,[R0, #+16]
+   \   0000037E   0x2000             MOVS     R0,#+0
+   \   00000380   0x.... 0x....      LDR.W    R1,??DataTable10_20  ;; 0x40080000
+   \   00000384   0x.... 0x....      BL       __aeabi_dadd
+   \   00000388   0x0004             MOVS     R4,R0
+   \   0000038A   0x000D             MOVS     R5,R1
+   \   0000038C   0x.... 0x....      LDR.W    R0,??DataTable10_17
+   \   00000390   0x6800             LDR      R0,[R0, #+0]
+   \   00000392   0x.... 0x....      LDR.W    R1,??DataTable10_21
+   \   00000396   0x6809             LDR      R1,[R1, #+0]
+   \   00000398   0x.... 0x....      BL       __aeabi_fsub
+   \   0000039C   0x.... 0x....      BL       __aeabi_f2d
+   \   000003A0   0x0022             MOVS     R2,R4
+   \   000003A2   0x002B             MOVS     R3,R5
+   \   000003A4   0x.... 0x....      BL       __aeabi_dmul
+   \   000003A8   0x4642             MOV      R2,R8
+   \   000003AA   0x464B             MOV      R3,R9
+   \   000003AC   0x.... 0x....      BL       __aeabi_dadd
+   \   000003B0   0x.... 0x....      BL       __aeabi_d2iz
+   \   000003B4   0x.... 0x....      LDR.W    R1,??DataTable10_22
+   \   000003B8   0x6008             STR      R0,[R1, #+0]
+    424              if(dir>0)
+   \   000003BA   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000003BE   0x6800             LDR      R0,[R0, #+0]
+   \   000003C0   0x2801             CMP      R0,#+1
+   \   000003C2   0xDB0F             BLT.N    ??Cam_B_36
+    425                dir*=1.2;//修正舵机左右不对称的问题//不可删
+   \   000003C4   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000003C8   0x6800             LDR      R0,[R0, #+0]
+   \   000003CA   0x.... 0x....      BL       __aeabi_i2d
+   \   000003CE   0xF05F 0x3233      MOVS     R2,#+858993459
+   \   000003D2   0x.... 0x....      LDR.W    R3,??DataTable10_23  ;; 0x3ff33333
+   \   000003D6   0x.... 0x....      BL       __aeabi_dmul
+   \   000003DA   0x.... 0x....      BL       __aeabi_d2iz
+   \   000003DE   0x.... 0x....      LDR.W    R1,??DataTable10_22
+   \   000003E2   0x6008             STR      R0,[R1, #+0]
+    426              last_err = err;
+   \                     ??Cam_B_36: (+1)
+   \   000003E4   0x.... 0x....      LDR.W    R0,??DataTable10_17
+   \   000003E8   0x6800             LDR      R0,[R0, #+0]
+   \   000003EA   0x.... 0x....      LDR.W    R1,??DataTable10_21
+   \   000003EE   0x6008             STR      R0,[R1, #+0]
+    427              
+    428              dir=constrainInt(-230,230,dir);
+   \   000003F0   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000003F4   0x6802             LDR      R2,[R0, #+0]
+   \   000003F6   0x21E6             MOVS     R1,#+230
+   \   000003F8   0xF07F 0x00E5      MVNS     R0,#+229
+   \   000003FC   0x.... 0x....      BL       constrainInt
+   \   00000400   0x.... 0x....      LDR.W    R1,??DataTable10_22
+   \   00000404   0x6008             STR      R0,[R1, #+0]
+    429              if(car_state!=0)
+   \   00000406   0x.... 0x....      LDR.W    R0,??DataTable10_24
+   \   0000040A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000040C   0x2800             CMP      R0,#+0
+   \   0000040E   0xD006             BEQ.N    ??Cam_B_37
+    430                Servo_Output(dir);
+   \   00000410   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000414   0x6800             LDR      R0,[R0, #+0]
+   \   00000416   0xB200             SXTH     R0,R0            ;; SignExt  R0,R0,#+16,#+16
+   \   00000418   0x.... 0x....      BL       Servo_Output
+   \   0000041C   0xE002             B.N      ??Cam_B_38
+    431              else   
+    432                Servo_Output(0);
+   \                     ??Cam_B_37: (+1)
+   \   0000041E   0x2000             MOVS     R0,#+0
+   \   00000420   0x.... 0x....      BL       Servo_Output
+    433              
+    434              
+    435              
+    436              //==============速度控制=================
+    437              //PWM以dir为参考，前期分级控制弯道速度；中期分段线性控速；后期找到合适参数的时候，再进行拟合——PWM关于dir的函数
+    438              float range=max_speed-MIN_SPEED;//速度范围大小 
+   \                     ??Cam_B_38: (+1)
+   \   00000424   0x.... 0x....      LDR.W    R0,??DataTable10_25  ;; 0xc1400000
+   \   00000428   0x0039             MOVS     R1,R7
+   \   0000042A   0x.... 0x....      BL       __aeabi_fadd
+   \   0000042E   0x0006             MOVS     R6,R0
+    439              if(car_state==2 ){
+   \   00000430   0x.... 0x....      LDR.W    R0,??DataTable10_24
+   \   00000434   0x7800             LDRB     R0,[R0, #+0]
+   \   00000436   0x2802             CMP      R0,#+2
+   \   00000438   0xF040 0x81EF      BNE.W    ??Cam_B_39
+    440                //分段线性控速
+    441                if(abs(dir)<50 ){//&& valid_row>valid_row_thr
+   \   0000043C   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000440   0x6800             LDR      R0,[R0, #+0]
+   \   00000442   0x2801             CMP      R0,#+1
+   \   00000444   0xDB03             BLT.N    ??Cam_B_40
+   \   00000446   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000044A   0x6800             LDR      R0,[R0, #+0]
+   \   0000044C   0xE003             B.N      ??Cam_B_41
+   \                     ??Cam_B_40: (+1)
+   \   0000044E   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000452   0x6800             LDR      R0,[R0, #+0]
+   \   00000454   0x4240             RSBS     R0,R0,#+0
+   \                     ??Cam_B_41: (+1)
+   \   00000456   0x2832             CMP      R0,#+50
+   \   00000458   0xDA09             BGE.N    ??Cam_B_42
+    442                  motor_L=motor_R=max_speed;
+   \   0000045A   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   0000045E   0x6007             STR      R7,[R0, #+0]
+   \   00000460   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000464   0x6800             LDR      R0,[R0, #+0]
+   \   00000466   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   0000046A   0x6008             STR      R0,[R1, #+0]
+   \   0000046C   0xE1B7             B.N      ??Cam_B_43
+    443                }
+    444                else if(abs(dir)<95){
+   \                     ??Cam_B_42: (+1)
+   \   0000046E   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000472   0x6800             LDR      R0,[R0, #+0]
+   \   00000474   0x2801             CMP      R0,#+1
+   \   00000476   0xDB03             BLT.N    ??Cam_B_44
+   \   00000478   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000047C   0x6800             LDR      R0,[R0, #+0]
+   \   0000047E   0xE003             B.N      ??Cam_B_45
+   \                     ??Cam_B_44: (+1)
+   \   00000480   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000484   0x6800             LDR      R0,[R0, #+0]
+   \   00000486   0x4240             RSBS     R0,R0,#+0
+   \                     ??Cam_B_45: (+1)
+   \   00000488   0x285F             CMP      R0,#+95
+   \   0000048A   0xDA73             BGE.N    ??Cam_B_46
+    445                  motor_L=motor_R=max_speed-0.33*range*(abs(dir)-50)/45;
+   \   0000048C   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000490   0x6800             LDR      R0,[R0, #+0]
+   \   00000492   0x2801             CMP      R0,#+1
+   \   00000494   0xDB04             BLT.N    ??Cam_B_47
+   \   00000496   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000049A   0xF8D0 0x8000      LDR      R8,[R0, #+0]
+   \   0000049E   0xE004             B.N      ??Cam_B_48
+   \                     ??Cam_B_47: (+1)
+   \   000004A0   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000004A4   0x6800             LDR      R0,[R0, #+0]
+   \   000004A6   0xF1D0 0x0800      RSBS     R8,R0,#+0
+   \                     ??Cam_B_48: (+1)
+   \   000004AA   0x0038             MOVS     R0,R7
+   \   000004AC   0x.... 0x....      BL       __aeabi_f2d
+   \   000004B0   0x4682             MOV      R10,R0
+   \   000004B2   0x468B             MOV      R11,R1
+   \   000004B4   0x0030             MOVS     R0,R6
+   \   000004B6   0x.... 0x....      BL       __aeabi_f2d
+   \   000004BA   0x.... 0x....      LDR.W    R2,??DataTable10_28  ;; 0x51eb851f
+   \   000004BE   0x.... 0x....      LDR.W    R3,??DataTable10_29  ;; 0x3fd51eb8
+   \   000004C2   0x.... 0x....      BL       __aeabi_dmul
+   \   000004C6   0x0004             MOVS     R4,R0
+   \   000004C8   0x000D             MOVS     R5,R1
+   \   000004CA   0xF1B8 0x0032      SUBS     R0,R8,#+50
+   \   000004CE   0x.... 0x....      BL       __aeabi_i2d
+   \   000004D2   0x0022             MOVS     R2,R4
+   \   000004D4   0x002B             MOVS     R3,R5
+   \   000004D6   0x.... 0x....      BL       __aeabi_dmul
+   \   000004DA   0x2200             MOVS     R2,#+0
+   \   000004DC   0x.... 0x....      LDR.W    R3,??DataTable10_30  ;; 0x40468000
+   \   000004E0   0x.... 0x....      BL       __aeabi_ddiv
+   \   000004E4   0x0002             MOVS     R2,R0
+   \   000004E6   0x000B             MOVS     R3,R1
+   \   000004E8   0x4650             MOV      R0,R10
+   \   000004EA   0x4659             MOV      R1,R11
+   \   000004EC   0x.... 0x....      BL       __aeabi_dsub
+   \   000004F0   0x.... 0x....      BL       __aeabi_d2f
+   \   000004F4   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   000004F8   0x6008             STR      R0,[R1, #+0]
+   \   000004FA   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   000004FE   0x6800             LDR      R0,[R0, #+0]
+   \   00000500   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   00000504   0x6008             STR      R0,[R1, #+0]
+    446                  if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.9);//右转
+   \   00000506   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000050A   0x6800             LDR      R0,[R0, #+0]
+   \   0000050C   0x2801             CMP      R0,#+1
+   \   0000050E   0xDB18             BLT.N    ??Cam_B_49
+   \   00000510   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000514   0x6800             LDR      R0,[R0, #+0]
+   \   00000516   0x.... 0x....      BL       __aeabi_f2d
+   \   0000051A   0x.... 0x....      LDR.W    R2,??DataTable10_31  ;; 0xcccccccd
+   \   0000051E   0x.... 0x....      LDR.W    R3,??DataTable10_32  ;; 0x3feccccc
+   \   00000522   0x.... 0x....      BL       __aeabi_dmul
+   \   00000526   0x.... 0x....      BL       __aeabi_d2f
+   \   0000052A   0x0002             MOVS     R2,R0
+   \   0000052C   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000530   0x6801             LDR      R1,[R0, #+0]
+   \   00000532   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   00000536   0x.... 0x....      BL       constrain
+   \   0000053A   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   0000053E   0x6008             STR      R0,[R1, #+0]
+   \   00000540   0xE14D             B.N      ??Cam_B_43
+    447                  else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
+   \                     ??Cam_B_49: (+1)
+   \   00000542   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   00000546   0x6800             LDR      R0,[R0, #+0]
+   \   00000548   0x.... 0x....      BL       __aeabi_f2d
+   \   0000054C   0x.... 0x....      LDR.W    R2,??DataTable10_31  ;; 0xcccccccd
+   \   00000550   0x.... 0x....      LDR.W    R3,??DataTable10_32  ;; 0x3feccccc
+   \   00000554   0x.... 0x....      BL       __aeabi_dmul
+   \   00000558   0x.... 0x....      BL       __aeabi_d2f
+   \   0000055C   0x0002             MOVS     R2,R0
+   \   0000055E   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   00000562   0x6801             LDR      R1,[R0, #+0]
+   \   00000564   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   00000568   0x.... 0x....      BL       constrain
+   \   0000056C   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   00000570   0x6008             STR      R0,[R1, #+0]
+   \   00000572   0xE134             B.N      ??Cam_B_43
+    448                }
+    449                else if(abs(dir)<185){    
+   \                     ??Cam_B_46: (+1)
+   \   00000574   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000578   0x6800             LDR      R0,[R0, #+0]
+   \   0000057A   0x2801             CMP      R0,#+1
+   \   0000057C   0xDB03             BLT.N    ??Cam_B_50
+   \   0000057E   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000582   0x6800             LDR      R0,[R0, #+0]
+   \   00000584   0xE003             B.N      ??Cam_B_51
+   \                     ??Cam_B_50: (+1)
+   \   00000586   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000058A   0x6800             LDR      R0,[R0, #+0]
+   \   0000058C   0x4240             RSBS     R0,R0,#+0
+   \                     ??Cam_B_51: (+1)
+   \   0000058E   0x28B9             CMP      R0,#+185
+   \   00000590   0xF280 0x8085      BGE.W    ??Cam_B_52
+    450                  motor_L=motor_R=max_speed-0.33*range-0.33*range*(abs(dir)-95)/90;
+   \   00000594   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000598   0x6800             LDR      R0,[R0, #+0]
+   \   0000059A   0x2801             CMP      R0,#+1
+   \   0000059C   0xDB04             BLT.N    ??Cam_B_53
+   \   0000059E   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000005A2   0xF8D0 0x8000      LDR      R8,[R0, #+0]
+   \   000005A6   0xE004             B.N      ??Cam_B_54
+   \                     ??Cam_B_53: (+1)
+   \   000005A8   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000005AC   0x6800             LDR      R0,[R0, #+0]
+   \   000005AE   0xF1D0 0x0800      RSBS     R8,R0,#+0
+   \                     ??Cam_B_54: (+1)
+   \   000005B2   0x0038             MOVS     R0,R7
+   \   000005B4   0x.... 0x....      BL       __aeabi_f2d
+   \   000005B8   0x0004             MOVS     R4,R0
+   \   000005BA   0x000D             MOVS     R5,R1
+   \   000005BC   0x0030             MOVS     R0,R6
+   \   000005BE   0x.... 0x....      BL       __aeabi_f2d
+   \   000005C2   0x.... 0x....      LDR.W    R2,??DataTable10_28  ;; 0x51eb851f
+   \   000005C6   0x.... 0x....      LDR.W    R3,??DataTable10_29  ;; 0x3fd51eb8
+   \   000005CA   0x.... 0x....      BL       __aeabi_dmul
+   \   000005CE   0x0002             MOVS     R2,R0
+   \   000005D0   0x000B             MOVS     R3,R1
+   \   000005D2   0x0020             MOVS     R0,R4
+   \   000005D4   0x0029             MOVS     R1,R5
+   \   000005D6   0x.... 0x....      BL       __aeabi_dsub
+   \   000005DA   0x4682             MOV      R10,R0
+   \   000005DC   0x468B             MOV      R11,R1
+   \   000005DE   0x0030             MOVS     R0,R6
+   \   000005E0   0x.... 0x....      BL       __aeabi_f2d
+   \   000005E4   0x.... 0x....      LDR.W    R2,??DataTable10_28  ;; 0x51eb851f
+   \   000005E8   0x.... 0x....      LDR.W    R3,??DataTable10_29  ;; 0x3fd51eb8
+   \   000005EC   0x.... 0x....      BL       __aeabi_dmul
+   \   000005F0   0x0004             MOVS     R4,R0
+   \   000005F2   0x000D             MOVS     R5,R1
+   \   000005F4   0xF1B8 0x005F      SUBS     R0,R8,#+95
+   \   000005F8   0x.... 0x....      BL       __aeabi_i2d
+   \   000005FC   0x0022             MOVS     R2,R4
+   \   000005FE   0x002B             MOVS     R3,R5
+   \   00000600   0x.... 0x....      BL       __aeabi_dmul
+   \   00000604   0x2200             MOVS     R2,#+0
+   \   00000606   0x.... 0x....      LDR.W    R3,??DataTable10_34  ;; 0x40568000
+   \   0000060A   0x.... 0x....      BL       __aeabi_ddiv
+   \   0000060E   0x0002             MOVS     R2,R0
+   \   00000610   0x000B             MOVS     R3,R1
+   \   00000612   0x4650             MOV      R0,R10
+   \   00000614   0x4659             MOV      R1,R11
+   \   00000616   0x.... 0x....      BL       __aeabi_dsub
+   \   0000061A   0x.... 0x....      BL       __aeabi_d2f
+   \   0000061E   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   00000622   0x6008             STR      R0,[R1, #+0]
+   \   00000624   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000628   0x6800             LDR      R0,[R0, #+0]
+   \   0000062A   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   0000062E   0x6008             STR      R0,[R1, #+0]
+    451                  if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
+   \   00000630   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   00000634   0x6800             LDR      R0,[R0, #+0]
+   \   00000636   0x2801             CMP      R0,#+1
+   \   00000638   0xDB18             BLT.N    ??Cam_B_55
+   \   0000063A   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   0000063E   0x6800             LDR      R0,[R0, #+0]
+   \   00000640   0x.... 0x....      BL       __aeabi_f2d
+   \   00000644   0x.... 0x....      LDR.W    R2,??DataTable10_35  ;; 0x9999999a
+   \   00000648   0x.... 0x....      LDR.W    R3,??DataTable10_36  ;; 0x3fe99999
+   \   0000064C   0x.... 0x....      BL       __aeabi_dmul
+   \   00000650   0x.... 0x....      BL       __aeabi_d2f
+   \   00000654   0x0002             MOVS     R2,R0
+   \   00000656   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   0000065A   0x6801             LDR      R1,[R0, #+0]
+   \   0000065C   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   00000660   0x.... 0x....      BL       constrain
+   \   00000664   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   00000668   0x6008             STR      R0,[R1, #+0]
+   \   0000066A   0xE0B8             B.N      ??Cam_B_43
+    452                  else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
+   \                     ??Cam_B_55: (+1)
+   \   0000066C   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   00000670   0x6800             LDR      R0,[R0, #+0]
+   \   00000672   0x.... 0x....      BL       __aeabi_f2d
+   \   00000676   0x.... 0x....      LDR.W    R2,??DataTable10_35  ;; 0x9999999a
+   \   0000067A   0x.... 0x....      LDR.W    R3,??DataTable10_36  ;; 0x3fe99999
+   \   0000067E   0x.... 0x....      BL       __aeabi_dmul
+   \   00000682   0x.... 0x....      BL       __aeabi_d2f
+   \   00000686   0x0002             MOVS     R2,R0
+   \   00000688   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   0000068C   0x6801             LDR      R1,[R0, #+0]
+   \   0000068E   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   00000692   0x.... 0x....      BL       constrain
+   \   00000696   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   0000069A   0x6008             STR      R0,[R1, #+0]
+   \   0000069C   0xE09F             B.N      ??Cam_B_43
+    453                }
+    454                else if(abs(dir)<230){
+   \                     ??Cam_B_52: (+1)
+   \   0000069E   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006A2   0x6800             LDR      R0,[R0, #+0]
+   \   000006A4   0x2801             CMP      R0,#+1
+   \   000006A6   0xDB03             BLT.N    ??Cam_B_56
+   \   000006A8   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006AC   0x6800             LDR      R0,[R0, #+0]
+   \   000006AE   0xE003             B.N      ??Cam_B_57
+   \                     ??Cam_B_56: (+1)
+   \   000006B0   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006B4   0x6800             LDR      R0,[R0, #+0]
+   \   000006B6   0x4240             RSBS     R0,R0,#+0
+   \                     ??Cam_B_57: (+1)
+   \   000006B8   0x28E6             CMP      R0,#+230
+   \   000006BA   0xF280 0x8085      BGE.W    ??Cam_B_58
+    455                  motor_L=motor_R=max_speed-0.66*range-0.33*range*(abs(dir)-185)/45;
+   \   000006BE   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006C2   0x6800             LDR      R0,[R0, #+0]
+   \   000006C4   0x2801             CMP      R0,#+1
+   \   000006C6   0xDB04             BLT.N    ??Cam_B_59
+   \   000006C8   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006CC   0xF8D0 0x8000      LDR      R8,[R0, #+0]
+   \   000006D0   0xE004             B.N      ??Cam_B_60
+   \                     ??Cam_B_59: (+1)
+   \   000006D2   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   000006D6   0x6800             LDR      R0,[R0, #+0]
+   \   000006D8   0xF1D0 0x0800      RSBS     R8,R0,#+0
+   \                     ??Cam_B_60: (+1)
+   \   000006DC   0x0038             MOVS     R0,R7
+   \   000006DE   0x.... 0x....      BL       __aeabi_f2d
+   \   000006E2   0x0004             MOVS     R4,R0
+   \   000006E4   0x000D             MOVS     R5,R1
+   \   000006E6   0x0030             MOVS     R0,R6
+   \   000006E8   0x.... 0x....      BL       __aeabi_f2d
+   \   000006EC   0x.... 0x....      LDR.W    R2,??DataTable10_28  ;; 0x51eb851f
+   \   000006F0   0x.... 0x....      LDR.W    R3,??DataTable10_37  ;; 0x3fe51eb8
+   \   000006F4   0x.... 0x....      BL       __aeabi_dmul
+   \   000006F8   0x0002             MOVS     R2,R0
+   \   000006FA   0x000B             MOVS     R3,R1
+   \   000006FC   0x0020             MOVS     R0,R4
+   \   000006FE   0x0029             MOVS     R1,R5
+   \   00000700   0x.... 0x....      BL       __aeabi_dsub
+   \   00000704   0x4682             MOV      R10,R0
+   \   00000706   0x468B             MOV      R11,R1
+   \   00000708   0x0030             MOVS     R0,R6
+   \   0000070A   0x.... 0x....      BL       __aeabi_f2d
+   \   0000070E   0x.... 0x....      LDR.W    R2,??DataTable10_28  ;; 0x51eb851f
+   \   00000712   0x.... 0x....      LDR.W    R3,??DataTable10_29  ;; 0x3fd51eb8
+   \   00000716   0x.... 0x....      BL       __aeabi_dmul
+   \   0000071A   0x0004             MOVS     R4,R0
+   \   0000071C   0x000D             MOVS     R5,R1
+   \   0000071E   0xF1B8 0x00B9      SUBS     R0,R8,#+185
+   \   00000722   0x.... 0x....      BL       __aeabi_i2d
+   \   00000726   0x0022             MOVS     R2,R4
+   \   00000728   0x002B             MOVS     R3,R5
+   \   0000072A   0x.... 0x....      BL       __aeabi_dmul
+   \   0000072E   0x2200             MOVS     R2,#+0
+   \   00000730   0x.... 0x....      LDR.W    R3,??DataTable10_30  ;; 0x40468000
+   \   00000734   0x.... 0x....      BL       __aeabi_ddiv
+   \   00000738   0x0002             MOVS     R2,R0
+   \   0000073A   0x000B             MOVS     R3,R1
+   \   0000073C   0x4650             MOV      R0,R10
+   \   0000073E   0x4659             MOV      R1,R11
+   \   00000740   0x.... 0x....      BL       __aeabi_dsub
+   \   00000744   0x.... 0x....      BL       __aeabi_d2f
+   \   00000748   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   0000074C   0x6008             STR      R0,[R1, #+0]
+   \   0000074E   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000752   0x6800             LDR      R0,[R0, #+0]
+   \   00000754   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   00000758   0x6008             STR      R0,[R1, #+0]
+    456                  if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
+   \   0000075A   0x.... 0x....      LDR.W    R0,??DataTable10_22
+   \   0000075E   0x6800             LDR      R0,[R0, #+0]
+   \   00000760   0x2801             CMP      R0,#+1
+   \   00000762   0xDB18             BLT.N    ??Cam_B_61
+   \   00000764   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000768   0x6800             LDR      R0,[R0, #+0]
+   \   0000076A   0x.... 0x....      BL       __aeabi_f2d
+   \   0000076E   0xF05F 0x3266      MOVS     R2,#+1717986918
+   \   00000772   0x.... 0x....      LDR.W    R3,??DataTable10_38  ;; 0x3fe66666
+   \   00000776   0x.... 0x....      BL       __aeabi_dmul
+   \   0000077A   0x.... 0x....      BL       __aeabi_d2f
+   \   0000077E   0x0002             MOVS     R2,R0
+   \   00000780   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   00000784   0x6801             LDR      R1,[R0, #+0]
+   \   00000786   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   0000078A   0x.... 0x....      BL       constrain
+   \   0000078E   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   00000792   0x6008             STR      R0,[R1, #+0]
+   \   00000794   0xE023             B.N      ??Cam_B_43
+    457                  else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
+   \                     ??Cam_B_61: (+1)
+   \   00000796   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   0000079A   0x6800             LDR      R0,[R0, #+0]
+   \   0000079C   0x.... 0x....      BL       __aeabi_f2d
+   \   000007A0   0xF05F 0x3266      MOVS     R2,#+1717986918
+   \   000007A4   0x.... 0x....      LDR.W    R3,??DataTable10_38  ;; 0x3fe66666
+   \   000007A8   0x.... 0x....      BL       __aeabi_dmul
+   \   000007AC   0x.... 0x....      BL       __aeabi_d2f
+   \   000007B0   0x0002             MOVS     R2,R0
+   \   000007B2   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   000007B6   0x6801             LDR      R1,[R0, #+0]
+   \   000007B8   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   000007BC   0x.... 0x....      BL       constrain
+   \   000007C0   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   000007C4   0x6008             STR      R0,[R1, #+0]
+   \   000007C6   0xE00A             B.N      ??Cam_B_43
+    458                }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
+    459                else{
+    460                  motor_L=motor_R=MIN_SPEED;
+   \                     ??Cam_B_58: (+1)
+   \   000007C8   0x.... 0x....      LDR.W    R0,??DataTable10_33  ;; 0x41400000
+   \   000007CC   0x.... 0x....      LDR.W    R1,??DataTable10_26
+   \   000007D0   0x6008             STR      R0,[R1, #+0]
+   \   000007D2   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   000007D6   0x6800             LDR      R0,[R0, #+0]
+   \   000007D8   0x.... 0x....      LDR.W    R1,??DataTable10_27
+   \   000007DC   0x6008             STR      R0,[R1, #+0]
+    461                }
+    462                PWM(motor_L, motor_R, &L, &R);               //后轮速度
+   \                     ??Cam_B_43: (+1)
+   \   000007DE   0x.... 0x....      LDR.W    R3,??DataTable10_39
+   \   000007E2   0x.... 0x....      LDR.W    R2,??DataTable10_40
+   \   000007E6   0x0014             MOVS     R4,R2
+   \   000007E8   0x001D             MOVS     R5,R3
+   \   000007EA   0x.... 0x....      LDR.W    R0,??DataTable10_26
+   \   000007EE   0x6800             LDR      R0,[R0, #+0]
+   \   000007F0   0x.... 0x....      BL       __aeabi_f2iz
+   \   000007F4   0x0001             MOVS     R1,R0
+   \   000007F6   0x002B             MOVS     R3,R5
+   \   000007F8   0x0022             MOVS     R2,R4
+   \   000007FA   0xB2C9             UXTB     R1,R1            ;; ZeroExt  R1,R1,#+24,#+24
+   \   000007FC   0x000C             MOVS     R4,R1
+   \   000007FE   0x0015             MOVS     R5,R2
+   \   00000800   0x001E             MOVS     R6,R3
+   \   00000802   0x.... 0x....      LDR.W    R0,??DataTable10_27
+   \   00000806   0x6800             LDR      R0,[R0, #+0]
+   \   00000808   0x.... 0x....      BL       __aeabi_f2iz
+   \   0000080C   0x0033             MOVS     R3,R6
+   \   0000080E   0x002A             MOVS     R2,R5
+   \   00000810   0x0021             MOVS     R1,R4
+   \   00000812   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000814   0x.... 0x....      BL       PWM
+   \   00000818   0xE007             B.N      ??Cam_B_62
+    463              }
+    464             else
+    465               PWM(0, 0, &L, &R);
+   \                     ??Cam_B_39: (+1)
+   \   0000081A   0x.... 0x....      LDR.W    R3,??DataTable10_39
+   \   0000081E   0x.... 0x....      LDR.W    R2,??DataTable10_40
+   \   00000822   0x2100             MOVS     R1,#+0
+   \   00000824   0x2000             MOVS     R0,#+0
+   \   00000826   0x.... 0x....      BL       PWM
+    466              
+    467              //方案二//暂时放弃
+    468              //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);
+    469              
+    470          }
+   \                     ??Cam_B_62: (+1)
+   \   0000082A   0xE8BD 0x8FF1      POP      {R0,R4-R11,PC}   ;; return
+
+   \                                 In section .bss, align 4
+   \                     ??dir:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+   \                     ??mid_ave3:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+   \                     ??err:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+   \                     ??last_err:
+   \   00000000                      DS8 4
+    471          
+    472          
+    473          
+    474          
+    475          // ====== Basic Drivers ======
+    476          
+
+   \                                 In section .text, align 2, keep-with-next
+    477          void PORTC_IRQHandler(){
+    478            if((PORTC->ISFR)&PORT_ISFR_ISF(1 << 8)){  //CS
+   \                     PORTC_IRQHandler: (+1)
+   \   00000000   0x.... 0x....      LDR.W    R0,??DataTable10_41  ;; 0x4004b0a0
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x05C0             LSLS     R0,R0,#+23
+   \   00000008   0xD533             BPL.N    ??PORTC_IRQHandler_0
+    479              PORTC->ISFR |= PORT_ISFR_ISF(1 << 8);
+   \   0000000A   0x....             LDR.N    R0,??DataTable10_41  ;; 0x4004b0a0
+   \   0000000C   0x6800             LDR      R0,[R0, #+0]
+   \   0000000E   0xF450 0x7080      ORRS     R0,R0,#0x100
+   \   00000012   0x....             LDR.N    R1,??DataTable10_41  ;; 0x4004b0a0
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+    480              if(img_row < IMG_ROWS && cam_row % IMG_STEP == 0 ){
+   \   00000016   0x....             LDR.N    R0,??DataTable10_42
+   \   00000018   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001A   0x2840             CMP      R0,#+64
+   \   0000001C   0xDA23             BGE.N    ??PORTC_IRQHandler_1
+   \   0000001E   0x....             LDR.N    R0,??DataTable10_43
+   \   00000020   0x7800             LDRB     R0,[R0, #+0]
+   \   00000022   0x2102             MOVS     R1,#+2
+   \   00000024   0xFB90 0xF2F1      SDIV     R2,R0,R1
+   \   00000028   0xFB02 0x0211      MLS      R2,R2,R1,R0
+   \   0000002C   0x2A00             CMP      R2,#+0
+   \   0000002E   0xD11A             BNE.N    ??PORTC_IRQHandler_1
+    481                DMA0->TCD[0].DADDR = (u32)&cam_buffer[img_row][-BLACK_WIDTH];
+   \   00000030   0x....             LDR.N    R0,??DataTable10_44
+   \   00000032   0x....             LDR.N    R1,??DataTable10_42
+   \   00000034   0x7809             LDRB     R1,[R1, #+0]
+   \   00000036   0x229B             MOVS     R2,#+155
+   \   00000038   0xFB02 0x0001      MLA      R0,R2,R1,R0
+   \   0000003C   0x381B             SUBS     R0,R0,#+27
+   \   0000003E   0x....             LDR.N    R1,??DataTable10_45  ;; 0x40009010
+   \   00000040   0x6008             STR      R0,[R1, #+0]
+    482                DMA0->ERQ |= DMA_ERQ_ERQ0_MASK; //Enable DMA0
+   \   00000042   0x....             LDR.N    R0,??DataTable10_46  ;; 0x4000800c
+   \   00000044   0x6800             LDR      R0,[R0, #+0]
+   \   00000046   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   0000004A   0x....             LDR.N    R1,??DataTable10_46  ;; 0x4000800c
+   \   0000004C   0x6008             STR      R0,[R1, #+0]
+    483                ADC0->SC1[0] |= ADC_SC1_ADCH(4); //Restart ADC
+   \   0000004E   0x....             LDR.N    R0,??DataTable10_47  ;; 0x4003b000
+   \   00000050   0x6800             LDR      R0,[R0, #+0]
+   \   00000052   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   00000056   0x....             LDR.N    R1,??DataTable10_47  ;; 0x4003b000
+   \   00000058   0x6008             STR      R0,[R1, #+0]
+    484                DMA0->TCD[0].CSR |= DMA_CSR_START_MASK; //Start
+   \   0000005A   0x....             LDR.N    R0,??DataTable10_48  ;; 0x4000901c
+   \   0000005C   0x8800             LDRH     R0,[R0, #+0]
+   \   0000005E   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   00000062   0x....             LDR.N    R1,??DataTable10_48  ;; 0x4000901c
+   \   00000064   0x8008             STRH     R0,[R1, #+0]
+    485              }
+    486              cam_row++;
+   \                     ??PORTC_IRQHandler_1: (+1)
+   \   00000066   0x....             LDR.N    R0,??DataTable10_43
+   \   00000068   0x7800             LDRB     R0,[R0, #+0]
+   \   0000006A   0x1C40             ADDS     R0,R0,#+1
+   \   0000006C   0x....             LDR.N    R1,??DataTable10_43
+   \   0000006E   0x7008             STRB     R0,[R1, #+0]
+   \   00000070   0xE010             B.N      ??PORTC_IRQHandler_2
+    487            }
+    488            else if(PORTC->ISFR&PORT_ISFR_ISF(1 << 9)){   //VS
+   \                     ??PORTC_IRQHandler_0: (+1)
+   \   00000072   0x....             LDR.N    R0,??DataTable10_41  ;; 0x4004b0a0
+   \   00000074   0x6800             LDR      R0,[R0, #+0]
+   \   00000076   0x0580             LSLS     R0,R0,#+22
+   \   00000078   0xD50C             BPL.N    ??PORTC_IRQHandler_2
+    489              PORTC->ISFR |= PORT_ISFR_ISF(1 << 9);
+   \   0000007A   0x....             LDR.N    R0,??DataTable10_41  ;; 0x4004b0a0
+   \   0000007C   0x6800             LDR      R0,[R0, #+0]
+   \   0000007E   0xF450 0x7000      ORRS     R0,R0,#0x200
+   \   00000082   0x....             LDR.N    R1,??DataTable10_41  ;; 0x4004b0a0
+   \   00000084   0x6008             STR      R0,[R1, #+0]
+    490              cam_row = img_row = 0;
+   \   00000086   0x2000             MOVS     R0,#+0
+   \   00000088   0x....             LDR.N    R1,??DataTable10_42
+   \   0000008A   0x7008             STRB     R0,[R1, #+0]
+   \   0000008C   0x....             LDR.N    R0,??DataTable10_42
+   \   0000008E   0x7800             LDRB     R0,[R0, #+0]
+   \   00000090   0x....             LDR.N    R1,??DataTable10_43
+   \   00000092   0x7008             STRB     R0,[R1, #+0]
+    491            }
+    492          }
+   \                     ??PORTC_IRQHandler_2: (+1)
+   \   00000094   0x4770             BX       LR               ;; return
+    493          
+
+   \                                 In section .text, align 2, keep-with-next
+    494          void DMA0_IRQHandler(){
+    495            DMA0->CINT &= ~DMA_CINT_CINT(7); //Clear DMA0 Interrupt Flag
+   \                     DMA0_IRQHandler: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable10_49  ;; 0x4000801f
+   \   00000002   0x7800             LDRB     R0,[R0, #+0]
+   \   00000004   0xF010 0x00F8      ANDS     R0,R0,#0xF8
+   \   00000008   0x....             LDR.N    R1,??DataTable10_49  ;; 0x4000801f
+   \   0000000A   0x7008             STRB     R0,[R1, #+0]
+    496            
+    497            img_row++; 
+   \   0000000C   0x....             LDR.N    R0,??DataTable10_42
+   \   0000000E   0x7800             LDRB     R0,[R0, #+0]
+   \   00000010   0x1C40             ADDS     R0,R0,#+1
+   \   00000012   0x....             LDR.N    R1,??DataTable10_42
+   \   00000014   0x7008             STRB     R0,[R1, #+0]
+    498          }
+   \   00000016   0x4770             BX       LR               ;; return
+    499          
+
+   \                                 In section .text, align 2, keep-with-next
+    500          void Cam_Init(){
+   \                     Cam_Init: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+    501            // --- IO ---
+    502            
+    503            PORTC->PCR[8] |= PORT_PCR_MUX(1); //cs
+   \   00000002   0x....             LDR.N    R0,??DataTable10_50  ;; 0x4004b020
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0xF450 0x7080      ORRS     R0,R0,#0x100
+   \   0000000A   0x....             LDR.N    R1,??DataTable10_50  ;; 0x4004b020
+   \   0000000C   0x6008             STR      R0,[R1, #+0]
+    504            PORTC->PCR[9] |= PORT_PCR_MUX(1); //vs
+   \   0000000E   0x....             LDR.N    R0,??DataTable10_51  ;; 0x4004b024
+   \   00000010   0x6800             LDR      R0,[R0, #+0]
+   \   00000012   0xF450 0x7080      ORRS     R0,R0,#0x100
+   \   00000016   0x....             LDR.N    R1,??DataTable10_51  ;; 0x4004b024
+   \   00000018   0x6008             STR      R0,[R1, #+0]
+    505            PORTC->PCR[11] |= PORT_PCR_MUX(1);    //oe
+   \   0000001A   0x....             LDR.N    R0,??DataTable10_52  ;; 0x4004b02c
+   \   0000001C   0x6800             LDR      R0,[R0, #+0]
+   \   0000001E   0xF450 0x7080      ORRS     R0,R0,#0x100
+   \   00000022   0x....             LDR.N    R1,??DataTable10_52  ;; 0x4004b02c
+   \   00000024   0x6008             STR      R0,[R1, #+0]
+    506            PTC->PDDR &=~(3<<8);
+   \   00000026   0x....             LDR.N    R0,??DataTable10_53  ;; 0x400ff094
+   \   00000028   0x6800             LDR      R0,[R0, #+0]
+   \   0000002A   0xF430 0x7040      BICS     R0,R0,#0x300
+   \   0000002E   0x....             LDR.N    R1,??DataTable10_53  ;; 0x400ff094
+   \   00000030   0x6008             STR      R0,[R1, #+0]
+    507            PTC->PDDR &=~(1<<11);
+   \   00000032   0x....             LDR.N    R0,??DataTable10_53  ;; 0x400ff094
+   \   00000034   0x6800             LDR      R0,[R0, #+0]
+   \   00000036   0xF430 0x6000      BICS     R0,R0,#0x800
+   \   0000003A   0x....             LDR.N    R1,??DataTable10_53  ;; 0x400ff094
+   \   0000003C   0x6008             STR      R0,[R1, #+0]
+    508            PORTC->PCR[8] |= PORT_PCR_PE_MASK | PORT_PCR_PS_MASK | PORT_PCR_IRQC(10);	//PULLUP | falling edge
+   \   0000003E   0x....             LDR.N    R0,??DataTable10_50  ;; 0x4004b020
+   \   00000040   0x6800             LDR      R0,[R0, #+0]
+   \   00000042   0xF440 0x2020      ORR      R0,R0,#0xA0000
+   \   00000046   0xF050 0x0003      ORRS     R0,R0,#0x3
+   \   0000004A   0x....             LDR.N    R1,??DataTable10_50  ;; 0x4004b020
+   \   0000004C   0x6008             STR      R0,[R1, #+0]
+    509            PORTC->PCR[9] |= PORT_PCR_PE_MASK | PORT_PCR_PS_MASK | PORT_PCR_IRQC(9);  // rising edge
+   \   0000004E   0x....             LDR.N    R0,??DataTable10_51  ;; 0x4004b024
+   \   00000050   0x6800             LDR      R0,[R0, #+0]
+   \   00000052   0xF440 0x2010      ORR      R0,R0,#0x90000
+   \   00000056   0xF050 0x0003      ORRS     R0,R0,#0x3
+   \   0000005A   0x....             LDR.N    R1,??DataTable10_51  ;; 0x4004b024
+   \   0000005C   0x6008             STR      R0,[R1, #+0]
+    510            PORTC->PCR[11] |= PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ;
+   \   0000005E   0x....             LDR.N    R0,??DataTable10_52  ;; 0x4004b02c
+   \   00000060   0x6800             LDR      R0,[R0, #+0]
+   \   00000062   0xF050 0x0003      ORRS     R0,R0,#0x3
+   \   00000066   0x....             LDR.N    R1,??DataTable10_52  ;; 0x4004b02c
+   \   00000068   0x6008             STR      R0,[R1, #+0]
+    511            
+    512            NVIC_EnableIRQ(PORTC_IRQn);
+   \   0000006A   0x2059             MOVS     R0,#+89
+   \   0000006C   0x.... 0x....      BL       NVIC_EnableIRQ
+    513            NVIC_SetPriority(PORTC_IRQn, NVIC_EncodePriority(NVIC_GROUP, 1, 2));
+   \   00000070   0x2202             MOVS     R2,#+2
+   \   00000072   0x2101             MOVS     R1,#+1
+   \   00000074   0x2005             MOVS     R0,#+5
+   \   00000076   0x.... 0x....      BL       NVIC_EncodePriority
+   \   0000007A   0x0001             MOVS     R1,R0
+   \   0000007C   0x2059             MOVS     R0,#+89
+   \   0000007E   0x.... 0x....      BL       NVIC_SetPriority
+    514            
+    515            // --- AD ---
+    516            
+    517            /*
+    518            SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;  //ADC1 Clock Enable
+    519            ADC0->CFG1 |= 0
+    520                       //|ADC_CFG1_ADLPC_MASK
+    521                       | ADC_CFG1_ADICLK(1)
+    522                       | ADC_CFG1_MODE(0);     // 8 bits
+    523                       //| ADC_CFG1_ADIV(0);
+    524            ADC0->CFG2 |= //ADC_CFG2_ADHSC_MASK |
+    525                          ADC_CFG2_MUXSEL_MASK |  // b
+    526                          ADC_CFG2_ADACKEN_MASK; 
+    527            
+    528            ADC0->SC1[0]&=~ADC_SC1_AIEN_MASK;//disenble interrupt
+    529            
+    530            ADC0->SC2 |= ADC_SC2_DMAEN_MASK; //DMA
+    531            
+    532            ADC0->SC3 |= ADC_SC3_ADCO_MASK; // continuous
+    533            
+    534            //PORTC->PCR[2]|=PORT_PCR_MUX(0);//adc1-4a
+    535            
+    536            ADC0->SC1[0] |= ADC_SC1_ADCH(4);
+    537            */
+    538            
+    539            SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK; //ADC1 Clock Enable
+   \   00000082   0x....             LDR.N    R0,??DataTable10_54  ;; 0x4004803c
+   \   00000084   0x6800             LDR      R0,[R0, #+0]
+   \   00000086   0xF050 0x6000      ORRS     R0,R0,#0x8000000
+   \   0000008A   0x....             LDR.N    R1,??DataTable10_54  ;; 0x4004803c
+   \   0000008C   0x6008             STR      R0,[R1, #+0]
+    540            ADC0->SC1[0] &= ~ADC_SC1_AIEN_MASK; //ADC1A
+   \   0000008E   0x....             LDR.N    R0,??DataTable10_47  ;; 0x4003b000
+   \   00000090   0x6800             LDR      R0,[R0, #+0]
+   \   00000092   0xF030 0x0040      BICS     R0,R0,#0x40
+   \   00000096   0x....             LDR.N    R1,??DataTable10_47  ;; 0x4003b000
+   \   00000098   0x6008             STR      R0,[R1, #+0]
+    541            ADC0->SC1[0] = 0x00000000; //Clear
+   \   0000009A   0x2000             MOVS     R0,#+0
+   \   0000009C   0x....             LDR.N    R1,??DataTable10_47  ;; 0x4003b000
+   \   0000009E   0x6008             STR      R0,[R1, #+0]
+    542            ADC0->SC1[0] |= ADC_SC1_ADCH(4); //ADC1_5->Input, Single Pin, No interrupt
+   \   000000A0   0x....             LDR.N    R0,??DataTable10_47  ;; 0x4003b000
+   \   000000A2   0x6800             LDR      R0,[R0, #+0]
+   \   000000A4   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   000000A8   0x....             LDR.N    R1,??DataTable10_47  ;; 0x4003b000
+   \   000000AA   0x6008             STR      R0,[R1, #+0]
+    543            ADC0->SC1[1] &= ~ADC_SC1_AIEN_MASK; //ADC1B
+   \   000000AC   0x....             LDR.N    R0,??DataTable10_55  ;; 0x4003b004
+   \   000000AE   0x6800             LDR      R0,[R0, #+0]
+   \   000000B0   0xF030 0x0040      BICS     R0,R0,#0x40
+   \   000000B4   0x....             LDR.N    R1,??DataTable10_55  ;; 0x4003b004
+   \   000000B6   0x6008             STR      R0,[R1, #+0]
+    544            ADC0->SC1[1] |= ADC_SC1_ADCH(4); //ADC1_5b
+   \   000000B8   0x....             LDR.N    R0,??DataTable10_55  ;; 0x4003b004
+   \   000000BA   0x6800             LDR      R0,[R0, #+0]
+   \   000000BC   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   000000C0   0x....             LDR.N    R1,??DataTable10_55  ;; 0x4003b004
+   \   000000C2   0x6008             STR      R0,[R1, #+0]
+    545            ADC0->SC2 &= 0x00000000; //Clear all.
+   \   000000C4   0x....             LDR.N    R0,??DataTable10_56  ;; 0x4003b020
+   \   000000C6   0x6804             LDR      R4,[R0, #+0]
+   \   000000C8   0x2000             MOVS     R0,#+0
+   \   000000CA   0x....             LDR.N    R1,??DataTable10_56  ;; 0x4003b020
+   \   000000CC   0x6008             STR      R0,[R1, #+0]
+    546            ADC0->SC2 |= ADC_SC2_DMAEN_MASK; //DMA, SoftWare
+   \   000000CE   0x....             LDR.N    R0,??DataTable10_56  ;; 0x4003b020
+   \   000000D0   0x6800             LDR      R0,[R0, #+0]
+   \   000000D2   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   000000D6   0x....             LDR.N    R1,??DataTable10_56  ;; 0x4003b020
+   \   000000D8   0x6008             STR      R0,[R1, #+0]
+    547            ADC0->SC3 &= (~ADC_SC3_AVGE_MASK&~ADC_SC3_AVGS_MASK); //hardware average disabled
+   \   000000DA   0x....             LDR.N    R0,??DataTable10_57  ;; 0x4003b024
+   \   000000DC   0x6800             LDR      R0,[R0, #+0]
+   \   000000DE   0x08C0             LSRS     R0,R0,#+3
+   \   000000E0   0x00C0             LSLS     R0,R0,#+3
+   \   000000E2   0x....             LDR.N    R1,??DataTable10_57  ;; 0x4003b024
+   \   000000E4   0x6008             STR      R0,[R1, #+0]
+    548            ADC0->SC3 |= ADC_SC3_ADCO_MASK; //Continuous conversion enable
+   \   000000E6   0x....             LDR.N    R0,??DataTable10_57  ;; 0x4003b024
+   \   000000E8   0x6800             LDR      R0,[R0, #+0]
+   \   000000EA   0xF050 0x0008      ORRS     R0,R0,#0x8
+   \   000000EE   0x....             LDR.N    R1,??DataTable10_57  ;; 0x4003b024
+   \   000000F0   0x6008             STR      R0,[R1, #+0]
+    549            ADC0->CFG1|=ADC_CFG1_ADICLK(1)|ADC_CFG1_MODE(0)|ADC_CFG1_ADIV(0);//InputClk, ShortTime, 8bits, Bus
+   \   000000F2   0x....             LDR.N    R0,??DataTable10_58  ;; 0x4003b008
+   \   000000F4   0x6800             LDR      R0,[R0, #+0]
+   \   000000F6   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   000000FA   0x....             LDR.N    R1,??DataTable10_58  ;; 0x4003b008
+   \   000000FC   0x6008             STR      R0,[R1, #+0]
+    550            ADC0->CFG2 |= ADC_CFG2_MUXSEL_MASK; //ADC1  b
+   \   000000FE   0x....             LDR.N    R0,??DataTable10_59  ;; 0x4003b00c
+   \   00000100   0x6800             LDR      R0,[R0, #+0]
+   \   00000102   0xF050 0x0010      ORRS     R0,R0,#0x10
+   \   00000106   0x....             LDR.N    R1,??DataTable10_59  ;; 0x4003b00c
+   \   00000108   0x6008             STR      R0,[R1, #+0]
+    551            ADC0->CFG2 |= ADC_CFG2_ADACKEN_MASK; //OutputClock
+   \   0000010A   0x....             LDR.N    R0,??DataTable10_59  ;; 0x4003b00c
+   \   0000010C   0x6800             LDR      R0,[R0, #+0]
+   \   0000010E   0xF050 0x0008      ORRS     R0,R0,#0x8
+   \   00000112   0x....             LDR.N    R1,??DataTable10_59  ;; 0x4003b00c
+   \   00000114   0x6008             STR      R0,[R1, #+0]
+    552              
+    553            // --- DMA ---
+    554            
+    555            SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK; //DMAMUX Clock Enable
+   \   00000116   0x....             LDR.N    R0,??DataTable10_54  ;; 0x4004803c
+   \   00000118   0x6800             LDR      R0,[R0, #+0]
+   \   0000011A   0xF050 0x0002      ORRS     R0,R0,#0x2
+   \   0000011E   0x....             LDR.N    R1,??DataTable10_54  ;; 0x4004803c
+   \   00000120   0x6008             STR      R0,[R1, #+0]
+    556            SIM->SCGC7 |= SIM_SCGC7_DMA_MASK; //DMA Clock Enable
+   \   00000122   0x....             LDR.N    R0,??DataTable10_60  ;; 0x40048040
+   \   00000124   0x6800             LDR      R0,[R0, #+0]
+   \   00000126   0xF050 0x0002      ORRS     R0,R0,#0x2
+   \   0000012A   0x....             LDR.N    R1,??DataTable10_60  ;; 0x40048040
+   \   0000012C   0x6008             STR      R0,[R1, #+0]
+    557            DMAMUX->CHCFG[0] |= DMAMUX_CHCFG_SOURCE(40); //DMA0->No.40 request, ADC0
+   \   0000012E   0x....             LDR.N    R0,??DataTable10_61  ;; 0x40021000
+   \   00000130   0x7800             LDRB     R0,[R0, #+0]
+   \   00000132   0xF050 0x0028      ORRS     R0,R0,#0x28
+   \   00000136   0x....             LDR.N    R1,??DataTable10_61  ;; 0x40021000
+   \   00000138   0x7008             STRB     R0,[R1, #+0]
+    558            DMA0->TCD[0].SADDR = (uint32_t) & (ADC0->R[0]); //Source Address 0x400B_B010h
+   \   0000013A   0x....             LDR.N    R0,??DataTable10_62  ;; 0x4003b010
+   \   0000013C   0x....             LDR.N    R1,??DataTable10_63  ;; 0x40009000
+   \   0000013E   0x6008             STR      R0,[R1, #+0]
+    559            DMA0->TCD[0].SOFF = 0; //Source Fixed
+   \   00000140   0x2000             MOVS     R0,#+0
+   \   00000142   0x....             LDR.N    R1,??DataTable10_64  ;; 0x40009004
+   \   00000144   0x8008             STRH     R0,[R1, #+0]
+    560            DMA0->TCD[0].ATTR = DMA_ATTR_SSIZE(0) | DMA_ATTR_DSIZE(0); //Source 8 bits, Aim 8 bits
+   \   00000146   0x2000             MOVS     R0,#+0
+   \   00000148   0x....             LDR.N    R1,??DataTable10_65  ;; 0x40009006
+   \   0000014A   0x8008             STRH     R0,[R1, #+0]
+    561            DMA0->TCD[0].NBYTES_MLNO = DMA_NBYTES_MLNO_NBYTES(1); //one byte each
+   \   0000014C   0x2001             MOVS     R0,#+1
+   \   0000014E   0x....             LDR.N    R1,??DataTable10_66  ;; 0x40009008
+   \   00000150   0x6008             STR      R0,[R1, #+0]
+    562            DMA0->TCD[0].SLAST = 0; //Last Source fixed
+   \   00000152   0x2000             MOVS     R0,#+0
+   \   00000154   0x....             LDR.N    R1,??DataTable10_67  ;; 0x4000900c
+   \   00000156   0x6008             STR      R0,[R1, #+0]
+    563            DMA0->TCD[0].DADDR = (u32)cam_buffer;
+   \   00000158   0x....             LDR.N    R0,??DataTable10_44
+   \   0000015A   0x....             LDR.N    R1,??DataTable10_45  ;; 0x40009010
+   \   0000015C   0x6008             STR      R0,[R1, #+0]
+    564            DMA0->TCD[0].DOFF = 1;
+   \   0000015E   0x2001             MOVS     R0,#+1
+   \   00000160   0x....             LDR.N    R1,??DataTable10_68  ;; 0x40009014
+   \   00000162   0x8008             STRH     R0,[R1, #+0]
+    565            DMA0->TCD[0].CITER_ELINKNO = DMA_CITER_ELINKNO_CITER(IMG_COLS+BLACK_WIDTH);
+   \   00000164   0x209B             MOVS     R0,#+155
+   \   00000166   0x....             LDR.N    R1,??DataTable10_69  ;; 0x40009016
+   \   00000168   0x8008             STRH     R0,[R1, #+0]
+    566            DMA0->TCD[0].DLAST_SGA = 0;
+   \   0000016A   0x2000             MOVS     R0,#+0
+   \   0000016C   0x....             LDR.N    R1,??DataTable10_70  ;; 0x40009018
+   \   0000016E   0x6008             STR      R0,[R1, #+0]
+    567            DMA0->TCD[0].BITER_ELINKNO = DMA_BITER_ELINKNO_BITER(IMG_COLS+BLACK_WIDTH);
+   \   00000170   0x209B             MOVS     R0,#+155
+   \   00000172   0x....             LDR.N    R1,??DataTable10_71  ;; 0x4000901e
+   \   00000174   0x8008             STRH     R0,[R1, #+0]
+    568            DMA0->TCD[0].CSR = 0x00000000; //Clear
+   \   00000176   0x2000             MOVS     R0,#+0
+   \   00000178   0x....             LDR.N    R1,??DataTable10_48  ;; 0x4000901c
+   \   0000017A   0x8008             STRH     R0,[R1, #+0]
+    569            DMA0->TCD[0].CSR |= DMA_CSR_DREQ_MASK; //Auto Clear
+   \   0000017C   0x....             LDR.N    R0,??DataTable10_48  ;; 0x4000901c
+   \   0000017E   0x8800             LDRH     R0,[R0, #+0]
+   \   00000180   0xF050 0x0008      ORRS     R0,R0,#0x8
+   \   00000184   0x....             LDR.N    R1,??DataTable10_48  ;; 0x4000901c
+   \   00000186   0x8008             STRH     R0,[R1, #+0]
+    570            DMA0->TCD[0].CSR |= DMA_CSR_INTMAJOR_MASK; //Enable Major Loop Int
+   \   00000188   0x....             LDR.N    R0,??DataTable10_48  ;; 0x4000901c
+   \   0000018A   0x8800             LDRH     R0,[R0, #+0]
+   \   0000018C   0xF050 0x0002      ORRS     R0,R0,#0x2
+   \   00000190   0x....             LDR.N    R1,??DataTable10_48  ;; 0x4000901c
+   \   00000192   0x8008             STRH     R0,[R1, #+0]
+    571            DMA0->INT |= DMA_INT_INT0_MASK; //Open Interrupt
+   \   00000194   0x....             LDR.N    R0,??DataTable10_72  ;; 0x40008024
+   \   00000196   0x6800             LDR      R0,[R0, #+0]
+   \   00000198   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   0000019C   0x....             LDR.N    R1,??DataTable10_72  ;; 0x40008024
+   \   0000019E   0x6008             STR      R0,[R1, #+0]
+    572            //DMA->ERQ&=~DMA_ERQ_ERQ0_MASK;//Clear Disable
+    573            DMAMUX->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK; //Enable
+   \   000001A0   0x....             LDR.N    R0,??DataTable10_61  ;; 0x40021000
+   \   000001A2   0x7800             LDRB     R0,[R0, #+0]
+   \   000001A4   0xF050 0x0080      ORRS     R0,R0,#0x80
+   \   000001A8   0x....             LDR.N    R1,??DataTable10_61  ;; 0x40021000
+   \   000001AA   0x7008             STRB     R0,[R1, #+0]
+    574            
+    575            NVIC_EnableIRQ(DMA0_IRQn);
+   \   000001AC   0x2000             MOVS     R0,#+0
+   \   000001AE   0x.... 0x....      BL       NVIC_EnableIRQ
+    576            NVIC_SetPriority(DMA0_IRQn, NVIC_EncodePriority(NVIC_GROUP, 1, 2));
+   \   000001B2   0x2202             MOVS     R2,#+2
+   \   000001B4   0x2101             MOVS     R1,#+1
+   \   000001B6   0x2005             MOVS     R0,#+5
+   \   000001B8   0x.... 0x....      BL       NVIC_EncodePriority
+   \   000001BC   0x0001             MOVS     R1,R0
+   \   000001BE   0x2000             MOVS     R0,#+0
+   \   000001C0   0x.... 0x....      BL       NVIC_SetPriority
+    577          }
+   \   000001C4   0xBD10             POP      {R4,PC}          ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6:
+   \   00000000   0xE000ED18         DC32     0xe000ed18
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7:
+   \   00000000   0x........         DC32     ??img_row_used
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_1:
+   \   00000000   0x........         DC32     img_row
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable7_2:
+   \   00000000   0x........         DC32     cam_buffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable9:
+   \   00000000   0xE000E100         DC32     0xe000e100
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable9_1:
+   \   00000000   0xE000E400         DC32     0xe000e400
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable9_2:
+   \   00000000   0x400FF090         DC32     0x400ff090
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable9_3:
+   \   00000000   0x447A0000         DC32     0x447a0000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable9_4:
+   \   00000000   0xC47A0000         DC32     0xc47a0000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10:
+   \   00000000   0x43FA0000         DC32     0x43fa0000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_1:
+   \   00000000   0x........         DC32     road_B
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_2:
+   \   00000000   0x40590000         DC32     0x40590000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_3:
+   \   00000000   0x42860000         DC32     0x42860000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_4:
+   \   00000000   0x........         DC32     mid_ave
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_5:
+   \   00000000   0x........         DC32     debug_speed
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_6:
+   \   00000000   0xFFFFFECA         DC32     0xfffffeca
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_7:
+   \   00000000   0x........         DC32     slope_mid
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_8:
+   \   00000000   0x........         DC32     curvatureL
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_9:
+   \   00000000   0x........         DC32     curvatureR
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_10:
+   \   00000000   0x........         DC32     valid_row
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_11:
+   \   00000000   0x........         DC32     ??mid_ave3
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_12:
+   \   00000000   0x........         DC32     margin
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_13:
+   \   00000000   0x........         DC32     valid_row_thr
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_14:
+   \   00000000   0x........         DC32     road_state
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_15:
+   \   00000000   0x........         DC32     weight
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_16:
+   \   00000000   0xC2840000         DC32     0xc2840000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_17:
+   \   00000000   0x........         DC32     ??err
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_18:
+   \   00000000   0x........         DC32     debug_dir
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_19:
+   \   00000000   0x40100000         DC32     0x40100000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_20:
+   \   00000000   0x40080000         DC32     0x40080000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_21:
+   \   00000000   0x........         DC32     ??last_err
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_22:
+   \   00000000   0x........         DC32     ??dir
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_23:
+   \   00000000   0x3FF33333         DC32     0x3ff33333
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_24:
+   \   00000000   0x........         DC32     car_state
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_25:
+   \   00000000   0xC1400000         DC32     0xc1400000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_26:
+   \   00000000   0x........         DC32     motor_R
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_27:
+   \   00000000   0x........         DC32     motor_L
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_28:
+   \   00000000   0x51EB851F         DC32     0x51eb851f
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_29:
+   \   00000000   0x3FD51EB8         DC32     0x3fd51eb8
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_30:
+   \   00000000   0x40468000         DC32     0x40468000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_31:
+   \   00000000   0xCCCCCCCD         DC32     0xcccccccd
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_32:
+   \   00000000   0x3FECCCCC         DC32     0x3feccccc
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_33:
+   \   00000000   0x41400000         DC32     0x41400000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_34:
+   \   00000000   0x40568000         DC32     0x40568000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_35:
+   \   00000000   0x9999999A         DC32     0x9999999a
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_36:
+   \   00000000   0x3FE99999         DC32     0x3fe99999
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_37:
+   \   00000000   0x3FE51EB8         DC32     0x3fe51eb8
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_38:
+   \   00000000   0x3FE66666         DC32     0x3fe66666
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_39:
+   \   00000000   0x........         DC32     R
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_40:
+   \   00000000   0x........         DC32     L
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_41:
+   \   00000000   0x4004B0A0         DC32     0x4004b0a0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_42:
+   \   00000000   0x........         DC32     img_row
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_43:
+   \   00000000   0x........         DC32     cam_row
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_44:
+   \   00000000   0x........         DC32     cam_buffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_45:
+   \   00000000   0x40009010         DC32     0x40009010
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_46:
+   \   00000000   0x4000800C         DC32     0x4000800c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_47:
+   \   00000000   0x4003B000         DC32     0x4003b000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_48:
+   \   00000000   0x4000901C         DC32     0x4000901c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_49:
+   \   00000000   0x4000801F         DC32     0x4000801f
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_50:
+   \   00000000   0x4004B020         DC32     0x4004b020
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_51:
+   \   00000000   0x4004B024         DC32     0x4004b024
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_52:
+   \   00000000   0x4004B02C         DC32     0x4004b02c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_53:
+   \   00000000   0x400FF094         DC32     0x400ff094
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_54:
+   \   00000000   0x4004803C         DC32     0x4004803c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_55:
+   \   00000000   0x4003B004         DC32     0x4003b004
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_56:
+   \   00000000   0x4003B020         DC32     0x4003b020
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_57:
+   \   00000000   0x4003B024         DC32     0x4003b024
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_58:
+   \   00000000   0x4003B008         DC32     0x4003b008
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_59:
+   \   00000000   0x4003B00C         DC32     0x4003b00c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_60:
+   \   00000000   0x40048040         DC32     0x40048040
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_61:
+   \   00000000   0x40021000         DC32     0x40021000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_62:
+   \   00000000   0x4003B010         DC32     0x4003b010
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_63:
+   \   00000000   0x40009000         DC32     0x40009000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_64:
+   \   00000000   0x40009004         DC32     0x40009004
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_65:
+   \   00000000   0x40009006         DC32     0x40009006
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_66:
+   \   00000000   0x40009008         DC32     0x40009008
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_67:
+   \   00000000   0x4000900C         DC32     0x4000900c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_68:
+   \   00000000   0x40009014         DC32     0x40009014
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_69:
+   \   00000000   0x40009016         DC32     0x40009016
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_70:
+   \   00000000   0x40009018         DC32     0x40009018
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_71:
+   \   00000000   0x4000901E         DC32     0x4000901e
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable10_72:
+   \   00000000   0x40008024         DC32     0x40008024
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   Cam_Algorithm
+         8   -> UART_SendChar
+      40   Cam_B
+        40   -> PWM
+        40   -> Servo_Output
+        40   -> __aeabi_d2f
+        40   -> __aeabi_d2iz
+        40   -> __aeabi_dadd
+        40   -> __aeabi_ddiv
+        40   -> __aeabi_dmul
+        40   -> __aeabi_dsub
+        40   -> __aeabi_f2d
+        40   -> __aeabi_f2iz
+        40   -> __aeabi_fadd
+        40   -> __aeabi_fdiv
+        40   -> __aeabi_fmul
+        40   -> __aeabi_fsub
+        40   -> __aeabi_i2d
+        40   -> __aeabi_i2f
+        40   -> constrain
+        40   -> constrainInt
+       0   Cam_B_Init
+       8   Cam_Init
+         8   -> NVIC_EnableIRQ
+         8   -> NVIC_EncodePriority
+         8   -> NVIC_SetPriority
+       0   DMA0_IRQHandler
+       0   NVIC_EnableIRQ
+       4   NVIC_EncodePriority
+       0   NVIC_SetPriority
+       0   PORTC_IRQHandler
+       8   constrain
+         8 __aeabi_cfcmple
+       0   constrainInt
+      80   getR
+        80   -> __aeabi_d2f
+        80   -> __aeabi_dadd
+        80   -> __aeabi_ddiv
+        80   -> __aeabi_dmul
+        80   -> __aeabi_dsub
+        80   -> __aeabi_f2d
+        80   -> __aeabi_fadd
+        80   -> __aeabi_fmul
+        80   -> __aeabi_fsub
+        80   -> constrain
+        80   -> sqrt
+        80 __aeabi_cdrcmple
+      24   getSlope_
+        24   -> __aeabi_ddiv
+        24   -> __aeabi_dmul
+        24   -> __aeabi_i2d
+        24 __aeabi_cdcmpeq
+       0   is_stop_line
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable10
+       4  ??DataTable10_1
+       4  ??DataTable10_10
+       4  ??DataTable10_11
+       4  ??DataTable10_12
+       4  ??DataTable10_13
+       4  ??DataTable10_14
+       4  ??DataTable10_15
+       4  ??DataTable10_16
+       4  ??DataTable10_17
+       4  ??DataTable10_18
+       4  ??DataTable10_19
+       4  ??DataTable10_2
+       4  ??DataTable10_20
+       4  ??DataTable10_21
+       4  ??DataTable10_22
+       4  ??DataTable10_23
+       4  ??DataTable10_24
+       4  ??DataTable10_25
+       4  ??DataTable10_26
+       4  ??DataTable10_27
+       4  ??DataTable10_28
+       4  ??DataTable10_29
+       4  ??DataTable10_3
+       4  ??DataTable10_30
+       4  ??DataTable10_31
+       4  ??DataTable10_32
+       4  ??DataTable10_33
+       4  ??DataTable10_34
+       4  ??DataTable10_35
+       4  ??DataTable10_36
+       4  ??DataTable10_37
+       4  ??DataTable10_38
+       4  ??DataTable10_39
+       4  ??DataTable10_4
+       4  ??DataTable10_40
+       4  ??DataTable10_41
+       4  ??DataTable10_42
+       4  ??DataTable10_43
+       4  ??DataTable10_44
+       4  ??DataTable10_45
+       4  ??DataTable10_46
+       4  ??DataTable10_47
+       4  ??DataTable10_48
+       4  ??DataTable10_49
+       4  ??DataTable10_5
+       4  ??DataTable10_50
+       4  ??DataTable10_51
+       4  ??DataTable10_52
+       4  ??DataTable10_53
+       4  ??DataTable10_54
+       4  ??DataTable10_55
+       4  ??DataTable10_56
+       4  ??DataTable10_57
+       4  ??DataTable10_58
+       4  ??DataTable10_59
+       4  ??DataTable10_6
+       4  ??DataTable10_60
+       4  ??DataTable10_61
+       4  ??DataTable10_62
+       4  ??DataTable10_63
+       4  ??DataTable10_64
+       4  ??DataTable10_65
+       4  ??DataTable10_66
+       4  ??DataTable10_67
+       4  ??DataTable10_68
+       4  ??DataTable10_69
+       4  ??DataTable10_7
+       4  ??DataTable10_70
+       4  ??DataTable10_71
+       4  ??DataTable10_72
+       4  ??DataTable10_8
+       4  ??DataTable10_9
+       4  ??DataTable6
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+       4  ??DataTable9
+       4  ??DataTable9_1
+       4  ??DataTable9_2
+       4  ??DataTable9_3
+       4  ??DataTable9_4
+       8  C
+       4  CAM_HOLE_ROW
+     170  Cam_Algorithm
+    2094  Cam_B
+      68  Cam_B_Init
+     454  Cam_Init
+      24  DMA0_IRQHandler
+      22  NVIC_EnableIRQ
+      62  NVIC_EncodePriority
+      38  NVIC_SetPriority
+       4  OBSTACLE_THR
+     150  PORTC_IRQHandler
+       4  ROAD_OBST_ROW
+       4  c1
+       4  c2
+       4  c3
+    9920  cam_buffer
+      56  cam_buffer_safe
+       1  cam_row
+       1  car_state
+      32  constrain
+      16  constrainInt
+      28  curvatureL
+      28  curvatureR
+      56  debug_dir
+       4  debug_speed
+       4  dir
+       4  err
+     708  getR
+      70  getSlope_
+       1  img_row
+       1  img_row_used
+      38  is_stop_line
+       4  last_err
+       4  margin
+       4  mid_ave
+       4  mid_ave3
+       4  motor_L
+       4  motor_R
+       1  remote_state
+     300  road_B
+       1  road_state
+       8  slope
+      28  slope_mid
+       8  test
+       8  theta
+       8  theta_d
+       4  valid_row
+       4  valid_row_thr
+     160  weight
+       8  x
+       8  y
+
+ 
+ 10 506 bytes in section .bss
+    200 bytes in section .data
+  4 274 bytes in section .text
+ 
+  4 274 bytes of CODE memory
+ 10 706 bytes of DATA memory
+
+Errors: none
+Warnings: 6

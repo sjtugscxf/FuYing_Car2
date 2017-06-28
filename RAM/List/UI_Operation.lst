@@ -1,0 +1,888 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.2.7424/W32 for ARM        28/Jun/2017  11:22:51
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  D:\GitHub_pository\FuYing_Car2\source\UI_Operation.c
+#    Command line =  
+#        D:\GitHub_pository\FuYing_Car2\source\UI_Operation.c -D LPLD_K60 -lCN
+#        D:\GitHub_pository\FuYing_Car2\RAM\List\ -lB
+#        D:\GitHub_pository\FuYing_Car2\RAM\List\ -o
+#        D:\GitHub_pository\FuYing_Car2\RAM\Obj\ --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M4 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.0\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\GitHub_pository\FuYing_Car2\..\app\ -I
+#        D:\GitHub_pository\FuYing_Car2\source\ -I
+#        D:\GitHub_pository\FuYing_Car2\common\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\HW\ -I
+#        D:\GitHub_pository\FuYing_Car2\LPLD\DEV\ -I
+#        D:\GitHub_pository\FuYing_Car2\iar_config_files\ -Ol -I "C:\Program
+#        Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\CMSIS\Include\" -D
+#        ARM_MATH_CM4
+#    List file    =  D:\GitHub_pository\FuYing_Car2\RAM\List\UI_Operation.lst
+#    Object file  =  D:\GitHub_pository\FuYing_Car2\RAM\Obj\UI_Operation.o
+#
+###############################################################################
+
+D:\GitHub_pository\FuYing_Car2\source\UI_Operation.c
+      1          /*
+      2          Arthor : Qian Qiyang (KisaragiAyanoo@twitter)
+      3          Date : 2015/12/04
+      4          License : MIT
+      5          */
+      6          
+      7          
+      8          #include "includes.h"
+      9          
+
+   \                                 In section .bss, align 1
+     10          char ch;
+   \                     ch:
+   \   00000000                      DS8 1
+     11          
+     12          
+     13          
+     14          // ====== Settings ======
+     15          
+     16            // Sensibility of operation
+     17            // smaller, more sensitive
+     18          #define SENSIBILITY 8
+     19          
+     20            // Strength to debounce
+     21            // depends on period of UI Refreshing Loop
+     22          #define DEBOUNCE_CNT 6 
+     23          
+     24          
+     25          
+     26          
+     27          // ====== Variables ======
+     28          
+     29          // ---- Global ----
+
+   \                                 In section .bss, align 2
+     30          int16 ui_operation_shift, ui_operation_cnt;
+   \                     ui_operation_shift:
+   \   00000000                      DS8 2
+
+   \                                 In section .bss, align 2
+   \                     ui_operation_cnt:
+   \   00000000                      DS8 2
+     31          
+     32          // ---- Local ----
+
+   \                                 In section .bss, align 1
+     33          u8 Key3_down,Key1_down,Key2_down;   // flag : state of pushed down
+   \                     Key3_down:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key1_down:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key2_down:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     34          u8 Key3_rise,Key1_rise,Key2_rise;   // flag : transient state of rising
+   \                     Key3_rise:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key1_rise:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key2_rise:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     35          u8 Key3_cnt,Key1_cnt,Key2_cnt;      // counter to debounce
+   \                     Key3_cnt:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key1_cnt:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key2_cnt:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     36          u8 Key1_risemask,Key2_risemask,Key3_risemask;   // flag to mask Rise_Func after DownSpin_Func
+   \                     Key1_risemask:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key2_risemask:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+   \                     Key3_risemask:
+   \   00000000                      DS8 1
+     37          
+     38          
+     39          
+     40          // ====== Local Func Declaration ====
+     41          
+     42            // --- API ---
+     43          void Key1_Rise_Func();
+     44          void Key2_Rise_Func();
+     45          void Key3_Rise_Func();
+     46          void Key1_Downspin_Func();
+     47          void Key2_Downspin_Func();
+     48          void Key3_Downspin_Func();
+     49          void Spin_Func();
+     50          
+     51            // --- Baisc Drivers ---
+     52          void Key1_Read();
+     53          void Key2_Read();
+     54          void Key3_Read();
+     55          
+     56          
+     57          
+     58          
+     59          // ====== APIs =======
+     60          // write your codes in certain Func you wanna realize.
+     61          
+     62          
+     63            // --- Keyn_Rise_Func ---
+     64            // triggered when Keyn rises after push with no spin of tacho.
+     65          
+
+   \                                 In section .text, align 2, keep-with-next
+     66          void Key1_Rise_Func(){
+     67            //if(!SW4()) MotorL_Output(-530);
+     68          }
+   \                     Key1_Rise_Func: (+1)
+   \   00000000   0x4770             BX       LR               ;; return
+     69          
+     70          
+
+   \                                 In section .text, align 2, keep-with-next
+     71          void Key2_Rise_Func(){
+     72           // if(!SW4()) MotorR_Output(-530);
+     73          }
+   \                     Key2_Rise_Func: (+1)
+   \   00000000   0x4770             BX       LR               ;; return
+     74          
+
+   \                                 In section .text, align 2, keep-with-next
+     75          void Key3_Rise_Func(){ 
+     76           // if(!SW4()) Servo_Output(-70);  
+     77          }
+   \                     Key3_Rise_Func: (+1)
+   \   00000000   0x4770             BX       LR               ;; return
+     78          
+     79          
+     80            // --- Keyn_Downspin_Func ---
+     81            // triggered when Keyn is pushed down and spinning tacho.
+     82            // if triggered , Rise_Func won't be trigger when rises.
+     83          
+
+   \                                 In section .text, align 2, keep-with-next
+     84          void Key1_Downspin_Func(){
+     85            
+     86            if(SW4() && SW3() && SW2() ) 
+   \                     Key1_Downspin_Func: (+1)
+   \   00000000   0x.... 0x....      LDR.W    R0,??DataTable6  ;; 0x400ff090
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0xF3C0 0x10C0      UBFX     R0,R0,#+7,#+1
+   \   0000000A   0x2800             CMP      R0,#+0
+   \   0000000C   0xD021             BEQ.N    ??Key1_Downspin_Func_0
+   \   0000000E   0x.... 0x....      LDR.W    R0,??DataTable6  ;; 0x400ff090
+   \   00000012   0x6800             LDR      R0,[R0, #+0]
+   \   00000014   0xF3C0 0x1080      UBFX     R0,R0,#+6,#+1
+   \   00000018   0x2800             CMP      R0,#+0
+   \   0000001A   0xD01A             BEQ.N    ??Key1_Downspin_Func_0
+   \   0000001C   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000001E   0x6800             LDR      R0,[R0, #+0]
+   \   00000020   0xF3C0 0x1040      UBFX     R0,R0,#+5,#+1
+   \   00000024   0x2800             CMP      R0,#+0
+   \   00000026   0xD014             BEQ.N    ??Key1_Downspin_Func_0
+     87            {
+     88              if (ui_operation_shift>0) speed_set++;
+   \   00000028   0x....             LDR.N    R0,??DataTable6_1
+   \   0000002A   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   0000002E   0x2801             CMP      R0,#+1
+   \   00000030   0xDB05             BLT.N    ??Key1_Downspin_Func_1
+   \   00000032   0x....             LDR.N    R0,??DataTable6_2
+   \   00000034   0x8800             LDRH     R0,[R0, #+0]
+   \   00000036   0x1C40             ADDS     R0,R0,#+1
+   \   00000038   0x....             LDR.N    R1,??DataTable6_2
+   \   0000003A   0x8008             STRH     R0,[R1, #+0]
+   \   0000003C   0xE009             B.N      ??Key1_Downspin_Func_0
+     89              else if (ui_operation_shift<0) speed_set--;
+   \                     ??Key1_Downspin_Func_1: (+1)
+   \   0000003E   0x....             LDR.N    R0,??DataTable6_1
+   \   00000040   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   00000044   0x2800             CMP      R0,#+0
+   \   00000046   0xD504             BPL.N    ??Key1_Downspin_Func_0
+   \   00000048   0x....             LDR.N    R0,??DataTable6_2
+   \   0000004A   0x8800             LDRH     R0,[R0, #+0]
+   \   0000004C   0x1E40             SUBS     R0,R0,#+1
+   \   0000004E   0x....             LDR.N    R1,??DataTable6_2
+   \   00000050   0x8008             STRH     R0,[R1, #+0]
+     90            }
+     91          }
+   \                     ??Key1_Downspin_Func_0: (+1)
+   \   00000052   0x4770             BX       LR               ;; return
+     92          
+
+   \                                 In section .text, align 2, keep-with-next
+     93          void Key2_Downspin_Func(){
+     94            
+     95          }
+   \                     Key2_Downspin_Func: (+1)
+   \   00000000   0x4770             BX       LR               ;; return
+     96          
+
+   \                                 In section .text, align 2, keep-with-next
+     97          void Key3_Downspin_Func(){
+   \                     Key3_Downspin_Func: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+     98            
+     99            Spin_Func();
+   \   00000002   0x.... 0x....      BL       Spin_Func
+    100          }
+   \   00000006   0xBD01             POP      {R0,PC}          ;; return
+    101          
+    102          
+    103            // --- Spin_Func ---
+    104            // triggered when spinning tacho with no Key pushed.
+
+   \                                 In section .text, align 2, keep-with-next
+    105          void Spin_Func(){
+    106          
+    107          }
+   \                     Spin_Func: (+1)
+   \   00000000   0x4770             BX       LR               ;; return
+    108          
+    109          
+    110          
+    111          
+    112          // ========= Service ======= 
+    113          
+    114            // Put this in UI refreshing loop (PIT1_ISR)
+    115          
+
+   \                                 In section .text, align 2, keep-with-next
+    116          void UI_Operation_Service(){
+   \                     UI_Operation_Service: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    117            Key3_Read();
+   \   00000002   0x.... 0x....      BL       Key3_Read
+    118            Key1_Read();
+   \   00000006   0x.... 0x....      BL       Key1_Read
+    119            Key2_Read();
+   \   0000000A   0x.... 0x....      BL       Key2_Read
+    120            
+    121            ui_operation_shift = ui_operation_cnt/SENSIBILITY;
+   \   0000000E   0x....             LDR.N    R0,??DataTable6_3
+   \   00000010   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   00000014   0x2108             MOVS     R1,#+8
+   \   00000016   0xFB90 0xF0F1      SDIV     R0,R0,R1
+   \   0000001A   0x....             LDR.N    R1,??DataTable6_1
+   \   0000001C   0x8008             STRH     R0,[R1, #+0]
+    122            ui_operation_cnt %= SENSIBILITY;
+   \   0000001E   0x....             LDR.N    R0,??DataTable6_3
+   \   00000020   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   00000024   0x2108             MOVS     R1,#+8
+   \   00000026   0xFB90 0xF2F1      SDIV     R2,R0,R1
+   \   0000002A   0xFB02 0x0211      MLS      R2,R2,R1,R0
+   \   0000002E   0x....             LDR.N    R0,??DataTable6_3
+   \   00000030   0x8002             STRH     R2,[R0, #+0]
+    123            
+    124            if(Key1_rise){
+   \   00000032   0x....             LDR.N    R0,??DataTable6_4
+   \   00000034   0x7800             LDRB     R0,[R0, #+0]
+   \   00000036   0x2800             CMP      R0,#+0
+   \   00000038   0xD004             BEQ.N    ??UI_Operation_Service_0
+    125              Key1_rise=0;
+   \   0000003A   0x2000             MOVS     R0,#+0
+   \   0000003C   0x....             LDR.N    R1,??DataTable6_4
+   \   0000003E   0x7008             STRB     R0,[R1, #+0]
+    126              Key1_Rise_Func();
+   \   00000040   0x.... 0x....      BL       Key1_Rise_Func
+    127            }
+    128            if(Key2_rise){
+   \                     ??UI_Operation_Service_0: (+1)
+   \   00000044   0x....             LDR.N    R0,??DataTable6_5
+   \   00000046   0x7800             LDRB     R0,[R0, #+0]
+   \   00000048   0x2800             CMP      R0,#+0
+   \   0000004A   0xD004             BEQ.N    ??UI_Operation_Service_1
+    129              Key2_rise=0;
+   \   0000004C   0x2000             MOVS     R0,#+0
+   \   0000004E   0x....             LDR.N    R1,??DataTable6_5
+   \   00000050   0x7008             STRB     R0,[R1, #+0]
+    130              Key2_Rise_Func();
+   \   00000052   0x.... 0x....      BL       Key2_Rise_Func
+    131            }
+    132            if(Key3_rise){
+   \                     ??UI_Operation_Service_1: (+1)
+   \   00000056   0x....             LDR.N    R0,??DataTable6_6
+   \   00000058   0x7800             LDRB     R0,[R0, #+0]
+   \   0000005A   0x2800             CMP      R0,#+0
+   \   0000005C   0xD004             BEQ.N    ??UI_Operation_Service_2
+    133              Key3_rise=0;
+   \   0000005E   0x2000             MOVS     R0,#+0
+   \   00000060   0x....             LDR.N    R1,??DataTable6_6
+   \   00000062   0x7008             STRB     R0,[R1, #+0]
+    134              Key3_Rise_Func();
+   \   00000064   0x.... 0x....      BL       Key3_Rise_Func
+    135            }
+    136            if(Key1_down && ui_operation_shift!=0 ){       // 
+   \                     ??UI_Operation_Service_2: (+1)
+   \   00000068   0x....             LDR.N    R0,??DataTable6_7
+   \   0000006A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000006C   0x2800             CMP      R0,#+0
+   \   0000006E   0xD00A             BEQ.N    ??UI_Operation_Service_3
+   \   00000070   0x....             LDR.N    R0,??DataTable6_1
+   \   00000072   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   00000076   0x2800             CMP      R0,#+0
+   \   00000078   0xD005             BEQ.N    ??UI_Operation_Service_3
+    137              Key1_risemask=1;
+   \   0000007A   0x2001             MOVS     R0,#+1
+   \   0000007C   0x....             LDR.N    R1,??DataTable6_8
+   \   0000007E   0x7008             STRB     R0,[R1, #+0]
+    138              Key1_Downspin_Func();
+   \   00000080   0x.... 0x....      BL       Key1_Downspin_Func
+   \   00000084   0xE024             B.N      ??UI_Operation_Service_4
+    139            }
+    140            else if(Key2_down && ui_operation_shift!=0 ){       // 
+   \                     ??UI_Operation_Service_3: (+1)
+   \   00000086   0x....             LDR.N    R0,??DataTable6_9
+   \   00000088   0x7800             LDRB     R0,[R0, #+0]
+   \   0000008A   0x2800             CMP      R0,#+0
+   \   0000008C   0xD00A             BEQ.N    ??UI_Operation_Service_5
+   \   0000008E   0x....             LDR.N    R0,??DataTable6_1
+   \   00000090   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   00000094   0x2800             CMP      R0,#+0
+   \   00000096   0xD005             BEQ.N    ??UI_Operation_Service_5
+    141              Key2_risemask=1;
+   \   00000098   0x2001             MOVS     R0,#+1
+   \   0000009A   0x....             LDR.N    R1,??DataTable6_10
+   \   0000009C   0x7008             STRB     R0,[R1, #+0]
+    142              Key2_Downspin_Func();
+   \   0000009E   0x.... 0x....      BL       Key2_Downspin_Func
+   \   000000A2   0xE015             B.N      ??UI_Operation_Service_4
+    143            }
+    144            else if(Key3_down && ui_operation_shift!=0 ){       // 
+   \                     ??UI_Operation_Service_5: (+1)
+   \   000000A4   0x....             LDR.N    R0,??DataTable6_11
+   \   000000A6   0x7800             LDRB     R0,[R0, #+0]
+   \   000000A8   0x2800             CMP      R0,#+0
+   \   000000AA   0xD00A             BEQ.N    ??UI_Operation_Service_6
+   \   000000AC   0x....             LDR.N    R0,??DataTable6_1
+   \   000000AE   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   000000B2   0x2800             CMP      R0,#+0
+   \   000000B4   0xD005             BEQ.N    ??UI_Operation_Service_6
+    145              Key3_risemask=1;
+   \   000000B6   0x2001             MOVS     R0,#+1
+   \   000000B8   0x....             LDR.N    R1,??DataTable6_12
+   \   000000BA   0x7008             STRB     R0,[R1, #+0]
+    146              Key3_Downspin_Func();
+   \   000000BC   0x.... 0x....      BL       Key3_Downspin_Func
+   \   000000C0   0xE006             B.N      ??UI_Operation_Service_4
+    147            }
+    148            else if(ui_operation_shift!=0){
+   \                     ??UI_Operation_Service_6: (+1)
+   \   000000C2   0x....             LDR.N    R0,??DataTable6_1
+   \   000000C4   0xF9B0 0x0000      LDRSH    R0,[R0, #+0]
+   \   000000C8   0x2800             CMP      R0,#+0
+   \   000000CA   0xD001             BEQ.N    ??UI_Operation_Service_4
+    149              Spin_Func();
+   \   000000CC   0x.... 0x....      BL       Spin_Func
+    150            }
+    151          }
+   \                     ??UI_Operation_Service_4: (+1)
+   \   000000D0   0xBD01             POP      {R0,PC}          ;; return
+    152          
+    153          
+    154          
+    155          
+    156          // ===== Basic Drivers ====
+    157          
+
+   \                                 In section .text, align 2, keep-with-next
+    158          void Key1_Read(){
+    159            if(Key1()==0){
+   \                     Key1_Read: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable6_13  ;; 0x400ff010
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0xF3C0 0x2000      UBFX     R0,R0,#+8,#+1
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xD106             BNE.N    ??Key1_Read_0
+    160              Key1_down=1;
+   \   0000000C   0x2001             MOVS     R0,#+1
+   \   0000000E   0x....             LDR.N    R1,??DataTable6_7
+   \   00000010   0x7008             STRB     R0,[R1, #+0]
+    161              Key1_cnt=0;
+   \   00000012   0x2000             MOVS     R0,#+0
+   \   00000014   0x....             LDR.N    R1,??DataTable6_14
+   \   00000016   0x7008             STRB     R0,[R1, #+0]
+   \   00000018   0xE01B             B.N      ??Key1_Read_1
+    162            }
+    163            else if(Key1_down && Key1_cnt<DEBOUNCE_CNT)
+   \                     ??Key1_Read_0: (+1)
+   \   0000001A   0x....             LDR.N    R0,??DataTable6_7
+   \   0000001C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001E   0x2800             CMP      R0,#+0
+   \   00000020   0xD009             BEQ.N    ??Key1_Read_2
+   \   00000022   0x....             LDR.N    R0,??DataTable6_14
+   \   00000024   0x7800             LDRB     R0,[R0, #+0]
+   \   00000026   0x2806             CMP      R0,#+6
+   \   00000028   0xDA05             BGE.N    ??Key1_Read_2
+    164              Key1_cnt++;
+   \   0000002A   0x....             LDR.N    R0,??DataTable6_14
+   \   0000002C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000002E   0x1C40             ADDS     R0,R0,#+1
+   \   00000030   0x....             LDR.N    R1,??DataTable6_14
+   \   00000032   0x7008             STRB     R0,[R1, #+0]
+   \   00000034   0xE00D             B.N      ??Key1_Read_1
+    165            else if(Key1_down){
+   \                     ??Key1_Read_2: (+1)
+   \   00000036   0x....             LDR.N    R0,??DataTable6_7
+   \   00000038   0x7800             LDRB     R0,[R0, #+0]
+   \   0000003A   0x2800             CMP      R0,#+0
+   \   0000003C   0xD006             BEQ.N    ??Key1_Read_3
+    166              Key1_down=0;
+   \   0000003E   0x2000             MOVS     R0,#+0
+   \   00000040   0x....             LDR.N    R1,??DataTable6_7
+   \   00000042   0x7008             STRB     R0,[R1, #+0]
+    167              Key1_rise=1;
+   \   00000044   0x2001             MOVS     R0,#+1
+   \   00000046   0x....             LDR.N    R1,??DataTable6_4
+   \   00000048   0x7008             STRB     R0,[R1, #+0]
+   \   0000004A   0xE002             B.N      ??Key1_Read_1
+    168            }
+    169            else
+    170              Key1_down=0;
+   \                     ??Key1_Read_3: (+1)
+   \   0000004C   0x2000             MOVS     R0,#+0
+   \   0000004E   0x....             LDR.N    R1,??DataTable6_7
+   \   00000050   0x7008             STRB     R0,[R1, #+0]
+    171          }
+   \                     ??Key1_Read_1: (+1)
+   \   00000052   0x4770             BX       LR               ;; return
+    172          
+
+   \                                 In section .text, align 2, keep-with-next
+    173          void Key2_Read(){
+    174            if(Key2()==0){
+   \                     Key2_Read: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable6_13  ;; 0x400ff010
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0xF3C0 0x2040      UBFX     R0,R0,#+9,#+1
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xD106             BNE.N    ??Key2_Read_0
+    175              Key2_down=1;
+   \   0000000C   0x2001             MOVS     R0,#+1
+   \   0000000E   0x....             LDR.N    R1,??DataTable6_9
+   \   00000010   0x7008             STRB     R0,[R1, #+0]
+    176              Key2_cnt=0;
+   \   00000012   0x2000             MOVS     R0,#+0
+   \   00000014   0x....             LDR.N    R1,??DataTable6_15
+   \   00000016   0x7008             STRB     R0,[R1, #+0]
+   \   00000018   0xE01B             B.N      ??Key2_Read_1
+    177            }
+    178            else if(Key2_down && Key2_cnt<DEBOUNCE_CNT)
+   \                     ??Key2_Read_0: (+1)
+   \   0000001A   0x....             LDR.N    R0,??DataTable6_9
+   \   0000001C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001E   0x2800             CMP      R0,#+0
+   \   00000020   0xD009             BEQ.N    ??Key2_Read_2
+   \   00000022   0x....             LDR.N    R0,??DataTable6_15
+   \   00000024   0x7800             LDRB     R0,[R0, #+0]
+   \   00000026   0x2806             CMP      R0,#+6
+   \   00000028   0xDA05             BGE.N    ??Key2_Read_2
+    179              Key2_cnt++;
+   \   0000002A   0x....             LDR.N    R0,??DataTable6_15
+   \   0000002C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000002E   0x1C40             ADDS     R0,R0,#+1
+   \   00000030   0x....             LDR.N    R1,??DataTable6_15
+   \   00000032   0x7008             STRB     R0,[R1, #+0]
+   \   00000034   0xE00D             B.N      ??Key2_Read_1
+    180            else if(Key2_down){
+   \                     ??Key2_Read_2: (+1)
+   \   00000036   0x....             LDR.N    R0,??DataTable6_9
+   \   00000038   0x7800             LDRB     R0,[R0, #+0]
+   \   0000003A   0x2800             CMP      R0,#+0
+   \   0000003C   0xD006             BEQ.N    ??Key2_Read_3
+    181              Key2_down=0;
+   \   0000003E   0x2000             MOVS     R0,#+0
+   \   00000040   0x....             LDR.N    R1,??DataTable6_9
+   \   00000042   0x7008             STRB     R0,[R1, #+0]
+    182              Key2_rise=1;
+   \   00000044   0x2001             MOVS     R0,#+1
+   \   00000046   0x....             LDR.N    R1,??DataTable6_5
+   \   00000048   0x7008             STRB     R0,[R1, #+0]
+   \   0000004A   0xE002             B.N      ??Key2_Read_1
+    183            }
+    184            else
+    185              Key2_down=0;
+   \                     ??Key2_Read_3: (+1)
+   \   0000004C   0x2000             MOVS     R0,#+0
+   \   0000004E   0x....             LDR.N    R1,??DataTable6_9
+   \   00000050   0x7008             STRB     R0,[R1, #+0]
+    186          }
+   \                     ??Key2_Read_1: (+1)
+   \   00000052   0x4770             BX       LR               ;; return
+    187          
+
+   \                                 In section .text, align 2, keep-with-next
+    188          void Key3_Read(){
+    189            if(Key3()==0){
+   \                     Key3_Read: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable6_13  ;; 0x400ff010
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0xF3C0 0x2080      UBFX     R0,R0,#+10,#+1
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xD106             BNE.N    ??Key3_Read_0
+    190              Key3_down=1;
+   \   0000000C   0x2001             MOVS     R0,#+1
+   \   0000000E   0x....             LDR.N    R1,??DataTable6_11
+   \   00000010   0x7008             STRB     R0,[R1, #+0]
+    191              Key3_cnt=0;
+   \   00000012   0x2000             MOVS     R0,#+0
+   \   00000014   0x....             LDR.N    R1,??DataTable6_16
+   \   00000016   0x7008             STRB     R0,[R1, #+0]
+   \   00000018   0xE023             B.N      ??Key3_Read_1
+    192            }
+    193            else if(Key3_down && Key3_cnt<DEBOUNCE_CNT)
+   \                     ??Key3_Read_0: (+1)
+   \   0000001A   0x....             LDR.N    R0,??DataTable6_11
+   \   0000001C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001E   0x2800             CMP      R0,#+0
+   \   00000020   0xD009             BEQ.N    ??Key3_Read_2
+   \   00000022   0x....             LDR.N    R0,??DataTable6_16
+   \   00000024   0x7800             LDRB     R0,[R0, #+0]
+   \   00000026   0x2806             CMP      R0,#+6
+   \   00000028   0xDA05             BGE.N    ??Key3_Read_2
+    194              Key3_cnt++;
+   \   0000002A   0x....             LDR.N    R0,??DataTable6_16
+   \   0000002C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000002E   0x1C40             ADDS     R0,R0,#+1
+   \   00000030   0x....             LDR.N    R1,??DataTable6_16
+   \   00000032   0x7008             STRB     R0,[R1, #+0]
+   \   00000034   0xE015             B.N      ??Key3_Read_1
+    195            else if(Key3_down){
+   \                     ??Key3_Read_2: (+1)
+   \   00000036   0x....             LDR.N    R0,??DataTable6_11
+   \   00000038   0x7800             LDRB     R0,[R0, #+0]
+   \   0000003A   0x2800             CMP      R0,#+0
+   \   0000003C   0xD00E             BEQ.N    ??Key3_Read_3
+    196              Key3_down=0;
+   \   0000003E   0x2000             MOVS     R0,#+0
+   \   00000040   0x....             LDR.N    R1,??DataTable6_11
+   \   00000042   0x7008             STRB     R0,[R1, #+0]
+    197              if(Key3_risemask==0)
+   \   00000044   0x....             LDR.N    R0,??DataTable6_12
+   \   00000046   0x7800             LDRB     R0,[R0, #+0]
+   \   00000048   0x2800             CMP      R0,#+0
+   \   0000004A   0xD103             BNE.N    ??Key3_Read_4
+    198                Key3_rise=1;
+   \   0000004C   0x2001             MOVS     R0,#+1
+   \   0000004E   0x....             LDR.N    R1,??DataTable6_6
+   \   00000050   0x7008             STRB     R0,[R1, #+0]
+   \   00000052   0xE006             B.N      ??Key3_Read_1
+    199              else
+    200                Key3_risemask=0;
+   \                     ??Key3_Read_4: (+1)
+   \   00000054   0x2000             MOVS     R0,#+0
+   \   00000056   0x....             LDR.N    R1,??DataTable6_12
+   \   00000058   0x7008             STRB     R0,[R1, #+0]
+   \   0000005A   0xE002             B.N      ??Key3_Read_1
+    201            }
+    202            else
+    203              Key3_down=0;
+   \                     ??Key3_Read_3: (+1)
+   \   0000005C   0x2000             MOVS     R0,#+0
+   \   0000005E   0x....             LDR.N    R1,??DataTable6_11
+   \   00000060   0x7008             STRB     R0,[R1, #+0]
+    204          }
+   \                     ??Key3_Read_1: (+1)
+   \   00000062   0x4770             BX       LR               ;; return
+    205          
+    206          //============ some new functions ===============
+
+   \                                 In section .text, align 2, keep-with-next
+    207          void set_car_state()
+    208          {
+    209            if(SW4()==1)          car_state=0;
+   \                     set_car_state: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0xF3C0 0x10C0      UBFX     R0,R0,#+7,#+1
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xD003             BEQ.N    ??set_car_state_0
+   \   0000000C   0x2000             MOVS     R0,#+0
+   \   0000000E   0x....             LDR.N    R1,??DataTable6_17
+   \   00000010   0x7008             STRB     R0,[R1, #+0]
+   \   00000012   0xE012             B.N      ??set_car_state_1
+    210            else if(SW3()==1)     car_state=1;
+   \                     ??set_car_state_0: (+1)
+   \   00000014   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0xF3C0 0x1080      UBFX     R0,R0,#+6,#+1
+   \   0000001C   0x2800             CMP      R0,#+0
+   \   0000001E   0xD003             BEQ.N    ??set_car_state_2
+   \   00000020   0x2001             MOVS     R0,#+1
+   \   00000022   0x....             LDR.N    R1,??DataTable6_17
+   \   00000024   0x7008             STRB     R0,[R1, #+0]
+   \   00000026   0xE008             B.N      ??set_car_state_1
+    211            else if(SW3()==0)     car_state=2;
+   \                     ??set_car_state_2: (+1)
+   \   00000028   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000002A   0x6800             LDR      R0,[R0, #+0]
+   \   0000002C   0xF3C0 0x1080      UBFX     R0,R0,#+6,#+1
+   \   00000030   0x2800             CMP      R0,#+0
+   \   00000032   0xD102             BNE.N    ??set_car_state_1
+   \   00000034   0x2002             MOVS     R0,#+2
+   \   00000036   0x....             LDR.N    R1,??DataTable6_17
+   \   00000038   0x7008             STRB     R0,[R1, #+0]
+    212          }
+   \                     ??set_car_state_1: (+1)
+   \   0000003A   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+    213          void set_oled_menu()
+    214          {
+    215            if(SW1()==1 && SW2()==1) oled_menu=1;
+   \                     set_oled_menu: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xD008             BEQ.N    ??set_oled_menu_0
+   \   0000000C   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000000E   0x6800             LDR      R0,[R0, #+0]
+   \   00000010   0xF3C0 0x1040      UBFX     R0,R0,#+5,#+1
+   \   00000014   0x2800             CMP      R0,#+0
+   \   00000016   0xD002             BEQ.N    ??set_oled_menu_0
+   \   00000018   0x2001             MOVS     R0,#+1
+   \   0000001A   0x....             LDR.N    R1,??DataTable6_18
+   \   0000001C   0x7008             STRB     R0,[R1, #+0]
+    216            if(SW1()==1 && SW2()==0) oled_menu=1;
+   \                     ??set_oled_menu_0: (+1)
+   \   0000001E   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   00000020   0x6800             LDR      R0,[R0, #+0]
+   \   00000022   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   00000026   0x2800             CMP      R0,#+0
+   \   00000028   0xD008             BEQ.N    ??set_oled_menu_1
+   \   0000002A   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000002C   0x6800             LDR      R0,[R0, #+0]
+   \   0000002E   0xF3C0 0x1040      UBFX     R0,R0,#+5,#+1
+   \   00000032   0x2800             CMP      R0,#+0
+   \   00000034   0xD102             BNE.N    ??set_oled_menu_1
+   \   00000036   0x2001             MOVS     R0,#+1
+   \   00000038   0x....             LDR.N    R1,??DataTable6_18
+   \   0000003A   0x7008             STRB     R0,[R1, #+0]
+    217            if(SW1()==0 && SW2()==1) oled_menu=2;
+   \                     ??set_oled_menu_1: (+1)
+   \   0000003C   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000003E   0x6800             LDR      R0,[R0, #+0]
+   \   00000040   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   00000044   0x2800             CMP      R0,#+0
+   \   00000046   0xD108             BNE.N    ??set_oled_menu_2
+   \   00000048   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000004A   0x6800             LDR      R0,[R0, #+0]
+   \   0000004C   0xF3C0 0x1040      UBFX     R0,R0,#+5,#+1
+   \   00000050   0x2800             CMP      R0,#+0
+   \   00000052   0xD002             BEQ.N    ??set_oled_menu_2
+   \   00000054   0x2002             MOVS     R0,#+2
+   \   00000056   0x....             LDR.N    R1,??DataTable6_18
+   \   00000058   0x7008             STRB     R0,[R1, #+0]
+    218            if(SW1()==0 && SW2()==0) oled_menu=3;
+   \                     ??set_oled_menu_2: (+1)
+   \   0000005A   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   0000005C   0x6800             LDR      R0,[R0, #+0]
+   \   0000005E   0xF3C0 0x1000      UBFX     R0,R0,#+4,#+1
+   \   00000062   0x2800             CMP      R0,#+0
+   \   00000064   0xD108             BNE.N    ??set_oled_menu_3
+   \   00000066   0x....             LDR.N    R0,??DataTable6  ;; 0x400ff090
+   \   00000068   0x6800             LDR      R0,[R0, #+0]
+   \   0000006A   0xF3C0 0x1040      UBFX     R0,R0,#+5,#+1
+   \   0000006E   0x2800             CMP      R0,#+0
+   \   00000070   0xD102             BNE.N    ??set_oled_menu_3
+   \   00000072   0x2003             MOVS     R0,#+3
+   \   00000074   0x....             LDR.N    R1,??DataTable6_18
+   \   00000076   0x7008             STRB     R0,[R1, #+0]
+    219          
+    220          }
+   \                     ??set_oled_menu_3: (+1)
+   \   00000078   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6:
+   \   00000000   0x400FF090         DC32     0x400ff090
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_1:
+   \   00000000   0x........         DC32     ui_operation_shift
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_2:
+   \   00000000   0x........         DC32     speed_set
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_3:
+   \   00000000   0x........         DC32     ui_operation_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_4:
+   \   00000000   0x........         DC32     Key1_rise
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_5:
+   \   00000000   0x........         DC32     Key2_rise
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_6:
+   \   00000000   0x........         DC32     Key3_rise
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_7:
+   \   00000000   0x........         DC32     Key1_down
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_8:
+   \   00000000   0x........         DC32     Key1_risemask
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_9:
+   \   00000000   0x........         DC32     Key2_down
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_10:
+   \   00000000   0x........         DC32     Key2_risemask
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_11:
+   \   00000000   0x........         DC32     Key3_down
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_12:
+   \   00000000   0x........         DC32     Key3_risemask
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_13:
+   \   00000000   0x400FF010         DC32     0x400ff010
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_14:
+   \   00000000   0x........         DC32     Key1_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_15:
+   \   00000000   0x........         DC32     Key2_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_16:
+   \   00000000   0x........         DC32     Key3_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_17:
+   \   00000000   0x........         DC32     car_state
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable6_18:
+   \   00000000   0x........         DC32     oled_menu
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   Key1_Downspin_Func
+       0   Key1_Read
+       0   Key1_Rise_Func
+       0   Key2_Downspin_Func
+       0   Key2_Read
+       0   Key2_Rise_Func
+       8   Key3_Downspin_Func
+         8   -> Spin_Func
+       0   Key3_Read
+       0   Key3_Rise_Func
+       0   Spin_Func
+       8   UI_Operation_Service
+         8   -> Key1_Downspin_Func
+         8   -> Key1_Read
+         8   -> Key1_Rise_Func
+         8   -> Key2_Downspin_Func
+         8   -> Key2_Read
+         8   -> Key2_Rise_Func
+         8   -> Key3_Downspin_Func
+         8   -> Key3_Read
+         8   -> Key3_Rise_Func
+         8   -> Spin_Func
+       0   set_car_state
+       0   set_oled_menu
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable6
+       4  ??DataTable6_1
+       4  ??DataTable6_10
+       4  ??DataTable6_11
+       4  ??DataTable6_12
+       4  ??DataTable6_13
+       4  ??DataTable6_14
+       4  ??DataTable6_15
+       4  ??DataTable6_16
+       4  ??DataTable6_17
+       4  ??DataTable6_18
+       4  ??DataTable6_2
+       4  ??DataTable6_3
+       4  ??DataTable6_4
+       4  ??DataTable6_5
+       4  ??DataTable6_6
+       4  ??DataTable6_7
+       4  ??DataTable6_8
+       4  ??DataTable6_9
+      84  Key1_Downspin_Func
+      84  Key1_Read
+       2  Key1_Rise_Func
+       1  Key1_cnt
+       1  Key1_down
+       1  Key1_rise
+       1  Key1_risemask
+       2  Key2_Downspin_Func
+      84  Key2_Read
+       2  Key2_Rise_Func
+       1  Key2_cnt
+       1  Key2_down
+       1  Key2_rise
+       1  Key2_risemask
+       8  Key3_Downspin_Func
+     100  Key3_Read
+       2  Key3_Rise_Func
+       1  Key3_cnt
+       1  Key3_down
+       1  Key3_rise
+       1  Key3_risemask
+       2  Spin_Func
+     210  UI_Operation_Service
+       1  ch
+      60  set_car_state
+     122  set_oled_menu
+       2  ui_operation_cnt
+       2  ui_operation_shift
+
+ 
+  17 bytes in section .bss
+ 838 bytes in section .text
+ 
+ 838 bytes of CODE memory
+  17 bytes of DATA memory
+
+Errors: none
+Warnings: none
