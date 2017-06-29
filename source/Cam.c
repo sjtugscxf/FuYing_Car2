@@ -531,7 +531,7 @@ void PORTC_IRQHandler(){
         wavetime=wavetimef-PIT2_VAL();
         wavetimeus = wavetime / (g_bus_clock/1000000); //1us
         distance_tmp=wavetimeus*34/200;    //¾àÀëµ¥Î»ºÁÃ×
-        if(distance_tmp>4000||distance_tmp<30)  distance=4000;
+        if(distance_tmp>500)  {}
         else distance=distance_tmp;
     }
   }
