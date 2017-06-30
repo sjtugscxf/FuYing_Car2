@@ -32,10 +32,10 @@ int16 speed_set = 0;
 
 void PID_Init() 
 {
-  L.kp = 5;
+  L.kp = 12;
   L.ki = 2;
   L.kd = 0;
-  R.kp = 5;
+  R.kp = 12;
   R.ki = 2;
   R.kd = 0;
   
@@ -65,10 +65,10 @@ void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //Ç°½øµÄPID
   L->lastErr=L_err;
   R->lastErr=R_err;
   
-  if(L_pwm>700)  L_pwm=700;
-  if(R_pwm>700)  R_pwm=700;
-  if(L_pwm<-700)  L_pwm=-700;
-  if(R_pwm<-700)  R_pwm=-700;
+  if(L_pwm>800)  L_pwm=800;
+  if(R_pwm>800)  R_pwm=800;
+  if(L_pwm<-800)  L_pwm=-800;
+  if(R_pwm<-800)  R_pwm=-800;
   MotorL_Output((int)(L_pwm)); 
   MotorR_Output((int)(-R_pwm));
 }
