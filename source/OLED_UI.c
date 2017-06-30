@@ -100,7 +100,7 @@ void displayParameters()//menu==1
       {"road_state",road_state},
       {"valid_row",valid_row}, 
       {"battery",battery},      {"pit0 time",pit0_time},  {"pit1 time",pit1_time},  
-      {"distance",distance}, 
+      {"distance",distance}, {"waveState",waveState}, 
       {"servo",ServoOut},       {"mid_ave",mid_ave},       
       {"car_state",car_state},
       {"tacho0",tacho0},{"tacho1",tacho1},
