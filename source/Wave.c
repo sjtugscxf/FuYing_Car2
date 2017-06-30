@@ -9,6 +9,9 @@ U32 wavetimeus;
 int distance;
 int distance_tmp;
 int distance_last;
+int distance_buffer[5];
+int distance_ave;
+int distance_diff;
 
 WaveState waveState;
 uint8 wave_lost_cnt = 0;

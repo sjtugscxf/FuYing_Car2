@@ -555,8 +555,12 @@ void PORTC_IRQHandler(){
                }
              break;
            
-           case LOST ;
-              
+            case LOST :
+              for(int i = 0;i<4;++i)
+              {
+                distance_buffer[i] = distance_buffer[i+1];
+              }
+              distance_buffer[4] = distance_tmp;
               break;
               
             default:
