@@ -24,6 +24,7 @@ void Wave_Init()
   PTC->PDDR |= (0x1<<1);
   NVIC_EnableIRQ(PORTC_IRQn);
   NVIC_SetPriority(PORTC_IRQn, NVIC_EncodePriority(NVIC_GROUP, 2, 1)); //PORTC中断服务程序在cam.c中
+  distance = distance_last = 300;
 }
 
 

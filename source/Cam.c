@@ -490,6 +490,16 @@ void Cam_B(){
       else{
         motor_L=motor_R=MIN_SPEED;
       }
+      if(distance <= 250)
+      {
+        motor_L *= 0.7;
+        motor_R *= 0.7;
+      }
+      if(distance >= 500)
+      {
+        motor_L *= 1.1;
+        motor_R *= 1.1;
+      }
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
@@ -530,9 +540,13 @@ void PORTC_IRQHandler(){
     {
         wavetime=wavetimef-PIT2_VAL();
         wavetimeus = wavetime / (g_bus_clock/1000000); //1us
-        distance_tmp=wavetimeus*34/200;    //距离单位毫米
-        if(distance_tmp>500)  {}
+        distance_tmp=wavetimeus*34/200;    //距离单位//毫米
+        if(distance_tmp - distance_last >= 80)
+          distance_tmp = distance_last;
+        if(distance_tmp > 500)
+          distance = 500;
         else distance=distance_tmp;
+        distance_last = distance;
     }
   }
 }
