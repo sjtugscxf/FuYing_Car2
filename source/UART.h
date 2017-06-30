@@ -2,6 +2,9 @@
 #define UART_H
 
 
+// ------ global ------
+extern u8 get_char;
+
 // ====== APIs ======
 
 // ---- Ayano's Format ----
