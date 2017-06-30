@@ -541,15 +541,28 @@ void PORTC_IRQHandler(){
     }
     else 
     {
-        wave_lost_cnt = 0;
         wavetime=wavetimef-PIT2_VAL();
         wavetimeus = wavetime / (g_bus_clock/1000000); //1us
         distance_tmp=wavetimeus*34/200;    //æ‡¿Îµ•Œª//∫¡√◊
-        if((distance_tmp - distance_last) <= 80)
-          distance = distance_tmp;
-     //   if(distance_tmp > 500)
-     //     distance = 500;
-     //   else distance=distance_tmp;
+        
+        switch(waveState)
+        {
+           case STABLE :
+             if( ((distance_tmp - distance_last) <= 80)&&((distance_tmp - distance_last) >= -80) )
+              {
+                distance = distance_tmp;
+                wave_lost_cnt = 0;
+               }
+             break;
+           
+           case LOST ;
+              
+              break;
+              
+            default:
+              break;
+        }
+        
         distance_last = distance;
     }
   }
