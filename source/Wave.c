@@ -6,9 +6,9 @@
 U32 wavetimef;
 U32 wavetime;
 U32 wavetimeus;
-U32 distance;
-U32 distance_tmp;
-U32 distance_last;
+int distance;
+int distance_tmp;
+int distance_last;
 
 void StartUltrasound(u8 x){
   if(x)
