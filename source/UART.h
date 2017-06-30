@@ -3,7 +3,7 @@
 
 
 // ------ global ------
-extern u8 get_char;
+extern u8 get_num;
 
 // ====== APIs ======
 

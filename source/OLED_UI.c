@@ -105,7 +105,7 @@ void displayParameters()//menu==1
       {"car_state",car_state},
       {"tacho0",tacho0},{"tacho1",tacho1},
       {"motor_L",motor_L},{"motor_R",motor_R},
-      {"receive_char",get_char}
+      {"receive_char",get_num}
 
       //{"C.r",C.r},{"C.sign",C.sign}
     },

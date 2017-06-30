@@ -7,7 +7,7 @@ License : MIT
 #include "includes.h"
 
 // ------ global ------
-u8 get_char;
+u8 get_num;
 
 
 // === Receive ISR ===
@@ -29,7 +29,7 @@ void UART3_IRQHandler(void){
    
    //--------------------------------------
    if(tmp >= '0' && tmp <= '9')
-     get_char = tmp;
+     get_num = tmp;
    
 }
 
