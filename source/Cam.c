@@ -489,17 +489,21 @@ void Cam_B(){
       }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
       else{
         motor_L=motor_R=MIN_SPEED;
-      }/*
-      if(distance <= 250)
-      {
-        motor_L *= 0.8;
-        motor_R *= 0.8;
       }
-      if(distance >= 500)
+      
+      if(waveState == STABLE)
       {
-        motor_L *= 1.1;
-        motor_R *= 1.1;
-      }*/
+        if(distance <= 250)
+        {
+          motor_L *= 0.8;
+          motor_R *= 0.8;
+        }
+        if(distance >= 350)
+        {
+          motor_L *= 1.1;
+          motor_R *= 1.1;
+        }
+      }
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
