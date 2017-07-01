@@ -575,7 +575,7 @@ void PORTC_IRQHandler(){
                 distance_diff += abs(distance_buffer[i]-distance_ave);
               }
               
-              if( distance_diff<20 ) 
+              if( distance_diff<20 && distance_ave<800) 
               {
                 distance = distance_ave;
                 distance_last = distance;
