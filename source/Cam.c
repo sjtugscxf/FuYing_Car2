@@ -11,7 +11,7 @@ License : MIT
 // ---- Global ----
 u8 cam_buffer_safe[BLACK_WIDTH*2];
 u8 cam_buffer[IMG_ROWS][IMG_COLS+BLACK_WIDTH];   //64*155，把黑的部分舍去是59*128
-Road road_B[ROAD_SIZE];//由近及远存放
+Road road_B[55];//由近及远存放
 float mid_ave;//road中点加权后的值
 //float  weight[10] = {1,1,1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744}; //2.296};//, 1.454};//上一次的权值
 //float weight[10] = {1.04,1.14,1.41,2.01,3.03,4.35,5.52,6,5.52,4.35};//待测试
@@ -30,11 +30,21 @@ u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
 float motor_L=MIN_SPEED;
 float motor_R=MIN_SPEED;
 
+//--------------------- added by Joshua ----------------------
+Order car_order = LEADER;
+
+int valid_rows;
+u8 threshold;
+
+u8 crossroad_start, crossroad_end;
+u8 cross_found;
+//------------------------------------------------------------
+
 //OLED调参
 int debug_speed=0;
 PIDInfo debug_dir;
 int margin=30;
-circle C;
+//circle C;
 int c1=15, c2=10, c3=5;
 
 //=====================
@@ -152,7 +162,7 @@ int constrainInt(int lowerBoundary, int upperBoundary, int input)
 		return input;
 }
 
-circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
+/*circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
 {
   double a,b,c,d,e,f;
   double r,x,y;
@@ -172,7 +182,7 @@ circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
   bool sign = (x>0)?1:0;
   circle tmp = {r,sign};
   return tmp;
-}
+}*/
 
 bool is_stop_line(int target_line)//目测并不有效……
 {
@@ -191,14 +201,16 @@ double getSlope_(int x1, int y1, int x2, int y2)
 
 void Cam_B_Init()//初始化Cam_B
 {
-  int i=0;
+  /*int i=0;
   for(i=0;i<ROAD_SIZE;i++)
   {
     road_B[i].left=CAM_WID/2;
     road_B[i].right=CAM_WID/2+2;
     road_B[i].mid=CAM_WID/2+1;
-  }
-  mid_ave=CAM_WID/2+1;
+  }*/
+  road_B[0].mid = CAM_WID / 2 + 1;
+  mid_ave = CAM_WID / 2 + 1;
+  
   //以下为road->mid加权值weight的初始化，由近到远
   //方案一：分段函数
   /*for(i=0;i<3;i++)
@@ -234,8 +246,8 @@ void Cam_B_Init()//初始化Cam_B
     }*/
 
 //test
-double theta,theta_d,slope,test;
-double x,y;
+//double theta,theta_d,slope,test;
+//double x,y;
 
   //第一次进化版巡线程序
 void Cam_B(){
@@ -312,27 +324,80 @@ void Cam_B(){
       }
     }
     */
+    
+    //动态阈值
+    threshold = 0;
+    for(u8 k = 0; k < CAM_WID; k++){
+      threshold = threshold + (cam_buffer[20][k] + cam_buffer[35][k] + cam_buffer[50][k]) / 3;
+    }
+    threshold = threshold / CAM_WID + 5;
     //横向扫描方案
-    for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
+    
+    cross_found = 0;
+    valid_rows = 54;
+    for(int j = 0;j < 55; j++)//从下向上扫描
     {
       int i;
       //left
       for (i = road_B[j].mid; i > 0; i--){
-        if (cam_buffer[60-CAM_STEP*j][i] < thr)
+        if (cam_buffer[62-j][i] < thr)
           break;
         }
       road_B[j].left = i;
       //right
       for (i = road_B[j].mid; i < CAM_WID; i++){
-        if (cam_buffer[60-CAM_STEP*j][i] < thr)
+        if (cam_buffer[62-j][i] < thr)
           break;
         }
       road_B[j].right = i;
       //mid
       road_B[j].mid = (road_B[j].left + road_B[j].right)/2;//分别计算并存储25行的mid
+      
+      if(road_B[j].left == road_B[j].right)//看到路的尽头
+      {
+        valid_rows = j - 1;
+        break;
+      }
+      
+      if(road_B[j].left == 0 && road_B[j].right == CAM_WID)//两边都没有扫到边线，判断为十字路口
+      {
+        if(cross_found == 0)
+        {
+          cross_found = 1;
+          crossroad_start = j;
+        }
+      }
+      
       //store
-      if(j<(ROAD_SIZE-1))
-        road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
+      if(j < (55 - 1))
+      {
+        if(cross_found == 1)
+        {
+          u8 tmp_i = 0;
+          while(1)//可能两边都有白点
+          {
+            if(cam_buffer[62-j-1][CAM_WID/2 - tmp_i] > thr)
+            {
+              road_B[j+1].mid = CAM_WID/2 - tmp_i;
+              break;
+            }
+            if(cam_buffer[62-j-1][CAM_WID/2 + tmp_i] > thr)
+            {
+              road_B[j+1].mid = CAM_WID/2 + tmp_i;
+              break;
+            }
+          }
+        }
+        else road_B[j+1].mid = road_B[j].mid;//后一行从前一行中点开始扫描 
+      }
+
+      if(j > 0)
+        road_B[j].slope_mid = road_B[j].mid - road_B[j-1].mid;
+      /*if(j > 1)
+      {
+        road_B[j].curvatureL = road_B[j].left - 2 * road_B[j-1].left + road_B[j-2].left;
+        road_B[j].curvatureR = road_B[j].right - 2 * road_B[j-1].right + road_B[j-2].right;
+      }*/
     }
       
     //===========================区分前方道路类型//需要设置一个优先级！！！
@@ -352,7 +417,7 @@ void Cam_B(){
       road_state=2;//弯道
     else road_state=1;//直道
     //detect the black hole————————————————————
-    int left=0,right=0;
+    /*int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
     {
       //left
@@ -380,6 +445,8 @@ void Cam_B(){
     }
     if(left>=1 && right>=1)
       road_state=3;//前方环岛
+    */
+    
     //detect the obstacle————————————————————
   /*  if((road_B[ROAD_OBST_ROW].right-road_B[ROAD_OBST_ROW].left)<OBSTACLE_THR)
     {
@@ -439,10 +506,10 @@ void Cam_B(){
     
     //================================对十行mid加权：
     float weight_sum=0;
-    for(int j=0;j<10;j++)
+    for(int j=1;j<11;j++)
     {
-      mid_ave += road_B[j].mid * weight[road_state][j];
-      weight_sum += weight[road_state][j];
+      mid_ave += road_B[2*j].mid * weight[road_state][j-1];
+      weight_sum += weight[road_state][j-1];
     }
     mid_ave/=weight_sum;
     

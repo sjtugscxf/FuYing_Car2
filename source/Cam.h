@@ -56,13 +56,15 @@ typedef struct {
   int left;
   int right;
   int mid;
+  int slope_mid;
+  //int curvatureL,curvatureR;
  // double slope_;//slpoe_=dx/dy
 }Road;//由近及远存放
-typedef struct {
+/*typedef struct {
   float r;
   bool sign;
-}circle;
-extern Road road_B[ROAD_SIZE];
+}circle;*/
+extern Road road_B[55];
 extern float mid_ave;//road中点加权后的值
 extern float weight[4][10];//road中点权值
 extern int valid_row;//有效行位置，大小为road_B[]下标
@@ -76,13 +78,13 @@ extern float motor_R;
 extern int debug_speed;
 extern PIDInfo debug_dir;
 extern int margin;
-extern circle C;
+//extern circle C;
 extern int c1, c2, c3;
 
 void Cam_B_Init();//初始化Cam_B
 float constrain(float lowerBoundary, float upperBoundary, float input);//控制上下限的函数
 int constrainInt(int lowerBoundary, int upperBoundary, int input);//控制上下限的函数(integer专用)
-circle getR(float x1, float y1, float x2, float y2, float x3, float y3);//得到前方曲率圆
+//circle getR(float x1, float y1, float x2, float y2, float x3, float y3);//得到前方曲率圆
 bool is_stop_line(int target_line);//判断是否为终止行/起点行
 double getSlope_(int x1, int y1, int x2, int y2);//得到斜率的倒数
 //——————透视变换
@@ -98,5 +100,18 @@ void getNewBuffer();*/
 //test
 extern double theta;
 extern double x,y;
+
+
+//---------------------- added by Joshua -----------------------
+typedef enum {
+	LEADER,
+        FOLLOWER
+} Order;//用于区别前车还是后车
+
+extern Order car_order;
+
+extern int valid_rows;
+extern u8 threshold;
+//--------------------------------------------------------------
 
 #endif
