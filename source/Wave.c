@@ -12,6 +12,7 @@ int distance_last;
 int distance_buffer[5];
 int distance_ave;
 int distance_diff;
+int distance_sum;
 
 WaveState waveState;
 uint8 wave_lost_cnt = 0;

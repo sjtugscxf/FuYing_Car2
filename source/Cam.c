@@ -561,6 +561,27 @@ void PORTC_IRQHandler(){
                 distance_buffer[i] = distance_buffer[i+1];
               }
               distance_buffer[4] = distance_tmp;
+              
+              distance_sum = 0;
+              for(int i = 0;i<5;++i)
+              {
+                distance_sum += distance_buffer[i];
+              }
+              distance_ave = distance_sum/5;
+              
+              distance_diff = 0;
+              for(int i = 0;i<5;++i)
+              {
+                distance_diff += abs(distance_buffer[i]-distance_ave);
+              }
+              
+              if( distance_diff<20 ) 
+              {
+                distance = distance_ave;
+                distance_last = distance;
+                waveState = STABLE;
+              }
+              
               break;
               
             default:

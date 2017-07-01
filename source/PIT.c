@@ -117,8 +117,8 @@ void PIT1_IRQHandler(){
   
   UI_SystemInfo();
   
-  if(wave_lost_cnt<10) wave_lost_cnt++;
-  if(wave_lost_cnt == 10) waveState = LOST;
+  if(wave_lost_cnt<5) wave_lost_cnt++;
+  if(wave_lost_cnt == 5) waveState = LOST;
   
   //------------ Other -------------
   
