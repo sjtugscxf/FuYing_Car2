@@ -493,12 +493,12 @@ void Cam_B(){
       
       if(waveState == STABLE)
       {
-        if(distance <= 250)
+        if(distance <= 400)
         {
           motor_L *= 0.8;
           motor_R *= 0.8;
         }
-        if(distance >= 350)
+        if(distance >= 600)
         {
           motor_L *= 1.1;
           motor_R *= 1.1;
