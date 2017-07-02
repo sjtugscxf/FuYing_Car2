@@ -26,6 +26,7 @@ u8 remote_state = 0;//远程控制
 u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
                   //3 4 状态下权重拉近
                   //2 状态下减速
+bool longstraight = 0;
 
 float motor_L=MIN_SPEED;
 float motor_R=MIN_SPEED;
@@ -42,7 +43,7 @@ int CAM_HOLE_ROW=27; //用来向两边扫描检测黑洞·环岛的cam_buffer行位置
 int ROAD_OBST_ROW=10; //用来检测障碍物的road_B行位置//不能太远，也不能太近
 int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 
-
+CarRole carRole;
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
 /*
@@ -199,6 +200,8 @@ void Cam_B_Init()//初始化Cam_B
     road_B[i].mid=CAM_WID/2+1;
   }
   mid_ave=CAM_WID/2+1;
+  
+  carRole = LEADER;
   //以下为road->mid加权值weight的初始化，由近到远
   //方案一：分段函数
   /*for(i=0;i<3;i++)
@@ -237,8 +240,8 @@ void Cam_B_Init()//初始化Cam_B
 double theta,theta_d,slope,test;
 double x,y;
 
-  //第一次进化版巡线程序
-void Cam_B(){
+  //第一次进化版巡线程序（前车）
+void Cam_Leader(){
   
     //===================变量定义====================
   
@@ -351,6 +354,7 @@ void Cam_B(){
     if(valid_row<valid_row_thr)
       road_state=2;//弯道
     else road_state=1;//直道
+    
     //detect the black hole————————————————————
     int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
@@ -450,13 +454,15 @@ void Cam_B(){
     static float err;
     static float last_err;
     err = mid_ave  - CAM_WID / 2;
-
+    if(longstraight) err = mid_ave  - (CAM_WID / 2-SIDE_WID);
+    
     dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
     //if(dir>0)
       //dir*=1.2;//修正舵机左右不对称的问题//不可删
     last_err = err;
     
     dir=constrainInt(-250,250,dir)-55;
+      
     if(car_state!=0)
       Servo_Output(dir);
     else   
@@ -504,6 +510,9 @@ void Cam_B(){
           motor_R *= 1.1;
         }
       }
+      
+      if(longstraight) motor_L=motor_R=WAIT_SPEED;
+      
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
@@ -517,7 +526,291 @@ void Cam_B(){
     
 }
 
+ //第一次进化版巡线程序（后车）
+void Cam_Follower(){
+  
+    //===================变量定义====================
+  
+    float max_speed=MAX_SPEED+debug_speed;//最大速度
+    static int dir;//舵机输出
+    
+    //================================透视变化
+    //getMatrix(0.785398,1.0,1.0,1000);
+   // linearization();
+   // matrixMultiply();
+   // getNewBuffer();
+ 
+    //==================================获取road_B的left right mid 坐标和slope_
+    //斜率方案
+    /*
+    for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
+    {
+      //double x,y;
+      slope=road_B[j].slope_;
+      theta=atan(road_B[j].slope_);//double theta=atan(road_B[j].slope_);
+      test=sin(theta);
+      test=cos(theta);
+      test=tan(theta);
+      theta_d=theta*180/PI;
+      test=sin(theta_d);//以上用来检测atan函数以及sin函数使用的是否正确，debug模式下
+      //left
+      x=road_B[j].mid[0];
+      y=road_B[j].mid[1];
+      while(x>=0 && x<=CAM_WID && y<=CAM_NEAR && y>=CAM_FAR)
+      {
+        if(cam_buffer[(int)y][(int)x]<thr)
+          break;
+        else
+        {
+          x-=cos(theta);
+          y-=sin(theta);
+        }
+      }
+      road_B[j].left[0]=constrain(0,CAM_WID,x);
+      road_B[j].left[1]=constrain(CAM_FAR,CAM_NEAR,y);
 
+      //right
+      x=road_B[j].mid[0];
+      y=road_B[j].mid[1];
+      while(x>=0 && x<=CAM_WID && y<=CAM_NEAR && y>=CAM_FAR)
+      {
+        if(cam_buffer[(int)y][(int)x]<thr)
+          break;
+        else
+        {
+          x+=cos(theta);
+          y+=sin(theta);
+        }
+      }
+      road_B[j].right[0]=constrain(0,CAM_WID,x);
+      road_B[j].right[1]=constrain(CAM_FAR,CAM_NEAR,y);
+      //mid
+      road_B[j].mid[0] = (road_B[j].left[0] + road_B[j].right[0])/2;
+      road_B[j].mid[1] = (road_B[j].left[1] + road_B[j].right[1])/2;//分别计算并存储25行的mid
+      //slope
+      if(j>0)
+      {
+        road_B[j].slope_=getSlope_(road_B[j-1].mid[0],-road_B[j-1].mid[1],road_B[j].mid[0],-road_B[j].mid[1]);
+        road_B[j+1].slope_=road_B[j].slope_;//用以预测下一个mid
+      }
+      //mid of the next road_B[]
+      if(j<(ROAD_SIZE-1))
+      {
+        road_B[j+1].mid[0]=road_B[j].mid[0]+CAM_STEP*sin(theta);
+        road_B[j+1].mid[1]=road_B[j].mid[1]-CAM_STEP*cos(theta);
+      }
+    }
+    */
+    //横向扫描方案
+    for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
+    {
+      int i;
+      //left
+      for (i = road_B[j].mid; i > 0; i--){
+        if (cam_buffer[60-CAM_STEP*j][i] < thr)
+          break;
+        }
+      road_B[j].left = i;
+      //right
+      for (i = road_B[j].mid; i < CAM_WID; i++){
+        if (cam_buffer[60-CAM_STEP*j][i] < thr)
+          break;
+        }
+      road_B[j].right = i;
+      //mid
+      road_B[j].mid = (road_B[j].left + road_B[j].right)/2;//分别计算并存储25行的mid
+      //store
+      if(j<(ROAD_SIZE-1))
+        road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
+    }
+      
+    //===========================区分前方道路类型//需要设置一个优先级！！！
+    static int mid_ave3;
+    bool flag_valid_row=0;
+    for(int i_valid=0;i_valid<(ROAD_SIZE-3) && flag_valid_row==0;i_valid++)
+    {
+      mid_ave3 = (road_B[i_valid].mid + road_B[i_valid+1].mid + road_B[i_valid+2].mid)/3;
+      if(mid_ave3<margin||mid_ave3>(CAM_WID-margin))
+      {
+        flag_valid_row=1;
+        valid_row=i_valid;
+      }
+      else valid_row=ROAD_SIZE-3;
+    }
+    if(valid_row<valid_row_thr)
+      road_state=2;//弯道
+    else road_state=1;//直道
+    
+    //detect the black hole————————————————————
+    int left=0,right=0;
+    if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
+    {
+      //left
+      int i=CAM_WID/2-1;
+      while(i>0){
+        if(left==0 && cam_buffer[CAM_HOLE_ROW][i]>thr){//是否考虑取平均防跳变？
+          left++;
+        }
+        else if(left==1 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          left++;
+        }
+        i--;
+      }
+      //right
+      i=CAM_WID/2+1;
+      while(i<CAM_WID){
+        if(right==0 && cam_buffer[CAM_HOLE_ROW][i]>thr){//是否考虑取平均防跳变？
+          right++;
+        }
+        else if(right==1 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          right++;
+        }
+        i++;
+      }
+    }
+    if(left>=1 && right>=1)
+      road_state=3;//前方环岛
+    //detect the obstacle————————————————————
+  /*  if((road_B[ROAD_OBST_ROW].right-road_B[ROAD_OBST_ROW].left)<OBSTACLE_THR)
+    {
+      int i=road_B[ROAD_OBST_ROW].mid;
+      left=0;
+      right=0;
+      //left
+      while(i>0){
+        if(left==0 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          left++;
+        }
+        else if(left==1 && cam_buffer[CAM_HOLE_ROW][i]>thr){
+          left++;
+        }
+        else if(left==2 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          left++;
+        }
+        i--;
+      }
+      //right
+      while(i<CAM_WID){
+        if(right==0 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          right++;
+        }
+        else if(right==1 && cam_buffer[CAM_HOLE_ROW][i]>thr){
+          right++;
+        }
+        else if(right==2 && cam_buffer[CAM_HOLE_ROW][i]<thr){
+          right++;
+        }
+        i++;
+      }
+      if(left>=3 || right>=3)
+        road_state=4;
+    }*/
+    
+  /*  //=============================根据前方道路类型，选择不同的权值weight
+     switch(road_state)
+    {
+      case 1: 
+        for(int i=0;i<10;i++)weight[i]=1;//均匀分布的权值
+        break;
+      case 2:
+        max_speed=MAX_SPEED-5;//减多少未定，取决于弯道最高速度
+        float weight2[10] = {1.00,1.03,1.14,1.54,2.56,4.29,6.16,7.00,6.16,4.29};
+        for(int i;i<10;i++) weight[i] = weight2[i];//正态分布的权值
+        break;
+      case 3:
+        max_speed=MAX_SPEED-5;
+        float  weight3[10] = {1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744, 2.296, 1.454};//未确定
+        for(int i;i<10;i++) weight[i] = weight2[i];
+        break;
+      case 4:
+        break;
+      default:break;
+    }*/
+    
+    //================================对十行mid加权：
+    float weight_sum=0;
+    for(int j=0;j<10;j++)
+    {
+      mid_ave += road_B[j].mid * weight[road_state][j];
+      weight_sum += weight[road_state][j];
+    }
+    mid_ave/=weight_sum;
+    
+    //=================================舵机的PD控制
+    static float err;
+    static float last_err;
+    err = mid_ave  - CAM_WID / 2;
+    if(longstraight) err = mid_ave  - (CAM_WID / 2-SIDE_WID);
+    
+    dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
+    //if(dir>0)
+      //dir*=1.2;//修正舵机左右不对称的问题//不可删
+    last_err = err;
+    
+    dir=constrainInt(-250,250,dir)-55;
+      
+    if(car_state!=0)
+      Servo_Output(dir);
+    else   
+      Servo_Output(0);
+    
+    
+    
+    //==============速度控制=================
+    //PWM以dir为参考，前期分级控制弯道速度；中期分段线性控速；后期找到合适参数的时候，再进行拟合——PWM关于dir的函数
+    float range=max_speed-MIN_SPEED;//速度范围大小 
+    if(car_state==2 ){
+      //分段线性控速
+      if(abs(dir)<50 ){//&& valid_row>valid_row_thr
+        motor_L=motor_R=max_speed;
+      }
+      else if(abs(dir)<95){
+        motor_L=motor_R=max_speed-0.33*range*(abs(dir)-50)/45;
+        if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.9);//右转
+        else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
+      }
+      else if(abs(dir)<185){    
+        motor_L=motor_R=max_speed-0.33*range-0.33*range*(abs(dir)-95)/90;
+        if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
+        else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
+      }
+      else if(abs(dir)<230){
+        motor_L=motor_R=max_speed-0.66*range-0.33*range*(abs(dir)-185)/45;
+        if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
+        else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
+      }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
+      else{
+        motor_L=motor_R=MIN_SPEED;
+      }
+      
+      if(waveState == STABLE)
+      {
+        if(distance <= 400)
+        {
+          motor_L *= 0.8;
+          motor_R *= 0.8;
+        }
+        if(distance >= 600)
+        {
+          motor_L *= 1.1;
+          motor_R *= 1.1;
+        }
+      }
+      
+      if(longstraight) motor_L=motor_R=WAIT_SPEED;
+      
+      PWM(motor_L, motor_R, &L, &R);               //后轮速度
+    }
+   else
+   {
+     MotorL_Output(0); 
+     MotorR_Output(0);
+   }
+    
+    //方案二//暂时放弃
+    //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);
+    
+}
 
 
 // ====== Basic Drivers ======
