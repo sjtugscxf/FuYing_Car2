@@ -56,7 +56,7 @@ typedef struct {
   int left;
   int right;
   int mid;
-  int slope_mid;
+  //int slope_mid;
   //int curvatureL,curvatureR;
  // double slope_;//slpoe_=dx/dy
 }Road;//由近及远存放
@@ -112,6 +112,7 @@ extern Order car_order;
 
 extern int valid_rows;
 extern u8 threshold;
+extern u8 long_straight;
 //--------------------------------------------------------------
 
 #endif

@@ -38,6 +38,7 @@ u8 threshold;
 
 u8 crossroad_start, crossroad_end;
 u8 cross_found;
+u8 long_straight = 0;//0 long straight not found; 1 long straight found
 //------------------------------------------------------------
 
 //OLED调参
@@ -386,13 +387,14 @@ void Cam_B(){
               road_B[j+1].mid = CAM_WID/2 + tmp_i;
               break;
             }
+            tmp_i++;
           }
         }
         else road_B[j+1].mid = road_B[j].mid;//后一行从前一行中点开始扫描 
       }
 
-      if(j > 0)
-        road_B[j].slope_mid = road_B[j].mid - road_B[j-1].mid;
+      /*if(j > 0)
+        road_B[j].slope_mid = road_B[j].mid - road_B[j-1].mid;*/
       /*if(j > 1)
       {
         road_B[j].curvatureL = road_B[j].left - 2 * road_B[j-1].left + road_B[j-2].left;
@@ -401,7 +403,7 @@ void Cam_B(){
     }
       
     //===========================区分前方道路类型//需要设置一个优先级！！！
-    static int mid_ave3;
+    /*static int mid_ave3;
     bool flag_valid_row=0;
     for(int i_valid=0;i_valid<(ROAD_SIZE-3) && flag_valid_row==0;i_valid++)
     {
@@ -415,7 +417,29 @@ void Cam_B(){
     }
     if(valid_row<valid_row_thr)
       road_state=2;//弯道
-    else road_state=1;//直道
+    else road_state=1;//直道*/
+    
+    if(valid_rows > 35)
+    {
+      int slope1 = road_B[16].mid - road_B[2].mid;
+      int slope2 = road_B[24].mid - road_B[8].mid;
+      int slope3 = road_B[33].mid - road_B[17].mid;
+      int slope_ave = (slope1 + slope2 + slope3) / 3;
+      if((abs(slope1 - slope_ave) + abs(slope2 - slope_ave) + abs(slope3 - slope_ave)) < 4)
+      {
+        long_straight = 1;
+        road_state = 1;
+      }
+    }
+    else if(valid_rows > 15)
+    {
+      if(abs((road_B[10].mid - road[4].mid) - (road_B[7].mid - road_B[1].mid)) < 3)
+        road_state = 1;
+      else road_state = 2;
+    }
+    else
+      road_state = 2;
+    
     //detect the black hole————————————————————
     /*int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
@@ -506,6 +530,7 @@ void Cam_B(){
     
     //================================对十行mid加权：
     float weight_sum=0;
+    if(
     for(int j=1;j<11;j++)
     {
       mid_ave += road_B[2*j].mid * weight[road_state][j-1];
@@ -526,7 +551,7 @@ void Cam_B(){
     dir=constrainInt(-250,250,dir)-55;
     if(car_state!=0)
       Servo_Output(dir);
-    else   
+    else
       Servo_Output(0);
     
     
