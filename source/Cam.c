@@ -70,6 +70,8 @@ int c1=15, c2=10, c3=5;
 int ROAD_OBST_ROW=10; //用来检测障碍物的road_B行位置//不能太远，也不能太近
 int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 
+//准备超车
+bool prepare_overtake = 0;
 
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
@@ -831,7 +833,9 @@ void Cam_B(){
     //=================================舵机的PD控制
     static float err;
     static float last_err;
-    err = mid_ave  - CAM_WID / 2;
+    
+    if(prepare_overtake) err = mid_ave  - (CAM_WID / 2 - 20);
+    else err = mid_ave  - CAM_WID / 2 ;
 
     dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
     //if(dir>0)
@@ -877,8 +881,8 @@ void Cam_B(){
       {
         if(distance <= 400)
         {
-          motor_L *= 0.8;
-          motor_R *= 0.8;
+          motor_L *= 0.6;
+          motor_R *= 0.6;
         }
         if(distance >= 600)
         {

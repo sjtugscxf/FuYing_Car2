@@ -39,7 +39,7 @@ void Cam_Init();
 #define ROAD_WID 30//道路宽度，未知，需要在透视变换后使用、、、、、、、、、、
 #define Dir_Kp 4    //舵机比例控制参数
 #define Dir_Kd 3  //舵机微分控制参数
-#define MAX_SPEED 26 //直道最大速度/////////////////////////26为现在的极限
+#define MAX_SPEED 32 //直道最大速度/////////////////////////26为现在的极限
 #define MIN_SPEED 18 //弯道最大速度////////////////////////不确定
 #define ROAD_SIZE 25 //利用的摄像头数据行数
 #define WEIGHT_SIZE 10 //实际加权并控制舵机的行数
@@ -119,5 +119,8 @@ extern int road_width_thr;
 #define DEPTH 5                //初步设为5层缓冲
 extern int left[DEPTH][ROAD_SIZE];
 extern int right[DEPTH][ROAD_SIZE];
+
+//准备超车
+extern bool prepare_overtake;
 
 #endif

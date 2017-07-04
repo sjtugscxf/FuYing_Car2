@@ -18,11 +18,13 @@ void UART3_IRQHandler(void){
      remote_state = 3;
      UART_SendString("turn right");//
    }else if (tmp == 'w'){
-     remote_state = 1;
-     UART_SendString("go ahead");
+     //remote_state = 1;
+     //UART_SendString("go ahead");
+     prepare_overtake = 1;
    }else if (tmp == 's'){
-     remote_state = 0;
-     UART_SendString("stop");
+     //remote_state = 0;
+     //UART_SendString("stop");
+      prepare_overtake = 0;
    }
 }
 
