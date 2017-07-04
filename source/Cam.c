@@ -56,7 +56,7 @@ int jump[2][2];//存拐点坐标 0左 1右 0-x 1-y
 bool flag_left_jump=0,flag_right_jump=0;
 //Hole hole;
 
-/停车处理=======================
+//停车处理=======================
 bool flag_stop=0;
 int stop_time=2000;
 
@@ -877,7 +877,9 @@ void Cam_B(){
     //==============速度控制=================
     //PWM以dir为参考，前期分级控制弯道速度；中期分段线性控速；后期找到合适参数的时候，再进行拟合——PWM关于dir的函数
     float range=max_speed-MIN_SPEED;//速度范围大小 
-    if(car_state==2 ){
+    if(flag_stop==1)
+    	PWM(0,0,&L,&R);
+	else if(car_state==2 ){
       //分段线性控速
       if(abs(dir)<50 ){//&& valid_row>valid_row_thr
         motor_L=motor_R=max_speed;
