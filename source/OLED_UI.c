@@ -104,7 +104,12 @@ void displayParameters()//menu==1
       {"servo",ServoOut},       {"mid_ave",mid_ave},       
       {"car_state",car_state},
       {"tacho0",tacho0},{"tacho1",tacho1},
-      {"motor_L",motor_L},{"motor_R",motor_R}
+      {"motor_L",motor_L},{"motor_R",motor_R},
+      {"long_straight",long_straight},
+      {"slope_diff", slope_diff},
+      {"curv_diff", curv_diff},
+      {"row_turn", row_turn_after_straight},
+      {"cross_found", cross_found}
 
       //{"C.r",C.r},{"C.sign",C.sign}
     },

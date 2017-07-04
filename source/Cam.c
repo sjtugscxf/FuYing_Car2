@@ -436,10 +436,10 @@ void Cam_B(){
         curvatureR[j-2] = road_B[j].right - 2 * road_B[j-1].right + road_B[j-2].right;
       }
       
-      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -5 || curvatureR[j-2] > 5 /*|| road_B[j].left == road_B[j].right*/))
+      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -8 || curvatureR[j-2] > 8 /*|| road_B[j].left == road_B[j].right*/))
         row_turn_after_straight = j;
       
-      if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -12 && curvatureR[j-2] > 12)
+      if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -20 && curvatureR[j-2] > 20)
         cross_found = 1;
       
       
@@ -467,12 +467,12 @@ void Cam_B(){
     
     for(int i = 0; i < 24 && (i+1) < row_turn_after_straight; i++)
     {
-      slope_diff += abss(slope[i] - slope_ave);
+      slope_diff += (slope[i] - slope_ave) * (slope[i] - slope_ave);
     }
     
     for(int i = 0; i < 23 && (i+2) < row_turn_after_straight; i++)
     {
-      curv_diff += abss(curvatureL[i] - curv_ave);
+      curv_diff += (curvatureL[i] - curv_ave) * (curvatureL[i] - curv_ave);
     }
       
     
@@ -497,7 +497,7 @@ void Cam_B(){
     }
     else road_state=1;//直道
     
-    if(valid_row > long_straight_thr && slope_diff < 30 /*&& cross_found == 0  && row_turn_after_straight > 10*/)
+    if(valid_row > long_straight_thr && curv_diff < 30 /*&& cross_found == 0  && row_turn_after_straight > 10*/)
     {
       long_straight = 1;
       //UART_SendChar('L');
@@ -964,8 +964,9 @@ void Cam_B(){
           motor_R *= 1.1;
         }
       }
-      PWM(motor_L, motor_R, &L, &R);               //后轮速度
-    }
+      if(long_straight == 0)
+        PWM(motor_L, motor_R, &L, &R);               //后轮速度
+      else PWM(motor_L/2, motor_R/2, &L, &R);     }
    else
    {
      MotorL_Output(0); 
