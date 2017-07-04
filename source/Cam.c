@@ -21,11 +21,19 @@ float weight[4][10] ={ {0,0,0,0,0,0,0,0,0,0},
                         {1.118, 1.454, 2.296, 3.744, 5.304,      6.000, 5.304, 3.744, 2.296, 1.454}};
 int valid_row=0;//与有效行相关，未有效识别
 int valid_row_thr=10;//有效行阈值
+int long_straight_thr = 17;//长直道阈值
 u8 car_state=0;//智能车状态标志 0：停止  1：测试舵机  2：正常巡线
 u8 remote_state = 0;//远程控制
 u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
                   //3 4 状态下权重拉近
                   //2 状态下减速
+u8 long_straight = 0;//0 long straight road not found, 1 found, ready for overtaking
+u8 cross_found = 0;//0 crossroads not found, 1 found;
+int slope[24];
+int curvatureL[23], curvatureR[23];
+
+int slope_diff = 0;
+int curv_diff = 0;
 
 float motor_L=MIN_SPEED;
 float motor_R=MIN_SPEED;
@@ -73,6 +81,8 @@ int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
+int slope_ave = 0, curv_ave = 0;
+int row_turn_after_straight = 0;
 /*
 //——————透视变换·变量——————
 double matrix[4][4];
@@ -262,8 +272,15 @@ void Cam_B_Init()//初始化Cam_B
     }*/
 
 //test
-double theta,theta_d,slope,test;
-double x,y;
+//double theta,theta_d,slope,test;
+//double x,y;
+
+int abss(int input)
+{
+  if(input>=0)
+    return input;
+  else return 0-input;
+}
 
 
 bool is_hole(int row)
@@ -388,6 +405,10 @@ void Cam_B(){
     }
     */
     //横向扫描方案
+    slope_diff = 0;
+    curv_diff = 0;
+    row_turn_after_straight = 24;
+    
     for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
     {
       int i;
@@ -405,13 +426,56 @@ void Cam_B(){
         }
       right[k_depth][j]=i;
       road_B[j].right = i;
+      
+      if(road_B[j].left == 0 && road_B[j].right == CAM_WID)
+        cross_found = 1;
+      
+      if(j > 1)
+      {
+        curvatureL[j-2] = road_B[j].left - 2 * road_B[j-1].left + road_B[j-2].left;
+        curvatureR[j-2] = road_B[j].right - 2 * road_B[j-1].right + road_B[j-2].right;
+      }
+      
+      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -5 || curvatureR[j-2] > 5 /*|| road_B[j].left == road_B[j].right*/))
+        row_turn_after_straight = j;
+      
+      if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -12 && curvatureR[j-2] > 12)
+        cross_found = 1;
+      
+      
       //mid
       road_B[j].mid = (road_B[j].left + road_B[j].right)/2;//分别计算并存储25行的mid
       //store
       if(j<(ROAD_SIZE-1))
         road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
     }
+    
+    slope_ave = 0;
+    for(int i = 0;i < 24; i++)
+    {
+      slope[i] = road_B[i+1].left - road_B[i].left;
+      slope_ave += slope[i];
+    }
+    slope_ave /= 24;
+    
+    curv_ave = 0;
+    for(int i = 0;i < 23; i++)
+    {
+      curv_ave += curvatureL[i];
+    }
+    curv_ave /= 23;
+    
+    for(int i = 0; i < 24 && (i+1) < row_turn_after_straight; i++)
+    {
+      slope_diff += abss(slope[i] - slope_ave);
+    }
+    
+    for(int i = 0; i < 23 && (i+2) < row_turn_after_straight; i++)
+    {
+      curv_diff += abss(curvatureL[i] - curv_ave);
+    }
       
+    
     //===========================区分前方道路类型//需要设置一个优先级！！！
     static int mid_ave3;
     static bool flag_valid_row=0;
@@ -425,6 +489,20 @@ void Cam_B(){
       }
       //else valid_row=ROAD_SIZE-3;
     }
+    
+    if(valid_row < valid_row_thr)
+    {
+      road_state=2;//弯道
+      //long_straight = 0;
+    }
+    else road_state=1;//直道
+    
+    if(valid_row > long_straight_thr && slope_diff < 30 /*&& cross_found == 0  && row_turn_after_straight > 10*/)
+    {
+      long_straight = 1;
+      //UART_SendChar('L');
+    }
+    else long_straight = 0;
     
     if(flag_valid_row==0) valid_row=ROAD_SIZE-3;
     if(roundabout_state==0){    //非环岛锁定时，才选择直道或者弯道
