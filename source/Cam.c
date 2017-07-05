@@ -316,7 +316,6 @@ bool is_hole(int row)
     if(left>=1 && right>=1)
       return 1;
     else return 0;
-        
 }
 
 bool isWider(int row)
@@ -438,7 +437,8 @@ void Cam_B(){
         curvatureR[j-2] = road_B[j].right - 2 * road_B[j-1].right + road_B[j-2].right;
       }
       
-      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -10 || curvatureR[j-2] > 10 || road_B[j].left < 1 || road_B[j].right > CAM_WID-1))
+      if(j > 1 && row_turn_after_straight == 24 
+         && (curvatureL[j-2] < -10 || curvatureR[j-2] > 10 || road_B[j].left < 1 || road_B[j].right > CAM_WID-1))
         row_turn_after_straight = j;
       
       /*if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -25 && curvatureR[j-2] > 25)
