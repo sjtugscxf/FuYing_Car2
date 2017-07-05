@@ -86,6 +86,7 @@ extern int curv_diff;
 extern int row_turn_after_straight;
 extern int slope[24];
 extern int curvatureL[23],curvatureR[23];
+extern int cnt_pos, cnt_neg;
 
 void Cam_B_Init();//初始化Cam_B
 float constrain(float lowerBoundary, float upperBoundary, float input);//控制上下限的函数

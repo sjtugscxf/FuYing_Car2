@@ -31,6 +31,7 @@ u8 long_straight = 0;//0 long straight road not found, 1 found, ready for overta
 u8 cross_found = 0;//0 crossroads not found, 1 found;
 int slope[24];
 int curvatureL[23], curvatureR[23];
+int cnt_pos = 0, cnt_neg = 0;
 
 int slope_diff = 0;
 int curv_diff = 0;
@@ -408,6 +409,7 @@ void Cam_B(){
     slope_diff = 0;
     curv_diff = 0;
     row_turn_after_straight = 24;
+    cross_found = 0;
     
     for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
     {
@@ -427,7 +429,7 @@ void Cam_B(){
       right[k_depth][j]=i;
       road_B[j].right = i;
       
-      if(road_B[j].left == 0 && road_B[j].right == CAM_WID)
+      if(road_B[j].left < 10 && road_B[j].right > (CAM_WID-10))
         cross_found = 1;
       
       if(j > 1)
@@ -436,11 +438,11 @@ void Cam_B(){
         curvatureR[j-2] = road_B[j].right - 2 * road_B[j-1].right + road_B[j-2].right;
       }
       
-      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -8 || curvatureR[j-2] > 8 /*|| road_B[j].left == road_B[j].right*/))
+      if(j > 1 && row_turn_after_straight == 24 && (curvatureL[j-2] < -10 || curvatureR[j-2] > 10 || road_B[j].left < 1 || road_B[j].right > CAM_WID-1))
         row_turn_after_straight = j;
       
-      if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -20 && curvatureR[j-2] > 20)
-        cross_found = 1;
+      /*if(j > 1 && j < 10 && cross_found == 0 && curvatureL[j-2] < -25 && curvatureR[j-2] > 25)
+        cross_found = 1;*/
       
       
       //mid
@@ -465,8 +467,13 @@ void Cam_B(){
     }
     curv_ave /= 23;
     
+    cnt_pos = cnt_neg = 0;
     for(int i = 0; i < 24 && (i+1) < row_turn_after_straight; i++)
     {
+      if(slope[i] > slope_ave)
+        cnt_pos++;
+      else if(slope[i] < slope_ave)
+        cnt_neg++;
       slope_diff += (slope[i] - slope_ave) * (slope[i] - slope_ave);
     }
     
@@ -474,7 +481,7 @@ void Cam_B(){
     {
       curv_diff += (curvatureL[i] - curv_ave) * (curvatureL[i] - curv_ave);
     }
-      
+    
     
     //===========================区分前方道路类型//需要设置一个优先级！！！
     static int mid_ave3;
@@ -497,7 +504,12 @@ void Cam_B(){
     }
     else road_state=1;//直道
     
-    if(valid_row > long_straight_thr && curv_diff < 30 /*&& cross_found == 0  && row_turn_after_straight > 10*/)
+    if(valid_row > long_straight_thr 
+       && row_turn_after_straight > 10
+       && (cnt_pos < 3 || cnt_neg < 3)
+       && cross_found == 0  
+       /*&& curv_diff < 30 
+       && row_turn_after_straight > 10*/)
     {
       long_straight = 1;
       //UART_SendChar('L');
@@ -917,6 +929,8 @@ void Cam_B(){
     last_err = err;
     
     dir=constrainInt(-250,250,dir)-55;
+    if(long_straight == 1)
+      dir = dir + 60;//贴边
     if(car_state!=0)
       Servo_Output(dir);
     else   

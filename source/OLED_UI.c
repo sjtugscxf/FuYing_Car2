@@ -99,21 +99,29 @@ void displayParameters()//menu==1
     {
       {"road_state",road_state},
       {"valid_row",valid_row}, 
-      {"battery",battery},      {"pit0 time",pit0_time},  {"pit1 time",pit1_time},  
-      {"distance",distance}, {"waveState",waveState}, 
-      {"servo",ServoOut},       {"mid_ave",mid_ave},       
+      {"battery",battery},      
+      {"pit0 time",pit0_time},  
+      {"pit1 time",pit1_time},  
+      {"distance",distance}, 
+      {"waveState",waveState}, 
+      {"servo",ServoOut},       
+      {"mid_ave",mid_ave},       
       {"car_state",car_state},
-      {"tacho0",tacho0},{"tacho1",tacho1},
-      {"motor_L",motor_L},{"motor_R",motor_R},
+      {"tacho0",tacho0},
+      {"tacho1",tacho1},
+      {"motor_L",motor_L},
+      {"motor_R",motor_R},
       {"long_straight",long_straight},
       {"slope_diff", slope_diff},
       {"curv_diff", curv_diff},
       {"row_turn", row_turn_after_straight},
-      {"cross_found", cross_found}
+      {"cross_found", cross_found},
+      {"cnt_pos", cnt_pos},
+      {"cnt_neg", cnt_neg}
 
       //{"C.r",C.r},{"C.sign",C.sign}
     },
-    { 
+    {
       {"mid_ave_x",mid_ave},
       {"mid[0]",road_B[0].mid},     {"mid[1]",road_B[1].mid},         {"mid[2]",road_B[2].mid}, 
       {"mid[3]",road_B[3].mid},     {"mid[4]",road_B[4].mid},         {"mid[5]",road_B[5].mid}, 
