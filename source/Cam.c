@@ -70,6 +70,9 @@ int c1=15, c2=10, c3=5;
 int ROAD_OBST_ROW=10; //用来检测障碍物的road_B行位置//不能太远，也不能太近
 int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 
+//超车用
+CarRole carRole = FOLLOWER;
+CarSide carSide = RIGHT;
 
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
@@ -924,6 +927,7 @@ void PORTC_IRQHandler(){
     if((PTC->PDIR>>0)&1)  
     {
       wavetimef=PIT2_VAL();
+      wave_abslost_cnt = 0;
     }
     else 
     {
@@ -938,6 +942,7 @@ void PORTC_IRQHandler(){
               {
                 distance = distance_tmp;
                 wave_lost_cnt = 0;
+                if(waveState = ABSLOST) waveState = LOST;
                }
              break;
            

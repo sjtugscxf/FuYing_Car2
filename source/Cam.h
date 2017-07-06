@@ -120,4 +120,21 @@ extern int road_width_thr;
 extern int left[DEPTH][ROAD_SIZE];
 extern int right[DEPTH][ROAD_SIZE];
 
+//≥¨≥µ”√
+typedef enum {
+	LEADER,
+        FOLLOWER
+} CarRole;
+
+typedef enum {
+	LEFT,
+        RIGHT
+} CarSide;
+
+//typedef enum {
+//	NOOVER
+//} OvertakeState;
+
+extern CarRole carRole;
+extern CarSide carSide;
 #endif

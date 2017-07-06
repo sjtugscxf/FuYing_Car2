@@ -16,6 +16,7 @@ int distance_sum;
 
 WaveState waveState;
 uint8 wave_lost_cnt = 0;
+uint8 wave_abslost_cnt = 0;
 
 void StartUltrasound(u8 x){
   if(x)
