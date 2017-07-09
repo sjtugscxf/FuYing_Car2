@@ -131,10 +131,15 @@ typedef enum {
         RIGHT
 } CarSide;
 
-//typedef enum {
-//	NOOVER
-//} OvertakeState;
+typedef enum {
+	NO_OVERTAKE,
+        PREPARE_OVERTAKE,
+        OVERTAKING,
+        OVERTAKEN
+} OvertakeState;
 
 extern CarRole carRole;
 extern CarSide carSide;
+extern OvertakeState overtakeState;
+extern OvertakeState overtakeState2;
 #endif

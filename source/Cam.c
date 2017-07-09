@@ -73,6 +73,8 @@ int OBSTACLE_THR=40;  //有障碍物时赛道宽度阈值
 //超车用
 CarRole carRole = FOLLOWER;
 CarSide carSide = RIGHT;
+OvertakeState overtakeState = NO_OVERTAKE;
+OvertakeState overtakeState2 = NO_OVERTAKE;
 
 // ---- Local ----
 u8 cam_row = 0, img_row = 0;
@@ -821,6 +823,28 @@ void Cam_B(){
       default:break;
     }
     //////////////////////////////////////////////////////////////////
+    
+    //================================超车状态切换
+    uint8 overtake_signal = 0;
+    switch (overtakeState)
+    {
+      case NO_OVERTAKE:
+        overtake_signal = 'z';
+        UART_SendChar(overtake_signal);
+        overtakeState = PREPARE_OVERTAKE;
+        break;
+      case PREPARE_OVERTAKE:
+        overtakeState = OVERTAKING;
+        break;
+      case OVERTAKING:
+        overtakeState = OVERTAKEN;
+        break;
+      case OVERTAKEN:
+        overtakeState = NO_OVERTAKE;
+        break;
+      default :
+        break;
+    }
     
     //================================对十行mid加权：
     float weight_sum=0;

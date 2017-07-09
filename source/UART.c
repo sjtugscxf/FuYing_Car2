@@ -11,18 +11,14 @@ License : MIT
 // === Receive ISR ===
 void UART3_IRQHandler(void){
    uint8 tmp = UART_GetChar();
-   if (tmp == 'a'){
-     remote_state = 2;
-     UART_SendString("turn left");//
-   }else if (tmp == 'd'){
-     remote_state = 3;
-     UART_SendString("turn right");//
-   }else if (tmp == 'w'){
-     remote_state = 1;
-     UART_SendString("go ahead");
-   }else if (tmp == 's'){
-     remote_state = 0;
-     UART_SendString("stop");
+   if (tmp == 'z'){
+     overtakeState2 = NO_OVERTAKE;
+   }else if (tmp == 'x'){
+     overtakeState2 = PREPARE_OVERTAKE;
+   }else if (tmp == 'c'){
+     overtakeState2 = OVERTAKING;
+   }else if (tmp == 'v'){
+     overtakeState2 = OVERTAKEN;
    }
 }
 
