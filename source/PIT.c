@@ -32,10 +32,10 @@ int16 speed_set = 0;
 
 void PID_Init() 
 {
-  L.kp = 12;
+  L.kp = 5;
   L.ki = 2;
   L.kd = 0;
-  R.kp = 12;
+  R.kp = 5;
   R.ki = 2;
   R.kd = 0;
   
@@ -52,8 +52,8 @@ void PID_Init()
 
 void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //前进的PID控制
 {  
-  L_err=left_speed-tacho0;
-  R_err=right_speed+tacho1;
+  L_err=left_speed+tacho0;
+  R_err=right_speed-tacho1;
   L->errSum+=L_err;
   if(L->errSum>300) L->errSum=300;
   if(L->errSum<-300) L->errSum=-300;
@@ -69,7 +69,7 @@ void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //前进的PID
   if(R_pwm>800)  R_pwm=800;
   if(L_pwm<-800)  L_pwm=-800;
   if(R_pwm<-800)  R_pwm=-800;
-  MotorL_Output((int)(L_pwm)); 
+  MotorL_Output((int)(-L_pwm)); 
   MotorR_Output((int)(-R_pwm));
 }
 

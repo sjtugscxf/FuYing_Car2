@@ -838,7 +838,7 @@ void Cam_B(){
       //dir*=1.2;//修正舵机左右不对称的问题//不可删
     last_err = err;
     
-    dir=constrainInt(-250,250,dir)-55;
+    dir=constrainInt(-200,200,dir)-55;
     if(car_state!=0)
       Servo_Output(dir);
     else   
