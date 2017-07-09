@@ -1296,7 +1296,6 @@
           <state>$PROJ_DIR$\LPLD\HW</state>
           <state>$PROJ_DIR$\LPLD\DEV</state>
           <state>F:\IAR Systems\Embedded Workbench 7.0\arm\CMSIS</state>
-          <state>F:\IAR Systems\Embedded Workbench 7.0\arm\CMSIS\Include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1703,11 +1702,11 @@
         </option>
         <option>
           <name>IlinkIcfOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>E:\FuYing\FuYing_Car2\FuYing_Car2\iar_config_files\LPLD_K60DN512_FLASH.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\NXP\MK60xN512_10.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
