@@ -120,6 +120,12 @@ void PIT1_IRQHandler(){
   if(wave_lost_cnt<20) wave_lost_cnt++;
   if(wave_lost_cnt == 20) waveState = LOST;
   
+  //------------------------
+  if(delay_zebra1 > 0)
+    delay_zebra1--;
+  if(delay_zebra2 > 0)
+    delay_zebra2--;
+  
   //------------ Other -------------
   
   pit1_time_tmp = pit1_time_tmp - PIT2_VAL();

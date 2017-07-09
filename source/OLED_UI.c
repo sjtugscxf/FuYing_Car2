@@ -236,9 +236,10 @@ void displayDebug()//menu==3
   default:break;
   }
   
-  Oled_Putstr(0,0,"dir.kp*10"); Oled_Putnum(0,11,(Dir_Kp+debug_dir.kp)*10);
-  Oled_Putstr(1,0,"dir.kd*10"); Oled_Putnum(1,11,(Dir_Kd+debug_dir.kd)*10);
-  Oled_Putstr(2,0,"MaxSpeed"); Oled_Putnum(2,11,MAX_SPEED+debug_speed);
+  Oled_Putstr(0,0,"dir.kp1*10"); Oled_Putnum(0,11,(Dir_Kp1+debug_dir.kp)*10);
+  Oled_Putstr(1,0,"dir.kp2*10"); Oled_Putnum(1,11,(Dir_Kp2+debug_dir.kp)*10);
+  Oled_Putstr(2,0,"dir.kd*10"); Oled_Putnum(2,11,(Dir_Kd+debug_dir.kd)*10);
+  Oled_Putstr(3,0,"MaxSpeed"); Oled_Putnum(3,11,MAX_SPEED+debug_speed);
     
 }
 

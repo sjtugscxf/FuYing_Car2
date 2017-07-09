@@ -26,6 +26,9 @@ u8 remote_state = 0;//远程控制
 u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
                   //3 4 状态下权重拉近
                   //2 状态下减速
+u8 is_stopline = 0;
+u8 cnt_zebra = 0;
+u8 delay_zebra1 = 0, delay_zebra2 = 0;
 
 float motor_L=MIN_SPEED;
 float motor_R=MIN_SPEED;
@@ -204,7 +207,20 @@ circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
 
 bool is_stop_line(int target_line)//目测并不有效……
 {
-  if((road_B[target_line].right-road_B[target_line].left)<ROAD_WID)
+  /*if((road_B[target_line].right-road_B[target_line].left)<ROAD_WID)
+    return 1;
+  else return 0;*/
+  
+  cnt_zebra = 0;
+  for(int i = 0; i < CAM_WID-5; i++)
+  {
+    if(cam_buffer[target_line][i] > thr
+     &&cam_buffer[target_line][i+1] > thr
+     &&cam_buffer[target_line][i+2] < thr
+     /*&&cam_buffer[target_line][i+3] < thr*/)
+      cnt_zebra++;
+  }
+  if(cnt_zebra > 5)
     return 1;
   else return 0;
 }
@@ -387,6 +403,24 @@ void Cam_B(){
       }
     }
     */
+    
+    if(is_stopline == 0 && is_stop_line(45) == 1)
+    {
+      is_stopline++;
+      delay_zebra1 = 10;
+    }
+    else if(is_stopline == 1 && delay_zebra1 == 0 && is_stop_line(45) == 1)
+    {
+      is_stopline++;
+      delay_zebra1 = 10;
+    }
+    else if(is_stopline == 2 && delay_zebra1 == 0 && is_stop_line(50) == 1)
+    {
+      is_stopline++;
+      delay_zebra2 = 5;
+    }
+    else if(is_stopline == 3 && delay_zebra2 == 0)
+      is_stopline++;
     //横向扫描方案
     for(int j=0;j<ROAD_SIZE;j++)//从下向上扫描
     {
@@ -832,13 +866,25 @@ void Cam_B(){
     static float err;
     static float last_err;
     err = mid_ave  - CAM_WID / 2;
-
-    dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
+    
+    if(err < 4 && err > -4)
+      dir = (Dir_Kp2+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);     //舵机转向  //参数: (7,3)->(8,3.5)
+    else if(err > 10 || err < -10)  
+      dir = (Dir_Kp1+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);
+    else
+      dir = (err - 1 +debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);
     //if(dir>0)
       //dir*=1.2;//修正舵机左右不对称的问题//不可删
+    //dir *= 1.6;
+    /*if(dir > 0)
+      dir *= 1.2;*/
     last_err = err;
     
-    dir=constrainInt(-200,200,dir)-55;
+    dir=constrainInt(-200,200,dir);
+    
+    if(is_stopline > 0 && (delay_zebra1 > 0 || delay_zebra2 > 0))
+      dir = 0;
+    
     if(car_state!=0)
       Servo_Output(dir);
     else   
@@ -851,26 +897,36 @@ void Cam_B(){
     float range=max_speed-MIN_SPEED;//速度范围大小 
     if(car_state==2 ){
       //分段线性控速
-      if(abs(dir)<50 ){//&& valid_row>valid_row_thr
+      if(abs(dir)<40 ){//&& valid_row>valid_row_thr
         motor_L=motor_R=max_speed;
       }
-      else if(abs(dir)<95){
-        motor_L=motor_R=max_speed-0.33*range*(abs(dir)-50)/45;
+      else if(abs(dir)<80){
+        motor_L=motor_R=max_speed-0.33*range*(abs(dir)-40)/40;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.9);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
       }
-      else if(abs(dir)<185){    
-        motor_L=motor_R=max_speed-0.33*range-0.33*range*(abs(dir)-95)/90;
+      else if(abs(dir)<120){    
+        motor_L=motor_R=max_speed-0.33*range-0.33*range*(abs(dir)-80)/40;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
       }
-      else if(abs(dir)<230){
-        motor_L=motor_R=max_speed-0.66*range-0.33*range*(abs(dir)-185)/45;
+      else if(abs(dir)<160){
+        motor_L=motor_R=max_speed-0.66*range-0.33*range*(abs(dir)-120)/40;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
       }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
       else{
-        motor_L=motor_R=MIN_SPEED;
+        if(dir > 0)
+        {
+          motor_L = MIN_SPEED;
+          motor_R = MIN_SPEED * 0.5;
+        }
+        else
+        {
+          motor_L = MIN_SPEED * 0.5;
+          motor_R = MIN_SPEED;
+        }
+        //motor_L=motor_R=MIN_SPEED;
       }
       
       if(waveState == STABLE)
@@ -886,7 +942,9 @@ void Cam_B(){
           motor_R *= 1.1;
         }
       }
-      PWM(motor_L, motor_R, &L, &R);               //后轮速度
+      if(is_stopline == 4)
+        PWM(0, 0, &L, &R);
+      else PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
    {

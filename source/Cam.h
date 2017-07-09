@@ -34,11 +34,12 @@ void Cam_Algorithm();
 void Cam_Init();
 
 //==============CAM_B===========
-#define CAM_WID 128//摄像头有效宽度//与摄像头安放位置有关//120//132
+#define CAM_WID 136//摄像头有效宽度//与摄像头安放位置有关//120//132
 #define thr 70//黑白阈值，目前无需调
 #define ROAD_WID 30//道路宽度，未知，需要在透视变换后使用、、、、、、、、、、
-#define Dir_Kp 3    //舵机比例控制参数
-#define Dir_Kd 1  //舵机微分控制参数
+#define Dir_Kp1 9    //舵机比例控制参数 for turning
+#define Dir_Kp2 3  //舵机微分控制参数  for straight
+#define Dir_Kd 1  //舵机控制参数
 #define MAX_SPEED 15 //直道最大速度/////////////////////////26为现在的极限
 #define MIN_SPEED 10 //弯道最大速度////////////////////////不确定
 #define ROAD_SIZE 25 //利用的摄像头数据行数
@@ -70,6 +71,10 @@ extern int valid_row_thr;//有效行阈值
 extern u8 car_state;//智能车状态
 extern u8 remote_state;//远程控制
 extern u8 road_state;//前方道路状态
+extern u8 is_stopline;
+extern u8 cnt_zebra;
+extern u8 delay_zebra1, delay_zebra2;//1 for the first, should pass; 2 for the second, should stop
+
 extern float motor_L;
 extern float motor_R;
 //OLED调参
