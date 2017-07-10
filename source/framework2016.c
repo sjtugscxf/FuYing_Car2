@@ -61,10 +61,10 @@ void main (void)
   {
     set_car_state();
     set_oled_menu();
-    if(car_state!=0)  Cam_B();
+    //if(car_state!=0)  Cam_B();
     //Cam_Algorithm();
+    Servo_Output(50);
   }
-
 }
 
 
