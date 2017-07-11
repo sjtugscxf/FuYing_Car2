@@ -69,7 +69,7 @@ void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //前进的PID
   if(R_pwm>800)  R_pwm=800;
   if(L_pwm<-800)  L_pwm=-800;
   if(R_pwm<-800)  R_pwm=-800;
-  MotorL_Output((int)(L_pwm)); 
+  MotorL_Output((int)(-L_pwm)); 
   MotorR_Output((int)(-R_pwm));
 }
 
@@ -117,6 +117,26 @@ void PIT1_IRQHandler(){
   
   UI_SystemInfo();
   
+  //===========
+  time_cnt++;
+  time_cnt%=5000;       //100s上限
+  if(delay_zebra1 > 0)
+    delay_zebra1--;
+  if(delay_zebra2 > 0)
+    delay_zebra2--;
+  if(obstacle_time_cnt>0)
+    obstacle_time_cnt--;
+  if(buf_time>0)
+    buf_time--;
+  if(left_time>0)
+    left_time--;
+  if(right_time>0)
+    right_time--;
+  if(wait_time>0)
+    wait_time--;
+  
+  if(wave_lost_cnt<20) wave_lost_cnt++;
+  if(wave_lost_cnt == 20) waveState = LOST;
   
   //------------ Other -------------
   
