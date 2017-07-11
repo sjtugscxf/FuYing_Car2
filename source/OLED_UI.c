@@ -58,7 +58,7 @@ void displayParameters()//menu==1
   static int start=0;
   static int page=0;
   Putboth outpair[Pages][Rows]={
-    {
+    {{"motor_L",motor_L},{"motor_R",motor_R},
   {"road_state",road_state},
   {"obstacle_type",obstacle_type},{"obstacle_pos",obstacle_pos},
   {"round_state",roundabout_state},//{"round_choice",roundabout_choice},
@@ -76,7 +76,7 @@ void displayParameters()//menu==1
       {"servo",ServoOut},       {"mid_ave",mid_ave},       
       {"car_state",car_state},
       {"tacho0",tacho0},{"tacho1",tacho1},
-      {"motor_L",motor_L},{"motor_R",motor_R},
+      
      // {"pit0 time",pit0_time},  {"pit1 time",pit1_time}
     },
     //==============
