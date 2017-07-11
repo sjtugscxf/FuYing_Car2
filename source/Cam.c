@@ -21,8 +21,8 @@ float weight[6][10] ={
 //{1.00,1.03,1.14,1.54,2.56,               4.29,6.16,7.00,6.16,4.29}
 //{1.118, 1.454, 2.296, 3.744, 5.304,      6.000, 5.304, 3.744, 2.296, 1.454}
 };//本来是为直、弯、环岛三个路况分别设置的权重，低速下不用考虑，高速可能会有细微区别。
-int MAX_SPEED=24;
-int MIN_SPEED=15;
+int MAX_SPEED=22;
+int MIN_SPEED=14;
 int road_B_near=0;//用于观察较近处的路宽判断是否会有分道，road_B下标，越小越近，其值与road_width_thr锁定
                   //CAR1对应路宽 5 -> 直道50+ or 弯道70+ or 入环岛或十字110+ or 出环岛可能80~100+ 
                   //目前CAR1--10  CAR2--0
@@ -30,9 +30,10 @@ int road_width_near=83;//该值通过观察check_near对应行的正常路宽来确定
 int road_B_far=40;
 int road_width_far=40;//未确定
 //由以上四个数据可以算出直道上一定距离处看到的路宽。//后两者暂时未使用，无需调试
-int valid_row_thr=27;//有效行阈值，区分直道S弯和大弯道         //跟摄像头角度有关
+int valid_row_thr=37;//有效行阈值，区分直道S弯和大弯道         //跟摄像头角度有关
 
 //通用·赛道识别================================
+int kp_reduce=0;//直道与长直道弱化
 int cnt=0;
 Road road_B[ROAD_SIZE];//由近及远存放
 float mid_ave;//road中点加权后的值
@@ -45,7 +46,7 @@ enum car_type car_type=leader;//前后车标志 1=前车 2=后车
 bool flag_stop=0;
 enum overtake_state overtake_state=0;//超车状态      0=无超车     1=主动超车（保持速度或者加速）          2=被超车（减速或停车） 
 enum remote_state remote_state = 0;//蓝牙通讯   
-  //0=各自正常行驶   
+  //0=各自正常行驶    
   //1=我（前车）可以被超车，你（后车）收到后设overtake_state为1  
   //2=我（后车）开始超车，你（前车）收到后设overtake_state为2      
   //3=我（后车)完成超车，我和你（前车）收到后设overtake_state为0，同时两车前后车状态反转
@@ -53,7 +54,7 @@ enum remote_state remote_state = 0;//蓝牙通讯
   //超车时机：启动超车（利用延时）   十字超车    环岛超车    直道超车        //暂时不需要把这个状态通讯？
 
 //环岛检测与处理========================================
-int check_round_farthest=10;  //双线延长检测黑洞存在时，最远检测位置，cam_buffer下标，越小越远，不可太小，大概10也就是road_B最远检测点就好
+int check_round_farthest=20;  //双线延长检测黑洞存在时，最远检测位置，cam_buffer下标，越小越远，不可太小，大概10也就是road_B最远检测点就好
 int time_cnt=0;//环岛计时
 int road_hole_row=40;//road_B下标 用于检测
 enum roundabout_state roundabout_state=0;//0-非环岛 1-预入环岛（直道） 2-入环岛（转向） 3-在环岛 4-出环岛（转向）      注：非零的时候会锁定环岛状态
@@ -73,6 +74,8 @@ u8 delay_zebra1 = 0, delay_zebra2 = 0;//1 for the first, should pass; 2 for the 
 //十字弯处理==============
 int left3;
 int right3;
+int left6;
+int right6;
 int flag_cross=0; //十字的判断条件
 int cross_cnt=0; //十字弯计数
 int cross_turn=0; //在十字弯是否靠右停下
@@ -82,6 +85,7 @@ int right_time=-1;
 int left_time=-1;
 int cross_end=0; //判断十字是否结束
 int flag_wide=0;
+int flag_thin=0;
 int wait_time=-1;
 
 //障碍处理==================
@@ -175,7 +179,7 @@ void Cam_B(){
     {
       is_stopline++;
       flag_ignore=1;
-      delay_zebra1 = 10;        //10
+      delay_zebra1 = 10;        //100
     }
     else if(is_stopline == 2 && delay_zebra1 == 0 && is_stop_line(50) == 1)
     {
@@ -356,11 +360,11 @@ void Cam_B(){
               cnt_black++;
           }
           if(cnt_black>(right_now-left_now)*0.8) cnt_black_row++;//弱化条件试一下
-          if(cnt_black_row>=3){
-            road_hole_row=j;
+          if(cnt_black_row>=1){         //已弱化
+            road_hole_row=60-j;
             if(is_hole(road_hole_row) || is_hole(road_hole_row-3) || is_hole(road_hole_row+3)){
            // if(road_B[road_B_near].width<80){
-          //    road_state=3;                       //完成环岛判断
+              road_state=3;                       //完成环岛判断
               roundabout_state=1;
               state_set=1;
               time_cnt=0;
@@ -370,14 +374,92 @@ void Cam_B(){
         }
       }
     }
+    /*
+    //寻找十字————————————————————————
+    int cross_middle;
+    float cross_diff = (road_B[8].mid-road_B[3].mid)/5.0;
+    int cross_hole=0;
+    if(state_set==0 && car_type==leader && flag_left_jump==1 && flag_right_jump==1){
+      flag_wide=0;
+      flag_thin=0;
+      for(int i_valid=5;i_valid<(40-3) && flag_cross==0;i_valid++)     //寻找十字弯
+      {
+        left3 = (road_B[i_valid].left+road_B[i_valid+1].left+road_B[i_valid+2].left)/3;
+        right3 = (road_B[i_valid].right+road_B[i_valid+1].right+road_B[i_valid+2].right)/3;
+     
+        // else valid_row=ROAD_SIZE-3;
+        if ((right3-left3) > 125){
+          flag_wide=1;
+          cross_middle = road_B[i_valid].mid;
+        }
+      
+        if (flag_wide==1){
+          left6 = (road_B[i_valid+3].left+road_B[i_valid+4].left+road_B[i_valid+5].left)/3;
+          right6 = (road_B[i_valid+3].right+road_B[i_valid+4].right+road_B[i_valid+5].right)/3;
+          if (road_B[i_valid].left >= cross_middle || road_B[i_valid].right <= cross_middle) cross_hole=1;
+          if ((left6-left3)>15 && (right3-right6)>15){
+            flag_thin=1;
+          }
+          cross_middle += cross_diff;
+        }
+      
+      }
+
+      if (flag_wide==1 && flag_thin==1 && cross_hole==0){
+        //state_set=1;
+        road_state=5;
+        //cross_turn=3;
+        //flag_stop=1;
+        //buf_time=1000;
+      }
+      //找到后：
+      
+      
+    }
+    */
+    //寻找十字————————————————————————
+    
+    if(state_set==0 && car_type==leader && flag_left_jump==1 && flag_right_jump==1){
+      flag_wide=0;
+      flag_thin=0;
+      for(int i_valid=5;i_valid<(40-3) && flag_cross==0;i_valid++)     //寻找十字弯
+      {
+        left3 = (road_B[i_valid].left+road_B[i_valid+1].left+road_B[i_valid+2].left)/3;
+        right3 = (road_B[i_valid].right+road_B[i_valid+1].right+road_B[i_valid+2].right)/3;
+     
+        // else valid_row=ROAD_SIZE-3;
+        if ((right3-left3) > 125){
+          flag_wide=1;
+        }
+      
+        if (flag_wide==1){
+          left6 = (road_B[i_valid+3].left+road_B[i_valid+4].left+road_B[i_valid+5].left)/3;
+          right6 = (road_B[i_valid+3].right+road_B[i_valid+4].right+road_B[i_valid+5].right)/3;
+          if ((left6-left3)>15 && (right3-right6)>15){
+            flag_thin=1;
+          }
+        }
+      
+      }
+
+      if (flag_wide==1 && flag_thin==1){
+        state_set=1;
+        road_state=5;
+        //cross_turn=3;
+        //flag_stop=1;
+      }
+      //找到后：
+      
+      
+    }
     
             //寻找十字————————————————————————
-    if(state_set==0 && car_type==leader && flag_left_jump==1 && flag_right_jump==1){
+  /*  if(state_set==0 && car_type==leader && flag_left_jump==1 && flag_right_jump==1){
       flag_wide=0;
       for(int i_valid=5;i_valid<(40-3) && flag_cross==0;i_valid++)     //寻找十字弯
       {
-        left3 = (road_B[i_valid].left+road_B[i_valid+1].left+road_B[i_valid+2].left+road_B[i_valid+3].left+road_B[i_valid+4].left)/5;
-        right3 = (road_B[i_valid].right+road_B[i_valid+1].right+road_B[i_valid+2].right+road_B[i_valid+3].right+road_B[i_valid+4].right)/5;
+        left3 = (road_B[i_valid].left+road_B[i_valid+1].left+road_B[i_valid+2].left)/3;
+        right3 = (road_B[i_valid].right+road_B[i_valid+1].right+road_B[i_valid+2].right)/3;
      
         // else valid_row=ROAD_SIZE-3;
         if ((right3-left3) > 125){
@@ -391,17 +473,17 @@ void Cam_B(){
         }
       
         if (flag_wide==1 && i_valid==36){
-          state_set=1;
-       //   road_state=5;
-          cross_turn=3;
-          flag_stop=1;
+        //  state_set=1;
+          road_state=5;
+      //    cross_turn=3;
+       //   flag_stop=1;
         //  buf_time=100;
         }
       }
       //找到后：
       
       
-    }
+    }*/
         //寻找十字————————————————————————
     /*
     if(state_set==0 && car_type==leader && flag_left_jump==1 && flag_right_jump==1){
@@ -437,8 +519,8 @@ void Cam_B(){
     */
     
     //最后，区分直弯-----------------------------
-  //  if(state_set==0){
-      //static int mid_ave3;
+    if(state_set==0){
+      static int mid_ave3;
       bool flag_valid_row=0;
       for(int i_valid=0;i_valid<(ROAD_SIZE-3) && flag_valid_row==0;i_valid++)     //寻找有效行
       {
@@ -456,12 +538,13 @@ void Cam_B(){
       else {
         road_state=1;                     //直道 & 可以直线通过的S弯
       }
-  //  }
+    }
     
     //=============================根据前方道路类型，进行不同的处理
      switch(road_state)
     {
       case 1:   //直道 or 可以直线通过的S弯
+        kp_reduce=0.5;
         max_speed=MAX_SPEED;
         min_speed=MIN_SPEED;
         //选左边界最右值和右边界最左值确定新的中点
@@ -479,11 +562,13 @@ void Cam_B(){
         */
         break;
       case 2:   //大弯道
+        kp_reduce=-0.1;
        // max_speed=constrain(MIN_SPEED+1,MAX_SPEED, MAX_SPEED-1);//减多少未定，取决于弯道最高速度
         max_speed=MAX_SPEED;
         min_speed=MIN_SPEED;
         break;
       case 3:   //环岛
+        kp_reduce=-0.1;
         min_speed=MIN_SPEED;
         max_speed=min_speed+1;
         switch(roundabout_state)
@@ -506,12 +591,14 @@ void Cam_B(){
         //  if(isWider(0,120)){//如果路过于宽，认为出现分叉，开始转弯     新车摄像头可能不一样
           max_speed=min_speed;
           for(int i=1;i<25;i++) road_B[i].mid=CAM_WID/2;
-          if(is_hole(15)){      //可改
+         // if(is_hole(15)){      //可改
+          if(road_B[0].width==128){
            // time_cnt++;
            // if(time_cnt>=100)   //提速后延时去掉
             roundabout_state=2;
             time_cnt=0;
           }
+          break;  
         case 2://入环岛
          // time_cnt++;
 
@@ -519,13 +606,14 @@ void Cam_B(){
             if(roundabout_choice==1) road_B[i].mid = 0;//constrain(0,CAM_WID/2-100,road_B[i].mid-100);
             else if(roundabout_choice==2) road_B[i].mid = CAM_WID;//constrain(CAM_WID/2+100,CAM_WID,road_B[i].mid+100);
           }
-          if(road_B[road_B_near].width<100){ //如果路宽恢复正常，认为完成入岛//我猜不如下面的时间控制方式有效
+          if(road_B[road_B_near].width<128){ //如果路宽恢复正常，认为完成入岛//我猜不如下面的时间控制方式有效
             roundabout_state=3;
             time_cnt=0;
           }
-          else if(time_cnt>25){
+         /* else if(time_cnt>25){
             roundabout_state=3;
           }
+          */
         /*
           else if(time_cnt>2000){
             roundabout_state=3;
@@ -563,7 +651,6 @@ void Cam_B(){
                    roundabout_state=4;
                    time_cnt=0;
                  }
-              
           }
          // if(time_cnt>10000) roundabout_state=0;//约5s  大环岛建议去掉该行
           //以上仅用作紧急处理，最好不要触发该条件
@@ -598,6 +685,7 @@ void Cam_B(){
         break;
         
       case 4://障碍
+        kp_reduce=0;
         max_speed=MAX_SPEED;
         min_speed=MIN_SPEED;
         switch(obstacle_state){
@@ -640,15 +728,21 @@ void Cam_B(){
         break;
         
       case 5://十字
+        kp_reduce=0;
         max_speed=MAX_SPEED;
         min_speed=MIN_SPEED;
         if (car_type==leader){
           if(buf_time==-1)
-            buf_time=25;        //100
+            buf_time=100;//25;        //100
           else if(buf_time>0){
             cross_turn=3;
             flag_stop=1;
           }
+          else{
+            flag_stop=0;
+            state_set=0;
+          }
+          /*
           else if(right_time==-1)
             right_time=12;      //60
           else if (right_time>0){
@@ -674,7 +768,7 @@ void Cam_B(){
             cross_turn=0;
             flag_stop=0;
             state_set=0;
-          }
+          }*/
         }
         break;
       default:break;
@@ -699,7 +793,7 @@ void Cam_B(){
     else
       dir = -(Dir_Kp+debug_dir.kp) * err*err + (Dir_Kd+debug_dir.kd) * (err-last_err); 
     */
-    dir = (Dir_Kp+debug_dir.kp) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);
+    dir = (Dir_Kp+debug_dir.kp-kp_reduce) * err + (Dir_Kd+debug_dir.kd) * (err-last_err);
   //  if(dir>0)
    //   dir*=1.2;//修正舵机左右不对称的问题//不可删
     last_err = err;
@@ -728,7 +822,7 @@ void Cam_B(){
     
     //舵机输出与手动停车：
     if(car_state!=0){
-      dir=constrainInt(-266,266,dir);   //done! //215 200
+      dir=constrainInt(-250,250,dir);   //done! //215 200
       Servo_Output(dir);
     }
     else   
@@ -784,7 +878,7 @@ void Cam_B(){
       }
       else if(valid_row>0) {
         motor_L=motor_R=max_speed-range*(45-valid_row)/45;
-        double x=dir/266;
+        double x=dir/250;
         if(x>0) motor_R=constrain(0,motor_R,motor_R*(1-0.3*x-0.2*x*x));//右转     //0.3x+0.2x^2  x=dir/200
         else motor_L=constrain(0,motor_L,motor_L*(1+0.3*x+0.2*x*x));
        // if(dir>0) motor_R=constrain(min_speed,motor_R,motor_R-range*dir/195);//右转
