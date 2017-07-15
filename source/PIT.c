@@ -32,10 +32,10 @@ int16 speed_set = 0;
 
 void PID_Init() 
 {
-  L.kp = 12;
+  L.kp = 5;
   L.ki = 2;
   L.kd = 0;
-  R.kp = 12;
+  R.kp = 5;
   R.ki = 2;
   R.kd = 0;
   
@@ -65,11 +65,11 @@ void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //Ç°½øµÄPID
   L->lastErr=L_err;
   R->lastErr=R_err;
   
-  if(L_pwm>800)  L_pwm=800;
-  if(R_pwm>800)  R_pwm=800;
-  if(L_pwm<-800)  L_pwm=-800;
-  if(R_pwm<-800)  R_pwm=-800;
-  MotorL_Output((int)(L_pwm)); 
+  if(L_pwm>700)  L_pwm=700;
+  if(R_pwm>700)  R_pwm=700;
+  if(L_pwm<-700)  L_pwm=-700;
+  if(R_pwm<-700)  R_pwm=-700;
+  MotorL_Output((int)(-L_pwm)); 
   MotorR_Output((int)(-R_pwm));
 }
 
@@ -117,8 +117,18 @@ void PIT1_IRQHandler(){
   
   UI_SystemInfo();
   
+  if(cnt_speed > 0)
+    cnt_speed--;
+  if(cnt_speed2 > 0)
+    cnt_speed2--;
+  if(stop_delay>0)
+    stop_delay--;
+  
   if(wave_lost_cnt<20) wave_lost_cnt++;
   if(wave_lost_cnt == 20) waveState = LOST;
+  
+  if(wave_abslost_cnt<10) wave_abslost_cnt++;
+  if(wave_abslost_cnt == 10) waveState = ABSLOST;
   
   //------------ Other -------------
   
@@ -163,7 +173,7 @@ void PIT0_IRQHandler(){
   
 #if (CAR_TYPE==0)   // Magnet and Balance
   
-  //Mag_Sample();
+  Mag_Sample();
   
   gyro1 = Gyro1();
   gyro2 = Gyro2();
@@ -172,8 +182,8 @@ void PIT0_IRQHandler(){
   
 #elif (CAR_TYPE==1)     // CCD
   
-  //CCD1_GetLine(ccd1_line);
-  //CCD2_GetLine(ccd2_line);
+  CCD1_GetLine(ccd1_line);
+  CCD2_GetLine(ccd2_line);
   
   
   
@@ -208,7 +218,8 @@ void PIT0_IRQHandler(){
   
   // not balance example : Servo_Output(dir_output);  
   // example : MotorL_Output(motorL_output); MotorR_Output(motorR_output);
- //MotorL_Output(550); MotorR_Output(-550);
+ //MotorL_Output(520); MotorR_Output(520);
+
   
   
   // ------- UART ---------

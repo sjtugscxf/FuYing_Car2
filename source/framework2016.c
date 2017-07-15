@@ -32,6 +32,7 @@ void main (void)
   Cam_B_Init();//≥ı ºªØCam_B
   Wave_Init();
   StartUltrasound(1);
+  Flash_Init();
   
 #if (CAR_TYPE==0)   // Magnet and Balance
   
@@ -56,13 +57,16 @@ void main (void)
 
   __enable_irq();
   
+  while (time_us < 2000000);
+  
   // --- System Initiated ---   
   while(1)
   {
     set_car_state();
     set_oled_menu();
-    if(car_state!=0)  Cam_B();
-    //Cam_Algorithm();
+    if(car_state!=0)
+      Cam_B();
+    Cam_Algorithm();
   }
 
 }

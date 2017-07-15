@@ -19,10 +19,12 @@ void StartUltrasound(u8 x);  //1开启，0关闭
 void Wave_Init();       //在main最前面初始化
 typedef enum {
 	STABLE,
-        LOST
+        LOST,
+        ABSLOST
 } WaveState;
 
 extern uint8 wave_lost_cnt;
+extern uint8 wave_abslost_cnt;
 extern WaveState waveState;
 
 #endif
