@@ -25,7 +25,8 @@ extern U32 time_us ;
 extern U32 pit0_time;   // time PIT0 ISR takes
 extern U32 pit1_time;   // time PIT1 ISR takes
 extern bool success_flag;
-
+extern int start_flag;
+extern int start_time;
 
 // ===== APIs =====
 

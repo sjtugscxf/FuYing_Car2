@@ -19,6 +19,6 @@ void drawCam(bool(*isTarget)(u8 x));//二值化
 bool isWhite(u8 x);
 
 void drawRoad();//画road_B的mid left right
-void drawJump();//画jump[][]以及其延长线
+//void drawJump();//画jump[][]以及其延长线
 
 #endif

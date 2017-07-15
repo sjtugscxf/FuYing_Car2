@@ -13,7 +13,8 @@ License : MIT
 U32 time_us = 0;
 U32 pit0_time;
 U32 pit1_time; 
-
+int start_flag=0;
+int start_time=100;
 
  
 //--- local ---
@@ -32,10 +33,10 @@ int16 speed_set = 0;
 
 void PID_Init() 
 {
-  L.kp = 12;
+  L.kp = 5;
   L.ki = 2;
   L.kd = 0;
-  R.kp = 12;
+  R.kp = 5;
   R.ki = 2;
   R.kd = 0;
   
@@ -52,8 +53,8 @@ void PID_Init()
 
 void PWM(u8 left_speed, u8 right_speed, PIDInfo *L, PIDInfo *R)      //前进的PID控制
 {  
-  L_err=left_speed+tacho0;
-  R_err=right_speed-tacho1;
+  L_err=left_speed-tacho0;
+  R_err=right_speed+tacho1;
   L->errSum+=L_err;
   if(L->errSum>300) L->errSum=300;
   if(L->errSum<-300) L->errSum=-300;
@@ -118,14 +119,22 @@ void PIT1_IRQHandler(){
   UI_SystemInfo();
   
   //===========
-  time_cnt++;
-  time_cnt%=5000;       //100s上限
+  
+  if(start_flag==1)
+    if(start_time>0)
+      start_time--;
+  
+ // time_cnt++;
+  //time_cnt%=5000;       //100s上限
   if(delay_zebra1 > 0)
     delay_zebra1--;
   if(delay_zebra2 > 0)
     delay_zebra2--;
+  
   if(obstacle_time_cnt>0)
     obstacle_time_cnt--;
+  
+  /*
   if(buf_time>0)
     buf_time--;
   if(left_time>0)
@@ -134,9 +143,25 @@ void PIT1_IRQHandler(){
     right_time--;
   if(wait_time>0)
     wait_time--;
+  */
+  
+  if(time_cnt>0)
+    time_cnt--;
+  if(time_cnt1>0)
+    time_cnt1--;
+  
+  if(flag_ignore==1 && ignore_time<25)      //这个时间依赖于车速，而且希望“起点”与环岛不要靠的太近，否则真正的环岛也会被屏蔽掉
+      ignore_time++;
+  else {
+      flag_ignore=0;
+      ignore_time=0;
+    }
   
   if(wave_lost_cnt<20) wave_lost_cnt++;
   if(wave_lost_cnt == 20) waveState = LOST;
+  
+  if(wave_abslost_cnt<10) wave_abslost_cnt++;
+  if(wave_abslost_cnt ==10) waveState = ABSLOST;
   
   //------------ Other -------------
   
@@ -162,7 +187,7 @@ void PIT0_IRQHandler(){
   
   pit0_time = PIT2_VAL();
     
-  battery = Battery();
+  //battery = Battery();
   
   
   

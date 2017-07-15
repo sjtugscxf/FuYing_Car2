@@ -32,6 +32,7 @@ void main (void)
   Cam_B_Init();//≥ı ºªØCam_B
   Wave_Init();
   StartUltrasound(1);
+  Flash_Init();
   
 #if (CAR_TYPE==0)   // Magnet and Balance
   
@@ -41,17 +42,18 @@ void main (void)
   
 #elif (CAR_TYPE==1)     // CCD
   
-  //CCD_Init();
+  CCD_Init();
   
 #else               // Camera
   
   Cam_Init();
   //CCD_Init();
 #endif
-  
+
   //---  Press Key 1 to Continue ---
   Oled_Putstr(6,1,"Press Key1 to go on");
   while (Key1());
+  
   Oled_Clear();
 
   __enable_irq();
@@ -59,9 +61,12 @@ void main (void)
   // --- System Initiated ---   
   while(1)
   {
+    start_flag=1;
     set_car_state();
     set_oled_menu();
-    if(car_state!=0)  Cam_B();
+    if(car_state!=0 && start_time==0){
+      Cam_B();
+    }
     //Cam_Algorithm();
   }
 

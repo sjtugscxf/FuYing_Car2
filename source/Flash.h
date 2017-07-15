@@ -10,12 +10,12 @@
 extern U16 data[DATA_NUM];
 
 #define data_flag                   data[0]
-#define KF_switch                   data[1]
-#define balance_deform              data[2]
-#define balance_K                   data[3]
-#define balance_P                   data[4]
-#define balance_D                   data[5]
-#define balance_dt                  data[6]
+#define MAX_SPEED                   data[1]
+#define MIN_SPEED                   data[2]
+#define round_speed                   data[3]
+#define CHASU                       data[4]
+#define DIR_KP                      data[5]
+#define DIR_KD                      data[6]
 #define accZ_offset                 data[7]
 #define P_speed                     data[8]
 #define D_speed                     data[9]
@@ -25,7 +25,6 @@ extern U16 data[DATA_NUM];
 #define wheel_I                         data[13]
 #define wheel_D                         data[14]
 #define I_speed                     data[15]
-//---------------------------
 void Flash_Data_Reset(void);
 void Flash_Data_Update(void);
 

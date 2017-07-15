@@ -34,9 +34,9 @@ void Cam_Init();
 
 //宏定义======================
 #define CAM_WID 128//摄像头有效宽度//与摄像头安放位置有关//正常值128
-#define Dir_Kp 6.666//0.666    //舵机比例控制参数  8               //6
-#define Dir_Kd 26.666  //舵机微分控制参数     //6    12抖得很厉害
-#define thr 85//黑白阈值，目前无需调      //70    //新摄像头需要调
+#define Dir_Kp 4.4//0.666    //舵机比例控制参数  8               //6  6.666
+#define Dir_Kd 32  //舵机微分控制参数     //6    12抖得很厉害    26.666
+extern int thr;//黑白阈值，目前无需调      //70    //新摄像头需要调
 #define ROAD_SIZE 50 //利用的摄像头数据行数
 #define WEIGHT_SIZE 10 //实际加权并控制舵机的行数
 //类型定义=======================================
@@ -71,9 +71,11 @@ bool isWider(int row,int road_width_thr);//检测路宽
 //================================================================
 //extern 声明：
 //特别声明（两车不同的部分）========================
+extern enum car_type car_type;//前后车标志 1=前车 2=后车
 extern float weight[6][10];
 extern int MAX_SPEED;
 extern int MIN_SPEED;
+extern float chasu;
 extern int road_B_near;
 extern int road_width_near;
 extern int road_B_far;
@@ -83,12 +85,18 @@ extern int road_width_far;
 extern Road road_B[ROAD_SIZE];//由近及远存放
 extern float mid_ave;//road中点加权后的值
 extern int valid_row;//与有效行相关，后期用来速控
+extern int fy_valid_row;
 extern int valid_row_thr;//有效行阈值，区分直道和大弯道
 extern enum car_state car_state;//智能车状态标志 0：停止  1：测试舵机  2：正常巡线
 extern enum road_state road_state;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍 5、十字
-                  //2 状态下减速//双车======================================
-extern enum car_type car_type;//前后车标志 1=前车 2=后车
+                  //2 状态下减速
+extern int state_set;
+//双车======================================
+extern bool uart_sw;
 extern bool flag_stop;
+extern bool bt_ok;
+extern int bt_delay;
+//extern bool bt_stop;
 extern enum overtake_state overtake_state;//超车状态      0=无超车     1=主动超车（保持速度或者加速）          2=被超车（减速或停车） 
 extern enum remote_state remote_state;//蓝牙通讯   
 //0=各自正常行驶   
@@ -101,6 +109,7 @@ extern enum remote_state remote_state;//蓝牙通讯
 //环岛检测与处理========================================
 extern int check_round_farthest;  //双线延长检测黑洞存在时，最远检测位置，cam_buffer下标，越小越远，不可太小，大概10也就是road_B最远检测点就好
 extern int time_cnt;//环岛计时
+extern int time_cnt1;
 extern int road_hole_row;//road_B下标 用于检测
 extern enum roundabout_state roundabout_state;//0-非环岛 1-预入环岛（直道） 2-入环岛（转向） 3-在环岛 4-出环岛（转向）      注：非零的时候会锁定环岛状态
 extern enum roundabout_choice roundabout_choice;//0-未选择 1-左 2-右 3-左右皆可(不用)      //单车能够选择最短路径时要初始化为0
@@ -109,14 +118,17 @@ extern int jump_thr;//两个拐点检测的阈值
 extern int jump[2][2];//存拐点坐标 0左 1右 0-x 1-y
 extern bool flag_left_jump,flag_right_jump;
 extern double suml,sumr;//为画图而改成全局变量
+extern int round_speed;
 
 //终点识别================
 extern u8 is_stopline;
 extern u8 cnt_zebra;
 extern u8 delay_zebra1, delay_zebra2;
+extern bool flag_ignore;
+extern int ignore_time;
 
 //十字弯处理==============
-
+extern enum cross_state cross_state;
 extern int left3;
 extern int right3;
 extern int flag_cross; //十字的判断条件
@@ -126,6 +138,9 @@ extern int cross_times; // 判断成十字的次数
 extern int buf_time;    //————————————
 extern int right_time;//——————————————
 extern int left_time;//——————————————
+extern int BUF_TIME;
+extern int RIGHT_TIME;
+extern int LEFT_TIME;
 extern int cross_end; //判断十字是否结束
 extern int flag_wide;
 extern int wait_time;
